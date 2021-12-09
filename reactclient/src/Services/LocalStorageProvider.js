@@ -15,7 +15,7 @@ const LocalStorageProvider = ({ initialData, children }) => {
             flightFollowing: true,
             showFlightPlan: true,
             showFlightPlanLabel: false,
-            currentLayer: 'Open Topo'
+            currentLayer: 'Google Terrain'
         });       
     }, [])
 

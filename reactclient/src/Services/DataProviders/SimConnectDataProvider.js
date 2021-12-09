@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_URL } from "../ServicesConst";
 import { initializeDataContainer, parseRequestData } from './simConnectDataParser';
 
 const SIMCONNECT_DATA_REQUEST_INTERVAL_SLOW = 5000;
@@ -23,7 +24,7 @@ const SimConnectDataProvider = ({ children }) => {
             requestInterval = 500;
             
         const requestData = () => {
-            fetch('/getdata')
+            fetch(`${API_URL.url}/getdata`)
                 .then(async response => {
                     return await response.json();
                 })

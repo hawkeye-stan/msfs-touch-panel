@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using MSFSTouchPanel.Shared;
 using System;
 using System.Windows.Forms;
 

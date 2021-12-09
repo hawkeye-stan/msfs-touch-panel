@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace MSFSTouchPanel.TouchPanelHost
 {
-    public class WebHost : IWebHost
+    public class WebApiHost : IWebHost
     {
         private IHost _host;
         private ISimConnectService _simConnectService;
 
-        public WebHost(IntPtr windowHandle)
+        public WebApiHost(IntPtr windowHandle)
         {
             _simConnectService = new SimConnectService(windowHandle);
         }
@@ -43,7 +42,7 @@ namespace MSFSTouchPanel.TouchPanelHost
             }
             catch (Exception ex)
             {
-                Logger.ServerLog($"Web Host server start error: : {ex.Message}", Shared.LogLevel.ERROR);
+                Logger.ServerLog($"API Host server start error: : {ex.Message}", Shared.LogLevel.ERROR);
             }
         }
 
@@ -55,7 +54,7 @@ namespace MSFSTouchPanel.TouchPanelHost
             }
             catch (Exception ex)
             {
-                Logger.ServerLog($"Web Host server stop error: : {ex.Message}", Shared.LogLevel.ERROR);
+                Logger.ServerLog($"API Host server stop error: : {ex.Message}", Shared.LogLevel.ERROR);
             }
         }
 
@@ -70,13 +69,13 @@ namespace MSFSTouchPanel.TouchPanelHost
             }
             catch (Exception ex)
             {
-                Logger.ServerLog($"Web Host server restart error: : {ex.Message}", Shared.LogLevel.ERROR);
+                Logger.ServerLog($"API Host server restart error: : {ex.Message}", Shared.LogLevel.ERROR);
             }
         }
         private IHostBuilder CreateHostBuilder() =>
             Host.CreateDefaultBuilder()
             .ConfigureLogging(loggingBuilder => {
-                loggingBuilder.ClearProviders();
+                loggingBuilder.ClearProviders(); 
             })
             .ConfigureWebHostDefaults(webBuilder =>
             {
@@ -85,7 +84,7 @@ namespace MSFSTouchPanel.TouchPanelHost
                 .SuppressStatusMessages(true)
                 .ConfigureKestrel(options =>
                 {
-                    options.Listen(IPAddress.Any, 5000, cfg =>
+                    options.Listen(IPAddress.Any, 5001, cfg =>
                     {
                         cfg.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
                     });
@@ -93,24 +92,19 @@ namespace MSFSTouchPanel.TouchPanelHost
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.Configure<ConsoleLifetimeOptions>(opts => opts.SuppressStatusMessages = true);
-                    services.AddHostedService<WebHostService>();
-
-                    // In production, the React files will be served from this directory
-                    services.AddSpaStaticFiles(configuration =>
-                    {
-                        configuration.RootPath = "reactclient";
-                    });
+                    services.AddControllersWithViews();
+                    services.AddMemoryCache();
+                    services.AddHostedService<WebApiHostService>();
+                    services.AddSingleton<ISimConnectService>(provider => _simConnectService);
 
                     services.AddCors();
-
-                    //TBD: (remove for production app for now) Allow CORS for API access, this are for REACTJS PWA APP with security cert
+                    // TBD: (remove for production app for now) Allow CORS for API access, this are for REACTJS PWA APP with security cert
                     //services.AddCors(options =>
                     //{
                     //    options.AddPolicy(name: MY_ALLOW_SPECIFIC_ORIGINS,
                     //                      builder =>
                     //                      {
-                    //                          builder.WithOrigins("http://localhost",
-                    //                                              "http://localhost:5000",
+                    //                          builder.WithOrigins("http://localhost:5001",
                     //                                              "https://msfstouchpanel.ddns.net/",
                     //                                              "http://msfstouchpanel.ddns.net/").AllowAnyMethod().AllowAnyHeader();
                     //                      });
@@ -131,19 +125,13 @@ namespace MSFSTouchPanel.TouchPanelHost
                         .AllowCredentials()
                     );
 
-                    app.UseStaticFiles();
-                    app.UseSpaStaticFiles();
+                    app.UseRouting();
 
-                    //app.UseRouting();
-
-                    app.UseSpa(spa =>
+                    app.UseEndpoints(endpoints =>
                     {
-                        spa.Options.SourcePath = env.ContentRootPath + @"\..\reactclient";
-
-                        if (env.IsDevelopment())
-                        {
-                            spa.UseReactDevelopmentServer(npmScript: "start");
-                        }
+                        endpoints.MapControllerRoute(
+                            name: "default",
+                            pattern: "{controller}/{action=Index}/{id?}");
                     });
                 });
             })

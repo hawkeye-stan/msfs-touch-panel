@@ -27,7 +27,7 @@ const start = (planeType, panel) => {
 
 const connect = (panel) => {
     console.log('Connecting to plane...')
-    fetch('http://' + window.location.hostname + ':' + window.location.port + '/getdebuggerpagelist')
+    fetch('http://' + window.location.hostname + ':5001' + '/getdebuggerpagelist')
         .then(
             (response) => { 
                 if(response.status === 200)

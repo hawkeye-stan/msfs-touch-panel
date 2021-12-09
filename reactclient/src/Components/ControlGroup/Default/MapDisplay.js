@@ -144,7 +144,7 @@ const MapDisplay = () => {
     const layerGroupFlightPlan = useRef();
     const planeMarker = useRef();
 
-    const selectedLayer = useRef('Open Topo');
+    const selectedLayer = useRef('Google Terrain');
 
     const handleUpdateMapConfig = (key, value) => {
         let config = { ...mapConfig };

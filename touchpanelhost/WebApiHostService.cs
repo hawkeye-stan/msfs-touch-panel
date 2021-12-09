@@ -5,13 +5,15 @@ using MSFSTouchPanel.Shared;
 
 namespace MSFSTouchPanel.TouchPanelHost
 {
-    internal class WebHostService : IHostedService
+    internal class WebApiHostService : IHostedService
     {
         private readonly IHostApplicationLifetime _appLifetime;
+        private readonly ISimConnectService _simConnectService;
 
-        public WebHostService(IHostApplicationLifetime appLifetime)
+        public WebApiHostService(IHostApplicationLifetime appLifetime, ISimConnectService simConnectService)
         {
             _appLifetime = appLifetime;
+            _simConnectService = simConnectService;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -30,17 +32,19 @@ namespace MSFSTouchPanel.TouchPanelHost
 
         private void OnStarted()
         {
-            Logger.ServerLog("Web Host server started", LogLevel.INFO);
+            Logger.ServerLog("API Host server started", LogLevel.INFO);
+            _simConnectService.Start();
         }
 
         private void OnStopping()
         {
-            Logger.ServerLog("Web Host server stopping", LogLevel.INFO);
+            Logger.ServerLog("API Host server stopping", LogLevel.INFO);
+            _simConnectService.Stop();
         }
 
         private void OnStopped()
         {
-            Logger.ServerLog("Web Host server stopped", LogLevel.INFO);
+            Logger.ServerLog("API Host server stopped", LogLevel.INFO);
         }
     }
 }

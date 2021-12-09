@@ -13,6 +13,7 @@ namespace MSFSTouchPanel.TouchPanelHost
     {
         private SynchronizationContext _syncRoot;
         private IWebHost _webHost;
+        private IWebHost _webApiHost;
 
         public StartupForm()
         {
@@ -28,8 +29,7 @@ namespace MSFSTouchPanel.TouchPanelHost
             Logger.OnServerLogged += HandleOnServerLogged;
             Logger.OnClientLogged += HandleOnClientLogged;
 
-            _webHost = new WebHost(this.Handle);
-            _webHost.StartAsync();
+            StartServers();
 
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             lblVersion.Text = version.ToString();
@@ -46,7 +46,6 @@ namespace MSFSTouchPanel.TouchPanelHost
             menu_framepanel_g1000nxi_pfd.Click += experimentalMenuItem_Clicked;
             menu_framepanel_g1000nxi_mfd.Click += experimentalMenuItem_Clicked;
             menu_framepanel_fbwa32nx_cdu.Click += experimentalMenuItem_Clicked;
-
 
             menu_webpanel_g1000nxi_mfd.Click += experimentalMenuItem_Clicked;
             menu_webpanel_g1000nxi_pfd.Click += experimentalMenuItem_Clicked;
@@ -70,12 +69,38 @@ namespace MSFSTouchPanel.TouchPanelHost
             set
             {
                 _syncRoot.Post((arg) =>
-          {
-              var ip = arg as string;
-              if (ip != null)
-                  txtServerIP.Text = ip;
-          }, value);
+                {
+                    var ip = arg as string;
+                    if (ip != null)
+                        txtServerIP.Text = ip;
+                }, value);
             }
+        }
+
+        private void StartServers()
+        {
+            _webHost = new WebHost(this.Handle);
+            _webHost.StartAsync();
+
+            _webApiHost = new WebApiHost(this.Handle);
+            _webApiHost.StartAsync();
+        }
+
+        private void StopServers()
+        {
+            _syncRoot = null;
+
+            _webHost.StopAsync();
+            _webHost.Dispose();
+
+            _webApiHost.StopAsync();
+            _webApiHost.Dispose();
+        }
+
+        private void RestartServers()
+        {
+            _webHost.RestartAsync();
+            _webApiHost.RestartAsync();
         }
 
         private void HandleOnServerLogged(object sender, EventArgs<string> e)
@@ -115,9 +140,7 @@ namespace MSFSTouchPanel.TouchPanelHost
 
         private void StartupForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _syncRoot = null;
-            _webHost.StopAsync();
-            _webHost.Dispose();
+            StopServers();
         }
 
         private void StartupForm_Resize(object sender, EventArgs e)
@@ -154,7 +177,7 @@ namespace MSFSTouchPanel.TouchPanelHost
             switch (itemName)
             {
                 case "menuRestartServer":
-                    _webHost.RestartAsync();
+                    RestartServers();
                     break;
                 case "menuClearServerLog":
                     txtServerLogMessages.Clear();
