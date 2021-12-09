@@ -47,7 +47,7 @@ export const FBWA32NX_CDU_STYLES = props => makeStyles({
         aspectRatio: `${props.iframeRatio}`,
         border: '0',
         backgroundColor: 'black',
-        zIndex: 999
+        zIndex: 999     // have the screen hide below the button overlay
     },
     squareButtonBase: {
         position: 'absolute',

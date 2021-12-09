@@ -1,11 +1,7 @@
-let BUGGY_NODES_CLASSES = [];
-let BUGGY_NODES_IDS = [];
-let buggyNodes = [];
+let targetedPlane, targetedPanel, socket, socketRetryInterval, garbageBin, htmluiRoot;
 let replaceMapNode = [];
-let htmluiRoot; 
-
-let targetedPlane, targetPanel, socket, socketRetryInterval;
-let toBeDeletedNodeList = [];
+let nodeTree = [];
+let deletedNodes = [];
 
 const start = (planeType, panel) => {
     targetedPlane = planeType.toLowerCase();
@@ -16,46 +12,21 @@ const start = (planeType, panel) => {
 
     window.onresize = resizePanel;
 
+    garbageBin = $('#garbageBin');
+
     // setup MSFS html_ui root folder path
     htmluiRoot = '/assets/' + planeType;
 
-    // setup buggy nodes for each plane type
-    switch(planeType.toLowerCase()){
-        case 'g1000nxi':
-            BUGGY_NODES_CLASSES = ['dtk-box', 'hsi-nav-source', 'hsi-nav-sensitivity', 'hsi-rose-hdg-box', 'hsi-map-hdg-box', 'tas-value', 'vertdev-source'];
-            BUGGY_NODES_IDS = [];
-            break;
-        case 'fbwa32nx':
-            //BUGGY_NODES_CLASSES = ['Title', 'Action', 'Completed'];
-            BUGGY_NODES_IDS = ['CurrentValue', 'Value', 'SATValue', 'TATValue', 'ISAValue' ];
-            break;
-        case 'cj4':
-            BUGGY_NODES_CLASSES = [];
-            BUGGY_NODES_IDS = [];
-            break;
-    }
-
-    // ** IMPORTANT ** clear deleted nodes at time interval
+    // ** IMPORTANT ** trim node tree on set interval (eg. constant add/remove nodes create a bunch of orphan references)
     setInterval(() => {
-        let garbageBin = document.getElementById('garbageBin');
-
-        for(let i = 0; i < toBeDeletedNodeList.length; i++)
-        {
-            let deletedNode = getElementsByName(toBeDeletedNodeList[i]);
-
-            if(deletedNode !== undefined)
-                garbageBin.appendChild(deletedNode);
-        }
-
-        toBeDeletedNodeList.length = 0;
-        garbageBin.innerHTML = '';
-    }, 5000);
+        trimNodeTree();
+        clearGarbageBin();
+        console.log('NodeTree node count: ' + nodeTree.length);
+    }, 5000)
 }
-
 
 const connect = (panel) => {
     console.log('Connecting to plane...')
-    //fetch('http://localhost:19999/pagelist.json')     // if running page directly, need to use browser's disable CORS plugin
     fetch('http://' + window.location.hostname + ':' + window.location.port + '/getdebuggerpagelist')
         .then(
             (response) => { 
@@ -107,171 +78,90 @@ const resizePanel = () => {
 }
 
 const socketReceivedMessage = (msg) => {
-    let data = JSON.parse(msg.data);
+    let message = JSON.parse(msg.data);
 
-    if (data.result !== undefined) 
+    if (message.result !== undefined) 
+        executeResultMessage(message);
+    else if (message.method !== undefined) 
+        executeMethodMessage(message)
+}
+
+const executeResultMessage = (data) => {
+    if (data.id >= 10) {
+        setElementAttributes(getNodeById(data.id), data.result.attributes);
+    }
+    else if (data.id === 2) {
+        createRootElement(data.result);
+    }
+    else if (data.id === 3) {
+        let rootNodeId = data.result.nodeId;
+        createDocument(rootNodeId);
+    }
+}
+
+const executeMethodMessage = (data) => {
+    switch(data.method)
     {
-        if (data.id >= 10) {
-            setElementAttributes(getElementsByName(data.id), data.result.attributes);
-        }
-        else if (data.id === 1) {
-            createRootElement(data.result);
-        }
-        else if (data.id === 2) {
-            let rootNodeId = data.result.nodeId;
-            createDocument(rootNodeId);
-        }
-    }
-    else if (data.method !== undefined) 
-    { 
-        switch(data.method)
-        {
-            case 'DOM.inlineStyleInvalidated':
-                handleInlineStyleInvalidated(data.params);
-                break;
-            case 'DOM.attributeModified':
-                handleAttributeModified(data.params);
-                forceRerender(data.nodeId);  // force rerender
-                break;
-            case 'DOM.attributeRemoved':
-                handleAttributeRemoved(data.params);
-                forceRerender(data.nodeId);  // force rerender
-                break;
-            case 'DOM.childNodeInserted':
-                if(buggyNodes.find(x => x == data.params.parentNodeId) === undefined)
-                {
-                    handleInsertNode(data.params);
-                    forceRerender(data.params.parentNodeId);  // force rerender
-                }
-                else
-                {
-                    let element = getElementsByName(data.params.parentNodeId);
-                    if(buggyNodes.indexOf(data.params.parentNodeId) === -1)
-                    {
-                        buggyNodes.push(data.params.parentNodeId);
-                        //buggyNodes.push(data.params.node.nodeId);
-                    }
+        case 'DOM.inlineStyleInvalidated':
+            handleInlineStyleInvalidated(data.params);
+            break;
+        case 'DOM.attributeModified':
+            handleAttributeModified(data.params);
+            break;
+        case 'DOM.attributeRemoved':
+            handleAttributeRemoved(data.params);
+            break;
+        case 'DOM.childNodeInserted':
+            handleInsertNode(data.params);
+            break;
+        case 'DOM.childNodeRemoved':
+            handleRemoveElement(data.params);
+            break;
+        case 'DOM.characterDataModified':
+            handleCharacterDataModified(data.params);
+            break;
+        case 'DOM.setChildNodes':
+            
+            let parent = getNodeById(data.params.parentId);
+            data.params.nodes = data.params.nodes.filter(childNode => childNode.localName !== 'script' && childNode.localName !== 'title' && childNode.localName !== 'meta');
 
-                    if (element.textContent !== data.params.node.nodeValue)
-                    {
-                        element.textContent = data.params.node.nodeValue;
-                    }
-                }
-                break;
-            case 'DOM.childNodeRemoved':
-                if(buggyNodes.find(x => x == data.params.parentNodeId) === undefined)
-                    removeElement(data.params);
-                break;
-            case 'DOM.characterDataModified':
-                handleCharacterDataModified(data.params);
-                break;
-            case 'DOM.setChildNodes':
-                let parent = getElementsByName(data.params.parentId);
-                data.params.nodes = data.params.nodes.filter(childNode => childNode.localName !== 'script' && childNode.localName !== 'title' && childNode.localName !== 'meta');
-    
-                if (parent !== undefined) {
-                    // only get first child of body tag
-                    if(data.params.parentId === Number(document.body.getAttribute('name')))
-                        data.params.nodes.length = 1;
-                    
-                    let frag = document.createDocumentFragment();
+            if (parent !== undefined) {
+                // only get first child of body element or DOM recursive loop will crash the page
+                if(data.params.parentId === Number(document.body.getAttribute('name')))
+                    data.params.nodes.length = 1;
 
-                    data.params.nodes.forEach((node) => {
-                        frag.appendChild(createElement(node, parent.tagName));
-                    });
+                let frag = document.createDocumentFragment();
 
-                    if(data.params.nodes.length > 0)
-                        parent.appendChild(frag);
-    
-                    forceRerender(data.params.parentId);  // force rerender
-                }
-                break;
-            case 'DOM.childNodeCountUpdated':
-                handleChildNodeCountUpdated(data.params);
-                break;
-            case 'DOM.pseudoElementAdded':   
-            case 'DOM.pseudoElementRemoved':
-                break;
-            default:
-                console.log(data);
-        }
+                data.params.nodes.forEach((node) => {
+                    frag.appendChild(createTagElement(node, data.params.parentId, parent.tagName));
+                });
+
+                if(data.params.nodes.length > 0)
+                    parent.appendChild(frag);
+
+                forceRerender(data.params.parentId);  // force rerender
+            }
+            break;
+        case 'DOM.childNodeCountUpdated':
+            handleChildNodeCountUpdated(data.params);
+            break;
+        case 'DOM.pseudoElementAdded':   
+        case 'DOM.pseudoElementRemoved':
+            break;
+        default:
+            console.log(data);
     }
 }
 
-const forceRerender = (elementName) => {
-    if(elementName === undefined) return;
-
-    let element = getElementsByName(elementName);
-    if(element !== undefined)
-        element.innerHTML += '';
-}
-
-const setupBuggyNodes = () => {
-    // capture buggy nodes by html class names
-    BUGGY_NODES_CLASSES.forEach(cls => {
-        let elements = document.querySelectorAll('.' + cls);
-
-        elements.forEach(element => {
-            let elementName = element.getAttribute('name');
-            buggyNodes.push(Number(elementName));
-
-            element.childNodes.forEach(c => {
-                if(c.getAttribute !== undefined)
-                {
-                    let childElementName =  c.getAttribute('name');
-                    if(childElementName !== undefined)
-                        buggyNodes.push(Number(childElementName));
-
-                    c.childNodes.forEach(gc => {
-                        if(gc.getAttribute !== undefined)
-                        {
-                            let gcElementName =  gc.getAttribute('name');
-                            if(gcElementName !== undefined)
-                                buggyNodes.push(Number(gcElementName));
-                        }
-                    })
-                }
-            })
-        })
-    });
-
-    // capture buggy nodes by html element id
-    BUGGY_NODES_IDS.forEach(id => {
-        let elements = document.querySelectorAll('#' + id);
-
-        elements.forEach(element => {
-            let elementName = element.getAttribute('name');
-            buggyNodes.push(Number(elementName));
-
-            element.childNodes.forEach(c => {
-                if(c.getAttribute !== undefined)
-                {
-                    let childElementName =  c.getAttribute('name');
-                    if(childElementName !== undefined)
-                        buggyNodes.push(Number(childElementName));
-
-                    c.childNodes.forEach(gc => {
-                        if(gc.getAttribute !== undefined)
-                        {
-                            let gcElementName =  gc.getAttribute('name');
-                            if(gcElementName !== undefined)
-                                buggyNodes.push(Number(gcElementName));
-                        }
-                    })
-                }
-            })
-        })
-    });
-}
 
 const getDocument = () => {
-    socket.send(JSON.stringify({id: 1, method: 'DOM.getDocument'}));
-    socket.send(JSON.stringify({id: 2, method: 'DOM.pushNodeByPathToFrontend', params: { path: '1,HTML'}}));
+    socket.send(JSON.stringify({id: 2, method: 'DOM.getDocument'}));
+    socket.send(JSON.stringify({id: 3, method: 'DOM.pushNodeByPathToFrontend', params: { path: '1,HTML'}}));
 }
 
 const createDocument = (nodeId) => {
     // expand all nodes
-    socket.send(JSON.stringify({id: 3, method: "DOM.requestChildNodes", params: { nodeId: nodeId, depth: -1 }}));
+    socket.send(JSON.stringify({id: 4, method: "DOM.requestChildNodes", params: { nodeId: nodeId, depth: -1 }}));
 
     setTimeout(() => {
         resizePanel();
@@ -280,16 +170,7 @@ const createDocument = (nodeId) => {
         let mainFrame = document.getElementById('Mainframe');
         if(mainFrame !== null) 
             mainFrame.setAttribute('style', 'overflow: clip');
-
-        // setup buggy nodes to change how the nodes are updated
-        setupBuggyNodes();
     }, 1000)
-
-    // Set interval to reset buggy nodes
-    setInterval(() => {
-        buggyNodes.length = 0;
-        setupBuggyNodes();
-    }, 30000);
 }
 
 const createRootElement = (data) => {
@@ -302,39 +183,45 @@ const createRootElement = (data) => {
         if(childNode.localName === 'head')
         {
             document.head.setAttribute('name', childNode.nodeId);
+            addNodeToTree(1, childNode.nodeId, document.head);
         }
         else if (childNode.localName === 'body')
         {
             document.body.setAttribute('name', childNode.nodeId);
+            addNodeToTree(1, childNode.nodeId, document.body);
         }
     })
 }
 
-const createElement = (node, parentTag) => {
+const createTagElement = (node, parentNodeId, parentTag) => {
     if(node.nodeType === 3)
     {
         if(targetedPlane === 'fbwa32nx' && targetedPanel === 'eicas_1') // one off for FBW A32NX and EICAS_1
         {
-            return node.nodeValue;
+             return node.nodeValue;
         }
 
         if(parentTag.toLowerCase() === 'text' || parentTag.toLowerCase() === 'tspan')
         {
             if(targetedPlane === 'fbwa32nx' || targetedPlane === 'g1000nxi')        // one off for FBW A32NX and G1000NXi
             {
-                let el = document.createElement('tspan');
-                el.setAttribute('name', node.nodeId);
-                el.textContent = node.nodeValue;
-                return el;
+                let element = createSpecificElement('tspan');
+                element.setAttribute('name', node.nodeId);
+                element.textContent = node.nodeValue;
+                addNodeToTree(parentNodeId, node.nodeId, element);
+                return element;
             }
-            
-            return node.nodeValue;
+            else
+            {
+                return node.nodeValue;
+            }
         }
 
-        let el = document.createElement('place-holder');
-        el.setAttribute('name', node.nodeId);
-        el.textContent = node.nodeValue;
-        return el;        
+        let element = createSpecificElement('place-holder');
+        element.setAttribute('name', node.nodeId);
+        element.textContent = node.nodeValue;
+        addNodeToTree(parentNodeId, node.nodeId, element);
+        return element;        
     }
 
     if(node.nodeType === 1)
@@ -344,14 +231,15 @@ const createElement = (node, parentTag) => {
             socket.send(JSON.stringify({id: node.nodeId, method: "DOM.requestChildNodes", params: { nodeId: node.nodeId, depth: -1 }}));
         }
 
-        let element = document.createElement(node.localName);
+        let element = createSpecificElement(node.localName);
         element.setAttribute('name', node.nodeId);
         setElementAttributes(element, node.attributes);
+        addNodeToTree(parentNodeId, node.nodeId, element);
 
         // replace bing map node with built-in map app
         if(replaceMapNode.includes(node.nodeId))
         {
-            let mapElement = document.createElement('iframe');
+            let mapElement = createSpecificElement('iframe');
             mapElement.setAttribute('src',  `http://${window.location.hostname}:${window.location.port}/mappanel`);
             mapElement.setAttribute('style', 'width:100%; height: calc(100% - 58px); margin-top: 58px');
             mapElement.setAttribute('frameborder', '0');
@@ -364,7 +252,7 @@ const createElement = (node, parentTag) => {
         {
             node.children = node.children.filter(n => n.localName !== 'script');
             node.children.forEach(childNode => {
-                let newElement = createElement(childNode, node.localName)
+                let newElement = createTagElement(childNode, node.nodeId, node.localName)
 
                 if(typeof newElement === 'string')
                     element.textContent = newElement;
@@ -376,7 +264,7 @@ const createElement = (node, parentTag) => {
 
         if(targetedPlane === 'fbwa32nx' && targetedPanel === 'eicas_1')     // one off for FBW A32NX and EICAS_1
         {
-            return element;
+           return element;
         }
         else{
             socket.send(JSON.stringify({id: node.nodeId, method: 'DOM.getAttributes', params: {nodeId: node.nodeId }}));
@@ -392,16 +280,21 @@ const createElement = (node, parentTag) => {
     return null;
 }
 
-const removeElement = (data) => {
-    let node = getElementsByName(data.nodeId);
-    
-    if(node !== undefined)
-    {
-        node.setAttribute('deleted', 'true');
-        toBeDeletedNodeList.push(data.nodeId);
-    }
+const createSpecificElement = (tag) => {
+    // *** Another gotcha here **** 
+    // SVG tag without namespace will not render without forcing full page refresh with element.innerHTML() += ''. But by using in
+    // it, it will break all existing DOM refrences. This is to fix that!
 
-    delete node;
+    switch(tag)
+    {
+        case 'svg':
+        case 'g':
+        case 'text':
+        case 'tspan':
+            return document.createElementNS("http://www.w3.org/2000/svg", tag);
+        default:
+            return document.createElement(tag);
+    }
 }
 
 const setElementAttributes = (element, attributes) => {
@@ -460,25 +353,32 @@ const setElementAttributes = (element, attributes) => {
     }
 }
 
+const handleRemoveElement = (data) => {
+    // let parentNode = getNodeById(data.parentNodeId);
+    // let node = getNodeById(data.nodeId);
+    // if(parentNode !== undefined && node !== undefined)
+    //     parentNode.removeChild(node);
+
+    deletedNodes.push(data.nodeId);
+}
+
 const handleInsertNode = (data) => {
-    let parent = getElementsByName(data.parentNodeId);
+    let parent = getNodeById(data.parentNodeId);
 
     if (data.node.nodeType === 3)
     {
         if(data.node.nodeValue.match(/{(.*?)}/)) return;   // ignore messed up data issue in fbwA32nx CDU  (eg. {cyan}113{end}{small}   {end} F={green}131{end})
-
-        let newElement = createElement(data.node, parent.tagName);
+        
+        let newElement = createTagElement(data.node, data.parentNodeId, parent.tagName);
         if(typeof newElement === 'string') {
             if(parent.textContent !== newElement)
                 parent.textContent = newElement;
         }
         else
-        {
             parent.append(newElement);
-        }
     }
     else if (data.node.nodeType === 1) {
-        let newElement = createElement(data.node, parent.tagName);
+        let newElement = createTagElement(data.node, data.parentNodeId, parent.tagName);
         if(typeof newElement === 'string'){
             if(parent.textContent !== newElement)
                 parent.textContent = newElement;
@@ -487,13 +387,9 @@ const handleInsertNode = (data) => {
             parent.append(newElement);
     }
 
-    let deletedNodes = $('vcockpit-panel').find('[deleted=true]').css('display', 'none');
-    if(deletedNodes.length > 0)
-    {
-        garbageBin = $('#garbageBin');
-        for(let i = 0; i < deletedNodes.length; i++)
-            garbageBin.append(deletedNodes[i]);
-    }
+    
+    // remove node here instead of in handleRemoveElement method to prevent screen flickering
+    trimNodeTree();
 }
 
 const handleInlineStyleInvalidated = (data) => {
@@ -503,21 +399,21 @@ const handleInlineStyleInvalidated = (data) => {
 }
 
 const handleAttributeModified = (data) => {
-    let node = getElementsByName(data.nodeId);
+    let node = getNodeById(data.nodeId);
     
     if(node !== undefined)
         setElementAttributes(node, [data.name, data.value]);
 }
 
 const handleAttributeRemoved = (data) => {
-    let node = getElementsByName(data.nodeId);
+    let node = getNodeById(data.nodeId);
     
     if(node !== undefined)
         node.removeAttribute(data.name);
 }
 
 const handleCharacterDataModified = (data) => {
-    let element = getElementsByName(data.nodeId);
+    let element = getNodeById(data.nodeId);
 
     if(element !== undefined && element.textContent !== data.characterData)
         element.textContent = data.characterData;
@@ -532,7 +428,47 @@ const handleChildNodeCountUpdated = (data) => {
     socket.send(JSON.stringify(msg));
 }
 
-const getElementsByName = (nodeId) => {
+const forceRerender = (nodeId) => {
+    let element = getNodeById(nodeId);
+    if(element !== undefined)
+        element.innerHTML += '';
+    
+    // reset node tree recursively since by doing innerHTML above will remove all node references
+    refreshNodeTree(nodeId);
+}
 
-    return $('[name=' + nodeId + ']')[0];
+const refreshNodeTree = (nodeId) => {
+    let nodes = nodeTree.filter(x => x.parentNodeId === nodeId);
+    for(let i = 0; i < nodes.length; i++)
+    {
+        nodeTree.find(x => x.nodeId === nodes[i].nodeId).node = $('[name=' + nodes[i].nodeId + ']')[0];
+        refreshNodeTree(nodes[i].nodeId);
+    }
+}
+
+const trimNodeTree = () => {
+    for(let i = 0; i < deletedNodes.length; i++)
+    {
+        garbageBin.append(getNodeById(deletedNodes[i]));
+    }
+
+    nodeTree = nodeTree.filter(n => !deletedNodes.includes(n.nodeId));
+    deletedNodes.length = 0;        // clear deleted node list
+}
+
+const clearGarbageBin = () => {
+    garbageBin.innerHTML = '';      
+}
+
+const getNodeById = (nodeId) => {
+    let node = nodeTree.find(x => x.nodeId === nodeId);
+    if(node !== undefined)
+        return node.node;
+
+    return undefined;
+}
+
+const addNodeToTree = (parentNodeId, nodeId, node) => {
+    if(nodeTree.indexOf(nodeId) === -1)
+        nodeTree.push({parentNodeId: parentNodeId, nodeId: nodeId, node: node});
 }

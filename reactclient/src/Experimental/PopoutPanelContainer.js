@@ -36,7 +36,7 @@ const PopoutPanelContainer = ({panelInfo, frameonly}) => {
     const sharedClasses = useStyles(panelInfo)();
     const panelClasses = panelInfo.styles(panelInfo)();
     const [activeButton, setActiveButton] = useState();
-    
+        
     const setupButtonClasses = (btn) => {
         var styleClasses = [];
 
@@ -78,7 +78,7 @@ const PopoutPanelContainer = ({panelInfo, frameonly}) => {
         setActiveButton(button);
     }
 
-    return useMemo(() => (
+    return (
         <div className={sharedClasses.root}>
             { !frameonly && 
                 <div className={panelClasses.iframePanel}>
@@ -86,16 +86,14 @@ const PopoutPanelContainer = ({panelInfo, frameonly}) => {
                 </div> 
             }
             <div className={sharedClasses.buttonOverlay}>
-                { panelInfo.definitions.map(btn => {
-                    return (
-                        <div key={btn.id} className={setupButtonClasses(btn)} style={setupButtonStyles(btn)}>
-                            <IconButton className={sharedClasses.iconButton} onClick={() => handleOnClick(setupButtonAction(btn.action), btn.id)} />
-                        </div>
-                    )
-                })}
+                { panelInfo.definitions.map(btn =>
+                    <div key={btn.id} className={setupButtonClasses(btn)} style={setupButtonStyles(btn)}>
+                        <IconButton className={sharedClasses.iconButton} onClick={() => handleOnClick(setupButtonAction(btn.action), btn.id)} />
+                    </div>
+                )}
             </div>
         </div>
-    ), [sharedClasses, panelClasses]);
+    )
 }
 
 export default PopoutPanelContainer;
