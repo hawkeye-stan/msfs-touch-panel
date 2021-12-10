@@ -15,7 +15,7 @@ class FlightPlanner {
             flightPlan.directToData =  this.flightPlans[this._activePlanIndex].directToData;
         }
         
-        fetch('http://XXX.XXX.XXX.XXX:5000/postflightplan', {
+        fetch('http://XXX.XXX.XXX.XXX:5001/postflightplan', {
             method: "POST",
             headers: { "Content-type": "application/json; charset=UTF-8" },
             body: JSON.stringify(flightPlan)

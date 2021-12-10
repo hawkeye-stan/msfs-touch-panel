@@ -22,10 +22,9 @@ export const useInterval = (callback, delay) => {
 }
 
 export const useWindowDimensions = () => {
-
     const hasWindow = typeof window !== 'undefined';
 
-    function getWindowDimensions() {
+    const getWindowDimensions = () => {
         const windowWidth = hasWindow ? window.innerWidth : null;
         const windowHeight = hasWindow ? window.innerHeight : null;
         return {

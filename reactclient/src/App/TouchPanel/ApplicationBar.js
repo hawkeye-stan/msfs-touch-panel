@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
-import { useLocalStorageData } from '../Services/LocalStorageProvider';
-import { planeType } from '../planeType';
+import { useHistory } from 'react-router-dom';
+import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
+import { useLocalStorageData } from '../../Services/LocalStorageProvider';
+import { planeType } from '../../planeType';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
@@ -10,10 +11,10 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import UsbIcon from '@mui/icons-material/Usb';
 import MapIcon from '@mui/icons-material/Map';
-import BiotechIcon from '@mui/icons-material/Biotech';
+import WebIcon from '@mui/icons-material/Web';
 import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
-import SettingConfiguration from './ControlGroup/SettingConfiguration';
-import SettingPlaneProfile from './ControlGroup/SettingPlaneProfile';
+import SettingConfiguration from '../../Components/ControlGroup/SettingConfiguration';
+import SettingPlaneProfile from '../../Components/ControlGroup/SettingPlaneProfile';
 
 const useStyles = makeStyles(() => ({
     toolbar: {
@@ -54,8 +55,9 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const ApplicationBar = ({ mapOpenChanged , experimentalOpenChanged}) => {
+const ApplicationBar = ({ mapOpenChanged }) => {
     const classes = useStyles();
+    const history = useHistory();
     const { networkStatus, arduinoStatus, simConnectSystemEvent } = useSimConnectData();
     const { updatePlaneProfile } = useLocalStorageData();
     const { PLANE_TITLE } = useSimConnectData().simConnectData;
@@ -90,14 +92,14 @@ const ApplicationBar = ({ mapOpenChanged , experimentalOpenChanged}) => {
                             <Typography variant="h6" className={classes.planeTitle}>MSFS Touch Panel{PLANE_TITLE === '' ? '' : ' - ' + PLANE_TITLE}</Typography>
                         </Grid>
                         <Grid item xs={3} className={classes.menuIcons}>
+                            <IconButton color='inherit' aria-label='map' size='small' className={classes.menuButton} onClick={() => history.push('/webpanel')}>
+                                <WebIcon />
+                            </IconButton>
                             <IconButton color='inherit' aria-label='map' size='small' className={classes.menuButton} onClick={() => mapOpenChanged()}>
                                 <MapIcon />
                             </IconButton>
                             <IconButton color='inherit' aria-label='profile' size='small' className={classes.menuButton} >
                                 <SettingPlaneProfile></SettingPlaneProfile>
-                            </IconButton>
-                            <IconButton color='inherit' aria-label='experimental feature' size='small' className={classes.menuButton} onClick={() => experimentalOpenChanged()}>
-                                <BiotechIcon/>
                             </IconButton>
                             <IconButton color='inherit' aria-label='settings' size='small' className={classes.menuButton}>
                                 <SettingConfiguration></SettingConfiguration>

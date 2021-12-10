@@ -47,9 +47,7 @@ const SimConnectDataProvider = ({ children }) => {
                     else
                         setSimConnectSystemEvent(null);
 
-                    if (result.msfsStatus)
-                        console.info('MSFS SimConnect is connected.')
-                    else
+                    if (!result.msfsStatus)
                         handleConnectionError('MSFS SimConnect is not available.')
 
                     if (result.data !== null || result.lvar !== null) {

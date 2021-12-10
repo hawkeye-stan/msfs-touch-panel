@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
+import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 

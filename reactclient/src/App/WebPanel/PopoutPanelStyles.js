@@ -1,5 +1,19 @@
 import makeStyles from '@mui/styles/makeStyles';
 
+export const DEFAULT_STYLES = props => makeStyles({
+    iframePanelMaxSize: {
+        height:  '100%',
+        width: '100%',
+        aspectRatio: `${props.iframeRatio}`,
+        border: '0',
+        backgroundColor: 'black',
+        margin: 'auto',
+        paddingTop: '1em',
+        paddingBottom: '1em',
+        zIndex: 999
+    },
+})
+
 export const G1000NXI_STYLES = props => makeStyles({
     iframePanel: {
         position: 'absolute',
@@ -9,6 +23,14 @@ export const G1000NXI_STYLES = props => makeStyles({
         aspectRatio: `${props.iframeRatio}`,
         border: '0',
         backgroundColor: 'black',
+        zIndex: 1001        // allows iframe to response to touch over button overlay
+    },
+    iframePanelMaxSize: {
+        height:   `calc(100% * 914 / ${props.height})`,
+        aspectRatio: `${props.iframeRatio}`,
+        border: '0',
+        backgroundColor: 'black',
+        margin: 'auto',
         zIndex: 1001        // allows iframe to response to touch over button overlay
     },
     buttonBase: {
@@ -47,6 +69,14 @@ export const FBWA32NX_CDU_STYLES = props => makeStyles({
         aspectRatio: `${props.iframeRatio}`,
         border: '0',
         backgroundColor: 'black',
+        zIndex: 999     // have the screen hide below the button overlay
+    },
+    iframePanelMaxSize: {
+        height: `calc(100% * 674 / ${props.height})`,
+        aspectRatio: `${props.iframeRatio}`,
+        border: '0',
+        backgroundColor: 'black',
+        margin: 'auto',
         zIndex: 999     // have the screen hide below the button overlay
     },
     squareButtonBase: {

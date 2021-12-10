@@ -3,11 +3,11 @@ let replaceMapNode = [];
 let nodeTree = [];
 let deletedNodes = [];
 
-const start = (planeType, panel) => {
+const start = (planeType, panelType) => {
     targetedPlane = planeType.toLowerCase();
-    targetedPanel = panel.toLowerCase();
+    targetedPanel = panelType.toLowerCase();
     socketRetryInterval = setInterval(() => {
-        connect(panel);
+        connect(panelType);
     }, 2000);
 
     window.onresize = resizePanel;
@@ -121,13 +121,14 @@ const executeMethodMessage = (data) => {
             handleCharacterDataModified(data.params);
             break;
         case 'DOM.setChildNodes':
-            
             let parent = getNodeById(data.params.parentId);
             data.params.nodes = data.params.nodes.filter(childNode => childNode.localName !== 'script' && childNode.localName !== 'title' && childNode.localName !== 'meta');
 
             if (parent !== undefined) {
+                let isBodyTag = data.params.parentId === Number(document.body.getAttribute('name'));
+
                 // only get first child of body element or DOM recursive loop will crash the page
-                if(data.params.parentId === Number(document.body.getAttribute('name')))
+                if(isBodyTag)
                     data.params.nodes.length = 1;
 
                 let frag = document.createDocumentFragment();
@@ -137,7 +138,12 @@ const executeMethodMessage = (data) => {
                 });
 
                 if(data.params.nodes.length > 0)
-                    parent.appendChild(frag);
+                {
+                    if(isBodyTag)
+                        parent.replaceChild(frag, document.getElementById('loadingPanel'))
+                    else
+                        parent.appendChild(frag);
+                }
 
                 forceRerender(data.params.parentId);  // force rerender
             }

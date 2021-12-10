@@ -1,7 +1,7 @@
-import { simActions } from '../Services/ActionProviders/simConnectActionHandler';
+import { simActions } from '../../Services/ActionProviders/simConnectActionHandler';
 
 export const G1000NXI_PFD_DEF = [
-    { id: 'btn_vol1knob', action: simActions.ProfileSpecific.G1000NXi.PFD.Volume.vol1Select, classes: ['knobBase', 'volKnob'], image: 'knob_vol.png', left: 60, top: 41 },
+    { id: 'btn_vol1knob', action: simActions.ProfileSpecific.G1000NXi.PFD.Volume.vol1Select, classes: ['knobBase', 'volKnob'], image: './knob_vol.png', left: 60, top: 41 },
     { id: 'btn_navswap', action: simActions.ProfileSpecific.G1000NXi.PFD.NAV.swap, classes: ['buttonBase'], image: 'button_swap.png', left: 97, top: 104 },
     { id: 'btn_navknob', action: simActions.ProfileSpecific.G1000NXi.PFD.NAV.select, classes: ['knobBase', 'regularKnob'], image: 'knob.png', left: 46, top: 171 },
     { id: 'btn_hdgknob', action: simActions.ProfileSpecific.G1000NXi.PFD.HEADING.select, classes: ['knobBase', 'regularKnob'], image: 'knob_hdg.png', left: 46, top: 338 },
