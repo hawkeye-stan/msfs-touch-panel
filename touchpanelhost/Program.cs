@@ -1,4 +1,7 @@
+
 using System;
+using System.Diagnostics;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace MSFSTouchPanel.TouchPanelHost
@@ -13,12 +16,30 @@ namespace MSFSTouchPanel.TouchPanelHost
         [STAThread]
         static void Main()
         {
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            bool createNew;
 
-            StartupForm = new StartupForm();
-            Application.Run(StartupForm);
+            using var mutex = new Mutex(true, typeof(Program).Namespace, out createNew);
+
+            if (createNew)
+            {
+                Application.SetHighDpiMode(HighDpiMode.SystemAware);
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                StartupForm = new StartupForm();
+                Application.Run(StartupForm);
+            }
+            else
+            {
+                var current = Process.GetCurrentProcess();
+
+                foreach (var process in Process.GetProcessesByName(current.ProcessName))
+                {
+                    if (process.Id == current.Id) continue;
+                    PInvoke.SetForegroundWindow(process.MainWindowHandle);
+                    break;
+                }
+            }
         }
     }
 }

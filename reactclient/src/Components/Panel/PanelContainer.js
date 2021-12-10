@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo, createElement } from 'react';
+import React, { Suspense, useMemo, createElement, useState, useEffect } from 'react';
 import { useLocalStorageData } from '../../Services/LocalStorageProvider';
 import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
@@ -43,7 +43,7 @@ const PanelContainer = ({ mapOpen }) => {
 
     return useMemo(() => (
         <div className={classes.root}>
-            {!mapOpen && <div className={classes.layout}>
+            <div className={classes.layout} style={{display: mapOpen ? 'none' : 'block'}}>
                 <Suspense fallback={<div className={classes.loading}><Typography variant='h6'>Loading Panels...</Typography></div>}>
                     {planeProfile != null &&
                         PlaneConfig.config[planeProfile].map(panel =>
@@ -56,13 +56,12 @@ const PanelContainer = ({ mapOpen }) => {
                         <ConsoleLogPanel />
                     </div>
                 }
-            </div>}
-            {mapOpen &&
-                <div className={classes.mapLayout}>
-                    <div className={classes.mappanel}>
-                        <MapPanel />
-                    </div>
-                </div>}
+            </div>
+            <div className={classes.mapLayout} style={{display: mapOpen ? 'block' : 'none'}}>
+                <div className={classes.mappanel}>
+                    <MapPanel mapType={'full'} refresh={mapOpen} />
+                </div>
+            </div>
         </div>
 
     ), [classes, mapOpen, planeProfile, panelVisibility, configurationData])

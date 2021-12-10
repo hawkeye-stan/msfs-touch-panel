@@ -1,3 +1,11 @@
+$execPath = $args[0]
+$execPath = $execPath.Trim("'")
+if($PSScriptRoot -ne '') {
+    $execPath = -join($PSScriptRoot + '\..\..')
+}
+
+Write-output 'Begin to create symobolic folders link for Web Panels feature.................'
+
 $localAppDataPath = -join($env:LOCALAPPDATA, '\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt') 
 $appDataPath = -join($env:APPDATA, '\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt') 
 
@@ -19,8 +27,8 @@ $installationPath = [regex]::match($UserCfg, 'InstalledPackagesPath "((.|\n)*?)"
 $officialPath = -join($installationPath, '\Official\OneStore');
 $communityPath = -join($installationPath, '\Community');
 
-$developmentPath = -join($PSScriptRoot, '\..\..\reactclient\public\assets')
-$productionPath = -join($PSScriptRoot, '\..\..\reactclient\assets')
+$developmentPath = -join($execPath, '\reactclient\public\assets')
+$productionPath = -join($execPath, '\reactclient\assets')
 
 if (Test-Path -Path $developmentPath) {
     $assetsPath = $developmentPath
@@ -51,7 +59,7 @@ $targetPath = -join($officialPath, '\asobo-vcockpits-instruments-airliners\html_
 New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath -Force 
 
 $linkPath = -join($assetsPath, '\shared\images\nd\AIRPLANE.svg')
-$targetPath = -join($communityPath, '\flybywire-aircraft-a320-neo\html_ui\images\nd\AIRPLANE.svg')
+$targetPath = -join($communityPath, '\flybywire-aircraft-a320-neo\html_ui\images\ND\AIRPLANE.svg')
 New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath -Force 
 
 ## Asobo CJ4
@@ -69,9 +77,7 @@ New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath -Force
 
 ## All Asobo non-airliners
 $linkPath = -join($assetsPath, '\asobo\html_ui')
-$targetPath = -join($officialPath, '\asobo-vcockpits-instruments-cj4\html_ui\')
+$targetPath = -join($officialPath, '\asobo-vcockpits-instruments\html_ui\')
 New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath -Force 
 
-$linkPath = -join($assetsPath, '\asobo\html_ui\Pages\VCockpit\Instruments\Shared')
-$targetPath = -join($officialPath, '\asobo-vcockpits-instruments\html_ui\Pages\VCockpit\Instruments\Shared\')
-New-Item -ItemType SymbolicLink -Path $linkPath -Target $targetPath -Force 
+Write-output ''

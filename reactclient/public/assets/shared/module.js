@@ -21,7 +21,6 @@ const start = (planeType, panelType) => {
     setInterval(() => {
         trimNodeTree();
         clearGarbageBin();
-        console.log('NodeTree node count: ' + nodeTree.length);
     }, 5000)
 }
 
@@ -88,7 +87,7 @@ const socketReceivedMessage = (msg) => {
 
 const executeResultMessage = (data) => {
     if (data.id >= 10) {
-        setElementAttributes(getNodeById(data.id), data.result.attributes);
+        setElementAttributes(data.id, getNodeById(data.id), data.result.attributes);
     }
     else if (data.id === 2) {
         createRootElement(data.result);
@@ -155,7 +154,7 @@ const executeMethodMessage = (data) => {
         case 'DOM.pseudoElementRemoved':
             break;
         default:
-            console.log(data);
+            //console.log(data);
     }
 }
 
@@ -182,7 +181,7 @@ const createDocument = (nodeId) => {
 const createRootElement = (data) => {
     let htmlNode = data.root.children[1];
     let htmlElement = $('html')[0]; 
-    setElementAttributes(htmlElement, htmlNode.attributes);
+    setElementAttributes(0, htmlElement, htmlNode.attributes);
         
     htmlNode.children.forEach(childNode =>
     {
@@ -239,16 +238,31 @@ const createTagElement = (node, parentNodeId, parentTag) => {
 
         let element = createSpecificElement(node.localName);
         element.setAttribute('name', node.nodeId);
-        setElementAttributes(element, node.attributes);
+        setElementAttributes(node.nodeId, element, node.attributes);
         addNodeToTree(parentNodeId, node.nodeId, element);
 
         // replace bing map node with built-in map app
-        if(replaceMapNode.includes(node.nodeId))
+        let mapNode = replaceMapNode.find(x => x.nodeId === node.nodeId);
+        if(mapNode !== undefined)
         {
             let mapElement = createSpecificElement('iframe');
-            mapElement.setAttribute('src',  `http://${window.location.hostname}:${window.location.port}/mappanel`);
-            mapElement.setAttribute('style', 'width:100%; height: calc(100% - 58px); margin-top: 58px');
             mapElement.setAttribute('frameborder', '0');
+
+            switch(mapNode.type)
+            {
+                case 'full':
+                    mapElement.setAttribute('style', 'width:100%; height: calc(100% - 58px); margin-top: 58px');
+                    mapElement.setAttribute('src',  `http://${window.location.hostname}:${window.location.port}/mappanel/full`);
+                    break;
+                case 'waypoint':
+                    mapElement.setAttribute('style', 'width:100%; height:100%');
+                    mapElement.setAttribute('src',  `http://${window.location.hostname}:${window.location.port}/mappanel/waypoint`);
+                    break;
+                case 'inset':
+                             mapElement.setAttribute('style', 'width:100%; height:100%');
+                    mapElement.setAttribute('src',  `http://${window.location.hostname}:${window.location.port}/mappanel/inset`);
+                    break;
+            }
             
             element.append(mapElement);
             return element;
@@ -303,7 +317,7 @@ const createSpecificElement = (tag) => {
     }
 }
 
-const setElementAttributes = (element, attributes) => {
+const setElementAttributes = (nodeId, element, attributes) => {
     if(element !== undefined && attributes !== undefined)
     {
         let i = 0;
@@ -323,9 +337,17 @@ const setElementAttributes = (element, attributes) => {
                         if(mainframe !== null)
                             setTimeout(() => mainframe.scrollIntoView({block: 'start', inline: 'end'}), 1000);
                     }
-                    else if (value.includes('mfd-navmap') || value.includes('mfd-fplmap'))  // replace MFD bing map with map from app
+                    else if (value.includes('mfd-navmap') || value.includes('mfd-fplmap'))  // replace G1000NXi MFD bing map with map from app
                     {
-                        replaceMapNode.push(Number(element.getAttribute('name')));
+                        replaceMapNode.push({nodeId: nodeId, type: 'full'});
+                    }
+                    else if (value.includes('waypoint-map'))  // replace G1000NXi MFD waypoint bing map with map from app
+                    {
+                        replaceMapNode.push({nodeId: nodeId, type: 'waypoint'});
+                    }
+                    else if (value.includes('pfd-insetmap'))      // replace G1000NXi PFD inset bing map with map from app
+                    {
+                        replaceMapNode.push({nodeId: nodeId, type: 'inset'});
                     }
                     break;
                 case 'src':
@@ -381,7 +403,7 @@ const handleInsertNode = (data) => {
                 parent.textContent = newElement;
         }
         else
-            parent.append(newElement);
+            parent.prepend(newElement);
     }
     else if (data.node.nodeType === 1) {
         let newElement = createTagElement(data.node, data.parentNodeId, parent.tagName);
@@ -408,7 +430,7 @@ const handleAttributeModified = (data) => {
     let node = getNodeById(data.nodeId);
     
     if(node !== undefined)
-        setElementAttributes(node, [data.name, data.value]);
+        setElementAttributes(data.nodeId, node, [data.name, data.value]);
 }
 
 const handleAttributeRemoved = (data) => {

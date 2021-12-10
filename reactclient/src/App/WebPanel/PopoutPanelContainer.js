@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
+import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
 
 const useStyles = props => makeStyles((theme) => ({
     root: {
@@ -33,9 +34,11 @@ const useStyles = props => makeStyles((theme) => ({
 }));
 
 const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
+    const { simConnectSystemEvent } = useSimConnectData();
     const sharedClasses = useStyles(panelInfo)();
     const panelClasses = panelInfo.styles(panelInfo)();
     const [activeButton, setActiveButton] = useState();
+    const [reload, setReload] = useState(true);
         
     const setupButtonClasses = (btn) => {
         var styleClasses = [];
@@ -78,16 +81,26 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
         setActiveButton(button);
     }
 
+    useEffect(() =>{
+        if(simConnectSystemEvent !== null)
+        {
+            if(simConnectSystemEvent === 'SIMSTART')
+                setReload(true);
+            else if(simConnectSystemEvent === 'SIMSTOP')
+                setReload(false);
+        }
+    }, [simConnectSystemEvent])
+
     return (
         <div className={sharedClasses.root}>
-            { (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'webpanel') && 
+            { reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'webpanel') && 
                 <div className={displayFormat.toLowerCase() === 'webpanel' ? panelClasses.iframePanelMaxSize : panelClasses.iframePanel}>
-                    <iframe title='iframePanel' className={sharedClasses.iframe} src={`/assets/webpanel.html?planeType=${panelInfo.planeId}&panelType=${panelInfo.panelId}`} frameBorder="0"></iframe>
+                    <iframe title='iframePanel' className={sharedClasses.iframe} src={`/assets/webpanel.html?planeId=${panelInfo.planeId}&panelId=${panelInfo.panelId}`} frameBorder="0"></iframe>
                 </div> 
             }
-            { (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'frameonly') &&
+            { reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'framepanel') &&
                 <div className={sharedClasses.buttonOverlay}>
-                    { panelInfo.definitions.map(btn =>
+                    { panelInfo.definitions !== undefined && panelInfo.definitions.map(btn =>
                         <div key={btn.id} className={setupButtonClasses(btn)} style={setupButtonStyles(btn)}>
                             <IconButton className={sharedClasses.iconButton} onClick={() => handleOnClick(setupButtonAction(btn.action), btn.id)} />
                         </div>

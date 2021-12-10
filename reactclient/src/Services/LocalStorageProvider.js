@@ -15,7 +15,7 @@ const LocalStorageProvider = ({ initialData, children }) => {
             flightFollowing: true,
             showFlightPlan: true,
             showFlightPlanLabel: false,
-            currentLayer: 'Google Terrain'
+            currentLayer: 'Open Street'
         });       
     }, [])
 
@@ -24,7 +24,7 @@ const LocalStorageProvider = ({ initialData, children }) => {
         let settings = {
             dataRefreshInterval: 100,
             mapRefreshInterval: 250,
-            isUsedArduino: false,
+            isUsedArduino: true,
             numericInputType: 'knob',
             showLog: false,
             panelVisibility: { }

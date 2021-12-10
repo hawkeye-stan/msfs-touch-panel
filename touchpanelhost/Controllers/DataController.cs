@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using MSFSTouchPanel.FSConnector;
 using MSFSTouchPanel.Shared;
 using MSFSTouchPanel.SimConnectAgent;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Dynamic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -19,11 +18,13 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
     {
         private ISimConnectService _simConnectService;
         private IMemoryCache _memoryCache;
+        private IWebHostEnvironment _hostingEnvironment;
 
-        public DataController(IConfiguration configuration, IMemoryCache memoryCache, ISimConnectService simConnectService) : base(configuration, memoryCache, simConnectService)
+        public DataController(IConfiguration configuration, IMemoryCache memoryCache, ISimConnectService simConnectService, IWebHostEnvironment environment) : base(configuration, memoryCache, simConnectService)
         {
             _simConnectService = simConnectService;
             _memoryCache = memoryCache;
+            _hostingEnvironment = environment;
         }
 
         [HttpGet("/getdebuggerpagelist")]
@@ -104,6 +105,23 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
             }
             
             return Ok();
+        }
+
+        [HttpGet("/getplanepanelprofileinfo")]
+        public string GetPlanePanelProfileInfo()
+        {
+            try
+            {
+                var filePath = Path.Combine(AppContext.BaseDirectory, "PlanePanelProfileInfo.json");
+                return System.IO.File.ReadAllText(filePath);
+
+            }
+            catch (Exception ex)
+            {
+                Logger.ServerLog(ex.Message, LogLevel.ERROR);
+            }
+
+            return string.Empty;
         }
     }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { darkTheme } from './themes';
 import './index.css';
@@ -17,8 +17,8 @@ ReactDOM.render(
                 <BrowserRouter>
                     <Route exact path='/' render={() => <TouchPanel/>}/>
                     <Route exact path='/webpanel' render={() => <WebPanelSelection/>}/>
-                    <Route exact path='/:displayFormat/:planeType/:panelType' render={(props) => <WebPanel planeType={props.match.params.planeType} panelType={props.match.params.panelType} displayFormat={props.match.params.displayFormat} /> } /> 
-                    <Route exact path='/mappanel' render={() => <WebMapPanel></WebMapPanel>}/>
+                    <Route exact path='/:displayFormat/:planeId/:panelId' render={(props) => <WebPanel planeId={props.match.params.planeId} panelId={props.match.params.panelId} displayFormat={props.match.params.displayFormat} /> } /> 
+                    <Route exact path='/mappanel/:mapType' render={(props) => <WebMapPanel mapType={props.match.params.mapType}></WebMapPanel>}/>
                 </BrowserRouter>
             </ThemeProvider>
         </StyledEngineProvider>

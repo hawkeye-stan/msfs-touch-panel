@@ -3,13 +3,12 @@ import makeStyles from '@mui/styles/makeStyles';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import LocalStorageProvider from '../../Services/LocalStorageProvider';
-import SimConnectDataProvider from '../../Services/DataProviders/SimConnectDataProvider';
+import SimConnectDataProvider, { simConnectGetPlanePanelProfilesInfo }  from '../../Services/DataProviders/SimConnectDataProvider';
 import { useWindowDimensions } from '../../Components/Util/hooks';
 import ApplicationBar from './ApplicationBar';
 import TelemetryPanel from './TelemetryPanel';
 import MapPanel from '../../Components/Panel/Default/MapPanel';
 import PopoutPanelContainer from './PopoutPanelContainer';
-import { PLANE_PROFILE_INFO } from './PlaneProfileInfo';
 
 const useStyles = props => makeStyles((theme) => ({
     rootFullWidth: {
@@ -27,6 +26,13 @@ const useStyles = props => makeStyles((theme) => ({
         position: 'fixed',
         width: '100vw',
         maxWidth: 'inherit'
+    },
+    mapPanel: {
+        height: '100%',
+    },
+    popoutPanel: {
+        width: '100%',
+        height: '100%'
     },
     g1000NXiContainerBase: {
         position: 'relative',
@@ -48,54 +54,88 @@ const useStyles = props => makeStyles((theme) => ({
         height: `calc(${props.windowHeight - 1}px - 2em)`,
         aspectRatio: 1
     },
+    framePanelContainer: {
+        position: 'relative',
+        backgroundColor: 'transparent',
+        margin: '0 auto',
+        height: `calc(${props.windowHeight - 1}px)`,
+        //aspectRatio: 1
+    }
 }));
 
-const WebPanel = ({planeType, panelType, displayFormat}) => {
+const WebPanel = ({planeId, panelId, displayFormat}) => {
     const classes = useStyles(useWindowDimensions())();
     const [mapOpen, setMapOpen] = useState(false);
     const [ planeProfile, setPlaneProfile] = useState();
     const [ panelProfile, setPanelProfile] = useState();
+    const [ planePanelProfileInfo, setPlanePanelProfileInfo ] = useState();
 
     useEffect(() => {
-        if (displayFormat.toLowerCase === 'framepanel')
+        if (displayFormat.toLowerCase() === 'framepanel')
             document.body.style.backgroundColor = 'transparent';
         else
             document.body.style.backgroundColor = 'black';
 
-        // setup panel profile
-        let planeProfile = PLANE_PROFILE_INFO.find(x => x.id.toLowerCase() === planeType);
-        if(planeProfile !== undefined)
+        simConnectGetPlanePanelProfilesInfo().then(data => 
         {
-            setPlaneProfile(planeProfile);
-            setPanelProfile(planeProfile.panels.find(x => x.id.toLowerCase() === panelType))   
-        }
-    }, [planeType, panelType, displayFormat]);
+            if(data !== null)
+            {
+                setPlanePanelProfileInfo(data);
+                
+                // setup plane and panel profile
+                let planeProfile = data.planes.find(x => x.planeId.toLowerCase() === planeId);
+                if(planeProfile !== undefined)
+                {
+                    setPlaneProfile(planeProfile);
+                    setPanelProfile(planeProfile.panels.find(x => x.panelId.toLowerCase() === panelId))   
+                }
+            }
+        })
+    }, [planeId, panelId, displayFormat]);
 
     return (
         <LocalStorageProvider initialData={{}}>
             <SimConnectDataProvider>
                 <CssBaseline />
-                { panelProfile !== undefined && displayFormat !== undefined &&
+                { planePanelProfileInfo !== undefined && panelProfile !== undefined && displayFormat !== undefined && displayFormat.toLowerCase() === 'framepanel' && 
+                    <Container className={classes.rootFullWidth}>
+                        <div className={classes.framePanelContainer} style={{aspectRatio: String(planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId).panelRatio) }}>
+                            <div className={classes.popoutPanel}>
+                                <PopoutPanelContainer panelInfo={planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId)} displayFormat={displayFormat}/> 
+                            </div>
+                        </div>
+                    </Container>
+                }
+
+                { planePanelProfileInfo !== undefined && panelProfile !== undefined && displayFormat !== undefined && displayFormat.toLowerCase() !== 'framepanel' && 
                     <Container className={classes.rootFullWidth}>
                         <div className={classes.appbar}>
                             <ApplicationBar showMapIcon={panelProfile.hasMap} mapOpenChanged={() => setMapOpen(!mapOpen)} planeInfo={{planeName: planeProfile.name, panelName: panelProfile.name}}></ApplicationBar>
                             { panelProfile.hasTelemetryDisplay && <TelemetryPanel></TelemetryPanel> }
                         </div>
-                        <div className={planeType.toLowerCase() === 'g1000nxi' ? classes.g1000NXiContainer : classes.panelContainer} style={{ aspectRatio: String(panelProfile.panelInfo.panelRatio) }}>
-                            {mapOpen && panelProfile.hasMap && <MapPanel /> }
-                            {<PopoutPanelContainer panelInfo={panelProfile.panelInfo} displayFormat={displayFormat}/> }
+                    
+                        <div className={planeId.toLowerCase() === 'g1000nxi' ? classes.g1000NXiContainer : classes.panelContainer} style={{ aspectRatio: String(planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId).panelRatio) }}>
+                            { panelProfile.hasMap &&
+                                <div className={classes.mapPanel} style={{display: mapOpen ? '' : 'none'}}>
+                                    <MapPanel mapType={'full'} refresh={mapOpen}/>
+                                </div>
+                            }
+                            <div className={classes.popoutPanel} style={{display: mapOpen ? 'none' : ''}}>
+                                <PopoutPanelContainer panelInfo={planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId)} displayFormat={displayFormat}/> 
+                            </div>
                         </div>
                     </Container>
                 }
                 {
-                        panelProfile === undefined &&
-                        <div style={{paddingLeft: '10px'}}>
-                            <p>Unable to load panel with invalid parameters ....................</p>
-                            <p>Plane type:  {planeType}</p>
-                            <p>Panel type:  {panelType}</p>
-                            <p>Display format: {displayFormat}</p>
-                        </div>
-                    }
+                    panelProfile === undefined &&
+                    <div style={{paddingLeft: '10px'}}>
+                        <p>Unable to load panel with invalid parameters or missing profile data ....................</p>
+                        <p>Plane type:  {planeId}</p>
+                        <p>Panel type:  {panelId}</p>
+                        <p>Display format: {displayFormat}</p>
+                        <p>Plane Panel Profile data: {String(planePanelProfileInfo)}</p>
+                    </div>
+                }
                 
             </SimConnectDataProvider>
         </LocalStorageProvider>

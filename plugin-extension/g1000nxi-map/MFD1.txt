@@ -1,24 +1,26 @@
 class FlightPlanner {
     onPostFlightPlan() {
-        var flightPlan = {};
-
         if(this.flightPlans[this._activePlanIndex] !== undefined)
         {
-            flightPlan.activeCalculatingLeg = this.flightPlans[this._activePlanIndex]._activeCalculatingLeg;
-            flightPlan.activeLateralLeg = this.flightPlans[this._activePlanIndex]._activeLateralLeg;
-            flightPlan.planIndex = this._activePlanIndex;
-            flightPlan.planSegments =  this.flightPlans[this._activePlanIndex].planSegments;
-            flightPlan.procedureDetails =  this.flightPlans[this._activePlanIndex].procedureDetails;
-            flightPlan.userData =  this.flightPlans[this._activePlanIndex].userData;
-            flightPlan.originAirport =  this.flightPlans[this._activePlanIndex]._originAirport;
-            flightPlan.destinationAirport =  this.flightPlans[this._activePlanIndex]._destinationAirport;
-            flightPlan.directToData =  this.flightPlans[this._activePlanIndex].directToData;
+            if(this.flightPlans[this._activePlanIndex].planSegments.some(p => p.legs.length > 0))
+            {
+                let flightPlan = {};
+                flightPlan.activeCalculatingLeg = this.flightPlans[this._activePlanIndex]._activeCalculatingLeg;
+                flightPlan.activeLateralLeg = this.flightPlans[this._activePlanIndex]._activeLateralLeg;
+                flightPlan.planIndex = this._activePlanIndex;
+                flightPlan.planSegments =  this.flightPlans[this._activePlanIndex].planSegments;
+                flightPlan.procedureDetails =  this.flightPlans[this._activePlanIndex].procedureDetails;
+                flightPlan.userData =  this.flightPlans[this._activePlanIndex].userData;
+                flightPlan.originAirport =  this.flightPlans[this._activePlanIndex]._originAirport;
+                flightPlan.destinationAirport =  this.flightPlans[this._activePlanIndex]._destinationAirport;
+                flightPlan.directToData =  this.flightPlans[this._activePlanIndex].directToData;
+ 
+                fetch('http://XXX.XXX.XXX.XXX:5001/postflightplan', {
+                    method: "POST",
+                    headers: { "Content-type": "application/json; charset=UTF-8" },
+                    body: JSON.stringify(flightPlan)
+                }).catch()
+            }
         }
-        
-        fetch('http://XXX.XXX.XXX.XXX:5001/postflightplan', {
-            method: "POST",
-            headers: { "Content-type": "application/json; charset=UTF-8" },
-            body: JSON.stringify(flightPlan)
-        })
     }
 

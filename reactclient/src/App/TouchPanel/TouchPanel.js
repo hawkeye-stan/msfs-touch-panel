@@ -38,7 +38,6 @@ const TouchPanel = () => {
         document.body.style.backgroundColor = 'rgb(17, 19, 24, 1)';
     }, []);
 
-
     return useMemo(() => (
         <LocalStorageProvider initialData={{}}>
             <SimConnectDataProvider>

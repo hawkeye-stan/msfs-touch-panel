@@ -16,15 +16,21 @@
             a320-neo-cdu-main-display .line-left { left: 5% !important }
             a320-neo-cdu-main-display .line-right { right: 5% !important }
             a320-neo-cdu-main-display .line { height: 7% !important }
+
+            /* fix z-index bug of G1000 MFD */
+            .mfd-navmap { z-index: 1000 } 
+            .popout-dialog { z-index: 1001 }
+            .open { z-index: 1001 !important}
+            .closed { z-index: 100 !important}
         </style>
         <script>
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
             $(document).ready(() => {
-                start(params.planeType, params.panelType);
+                start(params.planeId, params.panelId);
                 
                 // conditional rendering for specific plane
-                if(params.planeType !== null && params.planeType.toLowerCase() === 'fbwa32nx')
+                if(params.planeId !== null && params.planeId.toLowerCase() === 'fbwa32nx')
                 {
                     var element = document.createElement('link');
                     element.setAttribute('rel', 'stylesheet');
@@ -36,7 +42,7 @@
     </head>
     <body id="container" class="contentLoaded" quality="ultra" gamestate="ingame" gamepad="false" style='overflow:clip'>
         <div id='loadingPanel' style='font-size: calc(100vw/30); color: white; margin: 20px'>
-            Connecting to plane ...........
+            Connecting ...........
         </div>
         <div id='garbageBin' style='display: none'></div>
     </body>

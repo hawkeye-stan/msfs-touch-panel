@@ -18,7 +18,7 @@ namespace MSFSTouchPanel.TouchPanelHost
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr lParam);
+        public static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, int lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetClassName(IntPtr hWnd, StringBuilder strPtrClassName, Int32 nMaxCount);
@@ -73,7 +73,7 @@ namespace MSFSTouchPanel.TouchPanelHost
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        public delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
+        public delegate bool EnumWindowProc(IntPtr hwnd, int lParam);
     }
 
     [StructLayout(LayoutKind.Sequential)]

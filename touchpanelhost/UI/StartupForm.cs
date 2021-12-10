@@ -1,9 +1,14 @@
-﻿using DarkUI.Forms;
+﻿using DarkUI.Controls;
+using DarkUI.Forms;
 using MSFSTouchPanel.Shared;
 using MSFSTouchPanel.TouchPanelHost.UI;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using System.Linq;
-using System.Net;
+using System.Management.Automation;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -22,59 +27,22 @@ namespace MSFSTouchPanel.TouchPanelHost
             _syncRoot = SynchronizationContext.Current;
 
             // Get server host IP
-            var hostName = Dns.GetHostName();
-            var hostIp = Dns.GetHostEntry(hostName).AddressList.First(addr => addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-            txtServerIP.Text = $"http://{Convert.ToString(hostIp)}:5000";
+            GetIPAddressDisplay();
 
             Logger.OnServerLogged += HandleOnServerLogged;
             Logger.OnClientLogged += HandleOnClientLogged;
 
             StartServers();
 
+            // Get app version label
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             lblVersion.Text = version.ToString();
 
-            // setup menu events
-            menuRestartServer.Click += menuItem_Clicked;
-            menuClearClientActionLog.Click += menuItem_Clicked;
-            menuClearServerLog.Click += menuItem_Clicked;
+            // Create system menus
+            SetupSystemMenus();
 
-            menu_buttonpanel_g1000nxi_pfd.Click += experimentalMenuItem_Clicked;
-            menu_buttonpanel_g1000nxi_mfd.Click += experimentalMenuItem_Clicked;
-            menu_buttonpanel_fbwa32nx_cdu.Click += experimentalMenuItem_Clicked;
-
-            menu_framepanel_g1000nxi_pfd.Click += experimentalMenuItem_Clicked;
-            menu_framepanel_g1000nxi_mfd.Click += experimentalMenuItem_Clicked;
-            menu_framepanel_fbwa32nx_cdu.Click += experimentalMenuItem_Clicked;
-
-            menu_webpanel_g1000nxi_mfd.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_g1000nxi_pfd.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_cj4_pfd.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_cj4_mfd.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_cj4_fmc.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_cj4_sai.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_cdu.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_dcdu.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_eicas_1.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_eicas_2.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_fcu.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_isis.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_nd_template_1.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_pfd_template_1.Click += experimentalMenuItem_Clicked;
-            menu_webpanel_fbwa32nx_rmp.Click += experimentalMenuItem_Clicked;
-        }
-
-        public string HostIP
-        {
-            set
-            {
-                _syncRoot.Post((arg) =>
-                {
-                    var ip = arg as string;
-                    if (ip != null)
-                        txtServerIP.Text = ip;
-                }, value);
-            }
+            // Create Panels list menus
+            LoadPanelsMenu();
         }
 
         private void StartServers()
@@ -88,13 +56,17 @@ namespace MSFSTouchPanel.TouchPanelHost
 
         private void StopServers()
         {
-            _syncRoot = null;
+            try
+            {
+                _syncRoot = null;
 
-            _webHost.StopAsync();
-            _webHost.Dispose();
+                _webHost.StopAsync();
+                _webHost.Dispose();
 
-            _webApiHost.StopAsync();
-            _webApiHost.Dispose();
+                _webApiHost.StopAsync();
+                _webApiHost.Dispose();
+            }
+            catch { }
         }
 
         private void RestartServers()
@@ -108,13 +80,7 @@ namespace MSFSTouchPanel.TouchPanelHost
             if (_syncRoot != null)
                 _syncRoot.Post((arg) =>
                 {
-                    var logMessages = arg as string;
-
-                    if (logMessages != null)
-                        if (txtServerLogMessages.Text.Length == 0)
-                            txtServerLogMessages.AppendText(logMessages);
-                        else
-                            txtServerLogMessages.AppendText(Environment.NewLine + logMessages);
+                    AppendLogMessages(txtServerLogMessages, arg as string);
                 }, e.Value);
         }
 
@@ -123,12 +89,7 @@ namespace MSFSTouchPanel.TouchPanelHost
             if (_syncRoot != null)
                 _syncRoot.Post((arg) =>
                 {
-                    var logMessages = arg as string;
-                    if (logMessages != null)
-                        if (txtClientLogMessages.Text.Length == 0)
-                            txtClientLogMessages.AppendText(logMessages);
-                        else
-                            txtClientLogMessages.AppendText(Environment.NewLine + logMessages);
+                    AppendLogMessages(txtClientLogMessages, arg as string);
                 }, e.Value);
         }
 
@@ -169,8 +130,8 @@ namespace MSFSTouchPanel.TouchPanelHost
             notifyIcon1.Visible = false;
             WindowState = FormWindowState.Normal;
         }
-
-        private void menuItem_Clicked(object sender, EventArgs e)
+        
+        private void systemMenuItem_Click(object sender, EventArgs e)
         {
             var itemName = ((ToolStripMenuItem)sender).Name;
 
@@ -179,16 +140,142 @@ namespace MSFSTouchPanel.TouchPanelHost
                 case "menuRestartServer":
                     RestartServers();
                     break;
+                case "menuExit":
+                    this.Close();
+                    Application.Exit();
+                    break;
                 case "menuClearServerLog":
                     txtServerLogMessages.Clear();
                     break;
                 case "menuClearClientActionLog":
                     txtClientLogMessages.Clear();
                     break;
+                case "menuCreateSymbolicLinks":
+                    RunPowerShellScript(@"plugin-extension\webpanel\create_symbolic_link.ps1");
+                    break;
+                case "menuRemoveSymbolicLinks":
+                    RunPowerShellScript(@"plugin-extension\webpanel\remove_symbolic_link.ps1");
+                    break;
+                case "menuPatchG1000NXiMap":
+                    RunPowerShellScript(@"plugin-extension\g1000nxi-map\patch.ps1");
+                    break;
+                case "menuUnpatchG1000NXiMap":
+                    RunPowerShellScript(@"plugin-extension\g1000nxi-map\unpatch.ps1");
+                    break;
             }
         }
 
-        private void experimentalMenuItem_Clicked(object sender, EventArgs e)
+        private void AppendLogMessages(DarkTextBox LogPanel, string message)
+        {
+            if (message != null)
+                if (LogPanel.Text.Length == 0)
+                    LogPanel.AppendText(message);
+                else
+                    LogPanel.AppendText(Environment.NewLine + message);
+        }
+
+        private void RunPowerShellScript(string scriptPath)
+        {
+            var execPath = AppContext.BaseDirectory;
+            var fullScriptPath = execPath + scriptPath;
+            var scriptContents = File.ReadAllText(fullScriptPath);
+
+            // create a new hosted PowerShell instance using the default runspace.
+            using (PowerShell ps = PowerShell.Create())
+            {
+                // specify the script code to run.
+                ps.AddScript(scriptContents);
+                ps.AddArgument("'" + execPath + "'");
+
+                // execute the script as administrator if lauched as admin
+                var pipelineObjects = ps.Invoke("Set-ExecutionPolicy Unrestricted");
+
+                foreach (var item in pipelineObjects)
+                {
+                    AppendLogMessages(txtServerLogMessages, item.BaseObject.ToString());
+                }
+
+                foreach (var error in ps.Streams.Error)
+                {
+                    AppendLogMessages(txtServerLogMessages, error.ToString());
+                }
+            }
+        }
+
+        private void GetIPAddressDisplay()
+        {
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                var addr = ni.GetIPProperties().GatewayAddresses.FirstOrDefault();
+                if (addr != null)
+                {
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                    {
+                        foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                        {
+                            if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                            {
+                                txtServerIP.Text = $"http://{ip.Address}:5000";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void SetupSystemMenus()
+        {
+            menuRestartServer.Click += systemMenuItem_Click;
+            menuExit.Click += systemMenuItem_Click;
+
+            menuClearClientActionLog.Click += systemMenuItem_Click;
+            menuClearServerLog.Click += systemMenuItem_Click;
+
+            menuCreateSymbolicLinks.Click += systemMenuItem_Click;
+            menuRemoveSymbolicLinks.Click += systemMenuItem_Click;
+            menuPatchG1000NXiMap.Click += systemMenuItem_Click;
+            menuUnpatchG1000NXiMap.Click += systemMenuItem_Click;
+        }
+
+        private void LoadPanelsMenu()
+        {
+            JObject panelInfo;
+
+            try
+            {
+                using (StreamReader file = File.OpenText(Path.Combine(AppContext.BaseDirectory, "PlanePanelProfileInfo.json")))
+                using (JsonTextReader reader = new JsonTextReader(file))
+                {
+                    panelInfo = (JObject)JToken.ReadFrom(reader);
+                }
+
+                foreach (JObject plane in panelInfo["planes"])
+                {
+                    var planeMenu = new ToolStripMenuItem();
+                    planeMenu.Name = $"{plane["planeId"]}";
+                    planeMenu.Text = $"{plane["name"]}";
+                    planeMenu.BackColor = menuPanelRoot.BackColor;
+
+                    foreach (JObject panel in plane["panels"])
+                    {
+                        var panelMenu = new ToolStripMenuItem();
+                        panelMenu.Name = $"menu_{panel["type"]}_{plane["planeId"]}_{panel["panelId"]}";
+                        panelMenu.Click += panelMenuItem_Clicked;
+                        panelMenu.Text = $"{panel["name"]}";
+                        panelMenu.BackColor = menuPanelRoot.BackColor;
+                        planeMenu.DropDownItems.Add(panelMenu);
+                    }
+
+                    menuPanelRoot.DropDownItems.Add(planeMenu);
+                }
+            }
+            catch 
+            {
+                AppendLogMessages(txtServerLogMessages, "ERROR: PlanePanelProfileInfo.json file is not found or is invalid.");
+            }
+        }
+
+        private void panelMenuItem_Clicked(object sender, EventArgs e)
         {
             var itemName = ((ToolStripMenuItem)sender).Name;
 
@@ -198,9 +285,8 @@ namespace MSFSTouchPanel.TouchPanelHost
             var planeType = splits[2];
             var panel = splits[3];
 
-            for(var i = 4; i < splits.Length; i++)
+            for (var i = 4; i < splits.Length; i++)
                 panel = String.Join('_', new String[] { panel, splits[i] });
-
 
             var panelForm = new PanelForm(format, planeType, panel);
             panelForm.Show();

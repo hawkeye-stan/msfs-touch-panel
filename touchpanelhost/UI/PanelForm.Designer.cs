@@ -31,6 +31,7 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PanelForm));
             this.webView = new Microsoft.Web.WebView2.WinForms.WebView2();
+            this.buttonToggleTitleBar = new DarkUI.Controls.DarkButton();
             ((System.ComponentModel.ISupportInitialize)(this.webView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,16 +47,29 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
             this.webView.UseWaitCursor = true;
             this.webView.ZoomFactor = 1D;
             // 
+            // buttonToggleTitleBar
+            // 
+            this.buttonToggleTitleBar.Location = new System.Drawing.Point(0, 0);
+            this.buttonToggleTitleBar.Name = "buttonToggleTitleBar";
+            this.buttonToggleTitleBar.Padding = new System.Windows.Forms.Padding(5);
+            this.buttonToggleTitleBar.Size = new System.Drawing.Size(96, 27);
+            this.buttonToggleTitleBar.TabIndex = 1;
+            this.buttonToggleTitleBar.Text = "Toggle Titlebar";
+            this.buttonToggleTitleBar.UseWaitCursor = true;
+            this.buttonToggleTitleBar.Click += new System.EventHandler(this.buttonToggleTitleBar_Click);
+            // 
             // PanelForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.PowderBlue;
             this.ClientSize = new System.Drawing.Size(1199, 841);
+            this.Controls.Add(this.buttonToggleTitleBar);
             this.Controls.Add(this.webView);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PanelForm";
+            this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.PowderBlue;
             this.UseWaitCursor = true;
             ((System.ComponentModel.ISupportInitialize)(this.webView)).EndInit();
@@ -66,5 +80,6 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
         #endregion
 
         private Microsoft.Web.WebView2.WinForms.WebView2 webView;
+        private DarkUI.Controls.DarkButton buttonToggleTitleBar;
     }
 }

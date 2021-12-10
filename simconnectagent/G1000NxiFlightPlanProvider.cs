@@ -28,7 +28,7 @@ namespace MSFSTouchPanel.SimConnectAgent
                     wayPoint.index = wayPointId;
                     wayPoint.type = leg.leg.type.ToString();
 
-                    if (data.activeLateralLeg == wayPointId)
+                    if (data.activeCalculatingLeg == wayPointId)
                         wayPoint.isActiveLeg = true;
 
                     if (leg.calculated != null)
@@ -46,7 +46,7 @@ namespace MSFSTouchPanel.SimConnectAgent
 
                     wayPointId++;
 
-                    if (wayPoint.latLong[0] == 0 && wayPoint.latLong[1] == 0) continue;
+                    //if (wayPoint.latLong[0] == 0 && wayPoint.latLong[1] == 0) continue;
 
                     wayPoints.Add(wayPoint);
                 }

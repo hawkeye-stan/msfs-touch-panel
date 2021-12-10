@@ -2,6 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { API_URL } from "../ServicesConst";
 import { initializeDataContainer, parseRequestData } from './simConnectDataParser';
 
+import { PANEL_CONTROL_DEFINITION } from './PopoutPanelDefinition'
+import { PANEL_CONTROL_STYLE_DEFINITION } from './PopoutPanelStyles';
+
 const SIMCONNECT_DATA_REQUEST_INTERVAL_SLOW = 5000;
 const SimConnectDataContext = createContext(null);
 
@@ -96,10 +99,27 @@ export default SimConnectDataProvider;
 export const useSimConnectData = () => useContext(SimConnectDataContext);
 
 export const simConnectGetFlightPlan = async () => {
-    return await fetch('getflightplan')
+    return await fetch(`${API_URL.url}/getflightplan`)
         .then(response => response.json())
         .catch(error => {
             console.error('MSFS unable to load flight plan.')
         });
 }
+
+export const simConnectGetPlanePanelProfilesInfo = async () => {
+    return await fetch(`${API_URL.url}/getplanepanelprofileinfo`)
+    .then(response => response.json())
+    .then(data => {
+        data.panels.forEach(x => { 
+            x.definitions = PANEL_CONTROL_DEFINITION[x.definitions]; 
+            x.styles = PANEL_CONTROL_STYLE_DEFINITION[x.styles]; 
+        })
+        return data;
+    })
+    .catch(error => {
+        console.error('Unable to retrieve plane panel profile info. There may be an error with PlanePanelProfileInfo.json.')
+        return null;
+    });
+}
+
 

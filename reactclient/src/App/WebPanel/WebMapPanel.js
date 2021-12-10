@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     },
 });
 
-const WebMapPanel = () => {
+const WebMapPanel = ({mapType}) => {
     const classes = useStyles();
 
     return (
@@ -20,7 +20,7 @@ const WebMapPanel = () => {
             <SimConnectDataProvider>
                 <CssBaseline />
                     <div className={classes.mapPanel} >
-                        <MapPanel showTelemetry={false}></MapPanel>
+                        <MapPanel mapType={mapType}></MapPanel>
                     </div>
             </SimConnectDataProvider>
         </LocalStorageProvider>

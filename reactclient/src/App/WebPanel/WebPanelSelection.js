@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
 import ListSubheader from '@mui/material/ListSubheader';
@@ -12,7 +12,8 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import FlightIcon from '@mui/icons-material/Flight';
 import SensorWindowIcon from '@mui/icons-material/SensorWindow';
-import { PLANE_PROFILE_INFO } from './PlaneProfileInfo';
+import { simConnectGetPlanePanelProfilesInfo }  from '../../Services/DataProviders/SimConnectDataProvider';
+
 
 const useStyles = makeStyles((theme) => ({
     rootFullWidth: {
@@ -28,25 +29,22 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const PlaneProfileList = ({profile}) => {
+const PlaneProfileList = ({plane}) => {
     const history = useHistory();
     const [open, setOpen] = React.useState(false);
-    
-    const handlePanelSelect = (panel, panelType) => {
-        history.push(`/${panelType}/${profile.id}/${panel}`);
-    };
+
 
     return (
         <>
             <Divider></Divider>
             <ListItemButton onClick={() => setOpen(!open)}>
                 <ListItemIcon><FlightIcon /></ListItemIcon> 
-                <ListItemText primary={profile.name} />
+                <ListItemText primary={plane.name} />
                 {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
-                {profile.panels.map((panel, idx) => 
-                    <List key={idx} component="div" onClick={() => handlePanelSelect(panel.id, panel.type)}>
+                {plane.panels.map((panel) => 
+                    <List key={panel.id} component="div" onClick={() => history.push(`/${panel.type}/${plane.planeId}/${panel.panelId}`)}>
                         <ListItemButton sx={{ pl: 4 }}>
                             <ListItemIcon><SensorWindowIcon /></ListItemIcon>
                             <ListItemText primary={panel.name} />
@@ -60,18 +58,27 @@ const PlaneProfileList = ({profile}) => {
 
 const WebPanelSelection = () => {
     const classes = useStyles();
+    const [ planePanelProfileInfo, setPlanePanelProfileInfo ] = useState();
+
+    useEffect(() => {
+        simConnectGetPlanePanelProfilesInfo().then(data => 
+        {
+            if(data !== null)
+                setPlanePanelProfileInfo(data);
+        })
+    }, []);
 
     return (
         <div className={classes.root}>
-        <List component="nav" subheader={
+            <List component="nav" subheader={
                 <ListSubheader component="div" id="nested-list-subheader">
                     Please select a plane profile to open the corresponding panel
                 </ListSubheader>
             }>
-            {PLANE_PROFILE_INFO.map((profile, idx) => 
-                <PlaneProfileList key={idx} profile={profile}></PlaneProfileList>
-            )}
-        </List>
+                { planePanelProfileInfo !== undefined && planePanelProfileInfo.planes.map((plane) => 
+                    <PlaneProfileList key={plane.id} plane={plane}></PlaneProfileList>
+                )}
+            </List>
         </div>
     );
 }
