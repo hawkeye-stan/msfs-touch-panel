@@ -13,9 +13,9 @@ import { getDistance } from 'geolib';
 
 
 const MAP_TYPE_DEFAULTS = [
-    { displayType: 'full', defaultZoomLevel: 12, flightFollowing: true, showFlightPlan: true, showFlightPlanLabel: true, uiZoomFactor: 1, planeRadiusCircleRange: 2.5},
-    { displayType: 'waypoint', defaultZoomLevel: 10, flightFollowing: true, showFlightPlan: true, showFlightPlanLabel: true, uiZoomFactor: 0.75, planeRadiusCircleRange: 5 },
-    { displayType: 'inset', defaultZoomLevel: 11, flightFollowing: true, showFlightPlan: true, showFlightPlanLabel: false, uiZoomFactor: 0.75, planeRadiusCircleRange: 5 }
+    { displayType: 'full', defaultZoomLevel: 12, flightFollowing: true, showFlightPlan: true, uiZoomFactor: 1, planeRadiusCircleRange: 2.5},
+    { displayType: 'waypoint', defaultZoomLevel: 10, flightFollowing: true, showFlightPlan: true, uiZoomFactor: 0.75, planeRadiusCircleRange: 5 },
+    { displayType: 'inset', defaultZoomLevel: 11, flightFollowing: true, showFlightPlan: true, uiZoomFactor: 0.75, planeRadiusCircleRange: 5 }
 ]
 
 const MAP_PROVIDER = {
@@ -56,42 +56,32 @@ const getControlPoints = (waypointsState) => {
 }
 
 const getFullmapTooltip = (waypoint) => {
-    let tooltip = '<div style="display:flex; flex-direction:column; padding: 3px; font-size:0.85em; opactiy: 1">';
-    tooltip += '<span style="font-weight: bold">' + waypoint.id + '</span>';
-    
-    if (waypoint.altitude !== null && waypoint.altitude !== 0)
-        tooltip += '<span>Alt: ' + waypoint.altitude + 'ft</span>';
-    if (waypoint.distance !== null)
-        tooltip += '<span>Dist: ' + (waypoint.distance * 0.000539957).toFixed(1) + 'nm</span>';  // convert meter to NM
-    if (waypoint.course !== null)
-        tooltip += '<span>Course: ' + waypoint.course + '&deg;</span>';
-    
-    tooltip += '</div>';
+    let tooltip = `<div style="padding: 3px; font-size:1em; font-weight: bold">${waypoint.id}</div>`;
     return tooltip;
 }
 
-const getWaypointMapTooltip = (waypoint) => {
-    let tooltip = '<div style="display:flex; flex-direction:column; padding: 3px; font-size:0.85em; opactiy: 1">';
-    tooltip += '<span style="font-weight: bold">' + waypoint.id + '</span>';
-    
-    // if (waypoint.altitude !== null && waypoint.altitude  !== 0)
-    //     tooltip += '<span>Alt: ' + waypoint.altitude + 'ft</span>';
-    
-    tooltip += '</div>';
-    return tooltip;
+const getMarkerLegend = (waypoint) => {
+    let text = `<div class='planeMarkerLegendColumn1'>Waypoint:</div><div class='planeMarkerLegendColumn2'>${waypoint.id}</div>`;
+
+    if (waypoint.altitude !== null && waypoint.altitude !== 0)
+        text += `<div class='planeMarkerLegendColumn1'>Altitude:</div><div class='planeMarkerLegendColumn2'>${waypoint.altitude}ft</div>`;
+    if (waypoint.distance !== null)
+        text += `<div class='planeMarkerLegendColumn1'>Distance:</div><div class='planeMarkerLegendColumn2'>${(waypoint.distance * 0.000539957).toFixed(1)}nm</div>`;  // convert meter to NM
+    if (waypoint.course !== null)
+        text += `<div class='planeMarkerLegendColumn1'>Course:</div><div class='planeMarkerLegendColumn2'>${waypoint.course}&deg;</div>`;
+
+    return text;
 }
 
 const getPlaneRadiusCircleTooltip = (text) =>
 {
-    let tooltip = '<div style="margin:0; padding: 2px; background-color:black; color:#33CEFF; font-size:1em;">';
-    tooltip += '<span style="font-weight: bold">' + text + '</span>';
-
-    tooltip += '</div>'
+    let tooltip = `<div style="margin:0; padding: 2px; background-color:black; color:#33CEFF; font-size:1em; font-weight: bold">${text}</div>`;
     return tooltip;
 }
 
-const drawFlightPath = (waypointsState, layerGroup, showFlightPlanLabel, mapDisplayType) => {
-    let path, line, marker, tooltip, waypointTooltip;
+const drawFlightPath = (waypointsState, layerGroup, mapDisplayType, scaleInNm, map) => {
+    let scale = 2.5 / scaleInNm;
+    let path, line, marker, tooltip, waypointTooltip, markerLegend;
     let controlPoints = getControlPoints(waypointsState);
 
     waypointsState.forEach((waypoint, index) => {
@@ -121,11 +111,25 @@ const drawFlightPath = (waypointsState, layerGroup, showFlightPlanLabel, mapDisp
 
         // Waypoint marker
         tooltip = getFullmapTooltip(waypoint);
-        waypointTooltip = getWaypointMapTooltip(waypoint);
-        if(index === 0 || mapDisplayType === 'waypoint' || mapDisplayType === 'inset')
-            marker = L.circleMarker(waypoint.latLong, {radius: 6, color: 'purple'}).bindTooltip(waypointTooltip, { permanent: showFlightPlanLabel });
-        else
-            marker = L.circleMarker(waypoint.latLong, {radius: 6, color: 'purple'}).bindTooltip(tooltip, { permanent: showFlightPlanLabel });
+       
+        if(mapDisplayType !== 'inset')
+            marker = L.circleMarker(waypoint.latLong, {radius: 6, color: 'purple'}).bindTooltip(tooltip, { permanent: true, interactive: true, offset: [-50 * scale, -15 * scale] });
+
+        if(mapDisplayType !== 'waypoint' && mapDisplayType !== 'inset')
+        {
+            marker.on('click', () => {
+                let planeMarkerLegend = L.control({ position: 'topright' });
+                markerLegend = getMarkerLegend(waypoint);
+
+                planeMarkerLegend.onAdd = () => {
+                    var div = L.DomUtil.create('div', 'planeMarkerLegend');
+                    div.innerHTML = markerLegend;
+                    return div;
+                };
+                if(legend !== undefined) map.removeControl(legend);
+                legend = planeMarkerLegend.addTo(map);
+            });
+        }   
         
         layerGroup.addLayer(marker);
 
@@ -137,6 +141,8 @@ const drawFlightPath = (waypointsState, layerGroup, showFlightPlanLabel, mapDisp
         }
     })
 }
+
+let legend;
 
 const drawPlaneCircleRadius = (map, layerGroupPlanePosition, planePosition, scaleInNm = 2.5) => {
     // About radius of 147.79 pixels for a zoom level of 12 has the desire 2.5nm circle radius on screen size
@@ -199,7 +205,7 @@ const PLANE_ICON_LIGHT = L.icon({
     iconSize: [36, 36],
     iconAnchor: [18, 18]
 });
-let centerPlaneIcon, flightFollowingIcon, showFlightPlanIcon, showFlightPlanLabelIcon;
+let centerPlaneIcon, flightFollowingIcon, showFlightPlanIcon;
 
 const MapDisplay = ({displayType, refresh}) => {
     const { simConnectData, simConnectSystemEvent, g1000NxiFlightPlan } = useSimConnectData();
@@ -213,7 +219,6 @@ const MapDisplay = ({displayType, refresh}) => {
     const [ mapDisplayType ] = useState(MAP_TYPE_DEFAULTS.find(x => x.displayType === displayType));
     const [ flightFollowing, setFlightFollowing ] = useState(MAP_TYPE_DEFAULTS.find(x => x.displayType === displayType).flightFollowing);    // default to no flight following for anything other than full map
     const [ showFlightPlan, setShowFlightPlan ] = useState(MAP_TYPE_DEFAULTS.find(x => x.displayType === displayType).showFlightPlan);
-    const [ showFlightPlanLabel, setShowFlightPlanLabel ] = useState(MAP_TYPE_DEFAULTS.find(x => x.displayType === displayType).showFlightPlanLabel);
 
     const planePosition = useRef([GPS_LAT * 180 / Math.PI, GPS_LON * 180 / Math.PI]);
     const mapPosition = useRef([GPS_LAT * 180 / Math.PI, GPS_LON * 180 / Math.PI]);
@@ -222,6 +227,7 @@ const MapDisplay = ({displayType, refresh}) => {
     const layerGroupFlightPlan = useRef();
     const layerGroupPlanePosition = useRef();
     const layerGroupPlaneMarker = useRef();
+    const layerGroupPlaneMarkerLegend = useRef();
     const activeMapLayer = useRef('Open Topo');
 
     useMapEvents({
@@ -245,6 +251,9 @@ const MapDisplay = ({displayType, refresh}) => {
 
         layerGroupPlaneMarker.current = L.rotatedMarker([0, 0], { icon: PLANE_ICON_DARK, rotationAngle: 0, rotationOrigin: 'center' });
         map.addLayer(layerGroupPlaneMarker.current);
+
+        layerGroupPlaneMarkerLegend.current = L.layerGroup();
+        map.addLayer(layerGroupPlaneMarkerLegend.current);
 
         map.setZoom(mapDisplayType.defaultZoomLevel);
         map.setView(planePosition.current);
@@ -277,7 +286,6 @@ const MapDisplay = ({displayType, refresh}) => {
         if(centerPlaneIcon !== undefined) map.removeControl(centerPlaneIcon);
         if(flightFollowingIcon !== undefined) map.removeControl(flightFollowingIcon);
         if(showFlightPlanIcon !== undefined) map.removeControl(showFlightPlanIcon);
-        if(showFlightPlanLabelIcon !== undefined) map.removeControl(showFlightPlanLabelIcon);
 
         if(displayType === 'full')
         {
@@ -285,7 +293,6 @@ const MapDisplay = ({displayType, refresh}) => {
                 centerPlaneToMap(map, mapPosition, planePosition);
             }).addTo(map);
         }
-
 
         flightFollowingIcon = L.easyButton(`<span class="material-icons leaflet-icon">${flightFollowing ? 'airplanemode_active' : 'airplanemode_inactive'}</span>`, () => {
             setFlightFollowing(!flightFollowing);
@@ -298,11 +305,7 @@ const MapDisplay = ({displayType, refresh}) => {
             }).addTo(map);
         }
 
-        showFlightPlanLabelIcon = L.easyButton(`<span class="material-icons leaflet-icon">${showFlightPlanLabel ? 'label' : 'label_off'}</span>`, () => {
-            setShowFlightPlanLabel(!showFlightPlanLabel);
-        }).addTo(map);
-
-    }, [map, flightFollowing, showFlightPlan, showFlightPlanLabel])
+    }, [map, flightFollowing, showFlightPlan])
 
 
     useInterval(() => {
@@ -364,7 +367,7 @@ const MapDisplay = ({displayType, refresh}) => {
             if(mapDisplayType.displayType === 'full' || mapDisplayType.displayType === 'inset')
             {
                 if(showFlightPlan)
-                    drawFlightPath(waypointsState, layerGroupFlightPlan.current, showFlightPlanLabel, mapDisplayType.displayType)
+                    drawFlightPath(waypointsState, layerGroupFlightPlan.current, mapDisplayType.displayType, mapDisplayType.planeRadiusCircleRange, map)
                 else
                     layerGroupFlightPlan.current.clearLayers();
             }
@@ -372,12 +375,12 @@ const MapDisplay = ({displayType, refresh}) => {
             {
                 layerGroupFlightPlan.current.clearLayers();
 
-                let tooltip = getWaypointMapTooltip(nextWaypointState);
-                let marker = L.circleMarker(nextWaypointState.latLong, {radius: 6, color: 'purple'}).bindTooltip(tooltip, { permanent: showFlightPlanLabel });;
+                let tooltip = getFullmapTooltip(nextWaypointState);
+                let marker = L.circleMarker(nextWaypointState.latLong, {radius: 6, color: 'purple'}).bindTooltip(tooltip, { permanent: true });;
                 layerGroupFlightPlan.current.addLayer(marker);
             }
         }
-    }, [showFlightPlan, showFlightPlanLabel, nextWaypointState])
+    }, [showFlightPlan, nextWaypointState])
 
 
     useEffect(() => {

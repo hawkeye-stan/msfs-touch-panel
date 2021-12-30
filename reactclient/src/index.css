@@ -30,25 +30,60 @@ code {
 
 .leaflet-icon 
 {
-    font-size: 1.5em;
+    font-size: 2em;
     padding: 3px 2px 3px 2px !important;
     vertical-align: bottom;
 }
 
-.leaflet-control 
+.leaflet-bar a,
+.leaflet-bar a 
 {
-   zoom: 0.75;
+    height: 36px !important;
+    width: 36px !important;
+}
+
+.easy-button-button
+{
+    height: 36px;
+    width: 36px;
+    padding: 0 !important;
+    border-width: 0;
 }
 
 .leaflet-tooltip
 {
     padding: 0 !important;
+    opacity: 1;
+    background-color: white;
+    box-shadow: none !important;
+    border: 1px solid black;
 }
 
-.easy-button-button
-{
-    width: 30px;
-    height: 30px;
-    padding: 0 !important;
-    border-width: 0;
+.leaflet-tooltip-top:before, 
+.leaflet-tooltip-bottom:before, 
+.leaflet-tooltip-left:before, 
+.leaflet-tooltip-right:before {
+    border: none !important;
 }
+
+.planeMarkerLegend {
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    color: black;
+    font-size: 1.25em;
+    background-color: white;
+    border: 1px solid black;
+    padding: 5px;
+    width: 10em;
+}
+
+.planeMarkerLegendColumn1 {
+    width: 55%;
+}
+
+.planeMarkerLegendColumn2 {
+    width: 45%;
+}
+

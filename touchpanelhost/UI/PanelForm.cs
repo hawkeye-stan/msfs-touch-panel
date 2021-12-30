@@ -15,7 +15,7 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
 
             _ = InitializeAsync(displayFormat, planeId, panelId);
 
-            this.Text = $"{planeId.ToUpper()} - {panelId.ToUpper()}";
+            this.Text = $"MSFS Touch Panel | {planeId.ToUpper()} - {panelId.ToUpper()}";
         }
 
         private async Task InitializeAsync(string displayFormat, string planeId, string panelId)
