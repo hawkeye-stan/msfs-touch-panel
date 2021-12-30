@@ -74,14 +74,13 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         public IActionResult Post(SimConnectPostData data)
         {
             var value = Convert.ToString(data.Value);
-            var actionType = (SimActionType)Enum.Parse(typeof(SimActionType), data.ActionType);
             var planeProfile = (PlaneProfile)Enum.Parse(typeof(PlaneProfile), data.PlaneProfile);
 
-            _simConnectService.ExecAction(data.Action, actionType, value, data.ExecutionCount, planeProfile);
+            _simConnectService.ExecAction(data.Action, value, planeProfile);
 
             var clientIP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
 
-            Logger.ClientLog($"ClientIP: {clientIP, -20} Action: {data.Action,-35} Value: {value, -7} Exec Count: {data.ExecutionCount, -5} Profile: {data.PlaneProfile}", LogLevel.INFO);
+            Logger.ClientLog($"ClientIP: {clientIP, -20} Action: {data.Action,-35} Value: {value, -7} Profile: {data.PlaneProfile}", LogLevel.INFO);
 
             return Ok();
         }
@@ -112,7 +111,7 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         {
             try
             {
-                var filePath = Path.Combine(AppContext.BaseDirectory, "PlanePanelProfileInfo.json");
+                var filePath = Path.Combine(AppContext.BaseDirectory, @"Data\PlanePanelProfileInfo.json");
                 return System.IO.File.ReadAllText(filePath);
 
             }

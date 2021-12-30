@@ -2,12 +2,14 @@
     "planes": [
         { "id": 1, "planeId": "g1000nxi", "name": "G1000NXi Enabled Plane",
             "panels": [
-                { "id": 1, "panelId": "pfd", "name": "PFD (with button overlay)", "type": "buttonpanel", "hasMap": true, "hasTelemetryDisplay": true },
-                { "id": 3, "panelId": "pfd", "name": "PFD (button overlay only)", "type": "framepanel", "hasMap": true, "hasTelemetryDisplay": false },
-                { "id": 3, "panelId": "pfd", "name": "PFD", "type": "webpanel", "hasMap": true, "hasTelemetryDisplay": true },
+                
+                { "id": 1, "panelId": "pfd", "name": "PFD (button overlay only)", "type": "framepanel", "hasMap": true, "hasTelemetryDisplay": false },
+                { "id": 2, "panelId": "mfd", "name": "MFD (button overlay only)", "type": "framepanel", "hasMap": true, "hasTelemetryDisplay": false },
+                { "id": 3, "panelId": "pfd", "name": "PFD (with button overlay)", "type": "buttonpanel", "hasMap": true, "hasTelemetryDisplay": true },
                 { "id": 4, "panelId": "mfd", "name": "MFD (with button overlay)", "type": "buttonpanel", "hasMap": true, "hasTelemetryDisplay": true },
-                { "id": 5, "panelId": "mfd", "name": "MFD (button overlay only)", "type": "framepanel", "hasMap": true, "hasTelemetryDisplay": false },
+                { "id": 5, "panelId": "pfd", "name": "PFD", "type": "webpanel", "hasMap": true, "hasTelemetryDisplay": true },
                 { "id": 6, "panelId": "mfd", "name": "MFD", "type": "webpanel", "hasMap": true, "hasTelemetryDisplay": true }
+
             ]
         },
         { "id": 2, "planeId": "fbwa32nx", "name": "FlyByWire A32NX", 

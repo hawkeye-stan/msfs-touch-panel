@@ -9,6 +9,8 @@ namespace MSFSTouchPanel.SimConnectAgent
         public int activeLegIndex { get; set; }
 
         public List<ATCWaypoint> waypoints { get; set; }
+
+        public int dtk { get; set; }
     }
 
     public class ATCWaypoint

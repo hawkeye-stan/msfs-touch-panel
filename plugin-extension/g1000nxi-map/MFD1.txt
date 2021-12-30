@@ -14,6 +14,7 @@ class FlightPlanner {
                 flightPlan.originAirport =  this.flightPlans[this._activePlanIndex]._originAirport;
                 flightPlan.destinationAirport =  this.flightPlans[this._activePlanIndex]._destinationAirport;
                 flightPlan.directToData =  this.flightPlans[this._activePlanIndex].directToData;
+		flightPlan.dtk = Math.round(SimVar.GetSimVarValue(LNavVars.DTK, 'degrees'));
  
                 fetch('http://XXX.XXX.XXX.XXX:5001/postflightplan', {
                     method: "POST",

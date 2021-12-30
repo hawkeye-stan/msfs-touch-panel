@@ -1,6 +1,5 @@
 ﻿using MSFSTouchPanel.ArduinoAgent;
 using MSFSTouchPanel.FSConnector;
-using MSFSTouchPanel.FsuipcAgent;
 using MSFSTouchPanel.Shared;
 using System;
 
@@ -9,9 +8,8 @@ namespace MSFSTouchPanel.SimConnectAgent
     public class SimConnectProvider
     {
         private ArduinoProvider _arduinoProvider;
-        private FsuipcProvider _fsuipcProvider;
-
         private SimConnector _simConnector;
+
         private DataProvider _dataProvider;
         private ActionProvider _actionProvider;
 
@@ -31,16 +29,13 @@ namespace MSFSTouchPanel.SimConnectAgent
             _simConnector.OnException += HandleSimException;
             _simConnector.OnReceiveSystemEvent += (source, e) => OnReceiveSystemEvent?.Invoke(this, new EventArgs<string>(e.Value));
 
-            _fsuipcProvider = new FsuipcProvider(windowHandle);
-            _fsuipcProvider.OnLVarReceived += (source, e) => OnLVarReceived?.Invoke(this, e);
-
             _arduinoProvider = new ArduinoProvider();
             _arduinoProvider.OnConnectionChanged += (source, e) => OnArduinoConnectionChanged?.Invoke(this, new EventArgs<bool>(e.Value));
 
             _dataProvider = new DataProvider(_simConnector);
             _dataProvider.OnDataRefreshed += (source, e) => OnDataRefreshed?.Invoke(this, e);
 
-            _actionProvider = new ActionProvider(_simConnector, _arduinoProvider, _fsuipcProvider);
+            _actionProvider = new ActionProvider(_simConnector, _arduinoProvider);
             _arduinoProvider.OnDataReceived += _actionProvider.ArduinoInputHandler;
         }
 
@@ -52,7 +47,6 @@ namespace MSFSTouchPanel.SimConnectAgent
 
         public void Stop()
         {
-            _fsuipcProvider.Stop();
             _arduinoProvider.Stop();
             _dataProvider.Stop();
             _actionProvider.Stop();
@@ -61,9 +55,9 @@ namespace MSFSTouchPanel.SimConnectAgent
             OnMsfsDisconnected?.Invoke(this, null);
         }
 
-        public void ExecAction(string action, SimActionType actionType, string value, int executionCount, PlaneProfile planeProfile)
+        public void ExecAction(string action, string value, PlaneProfile planeProfile)
         {
-            _actionProvider.ExecAction(action, actionType, value, executionCount, planeProfile);
+            _actionProvider.ExecAction(action, value, planeProfile);
         }
 
         public string GetFlightPlan()
@@ -73,10 +67,10 @@ namespace MSFSTouchPanel.SimConnectAgent
 
         private void HandleSimConnected(object source, EventArgs e)
         {
-            _fsuipcProvider.Start();
             _arduinoProvider.Start();
             _dataProvider.Start();
             _actionProvider.Start();
+            
             OnMsfsConnected?.Invoke(this, null);
 
             Logger.ServerLog("MSFS connected", LogLevel.INFO);

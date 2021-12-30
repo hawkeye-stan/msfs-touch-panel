@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
+import { simConnectPost } from '../../Services/ActionProviders/simConnectPost';
 
-const useStyles = props => makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         position: 'relative',
         width: '100%',
@@ -13,7 +14,7 @@ const useStyles = props => makeStyles((theme) => ({
     {
         position: 'relative',
         backgroundColor: theme.palette.background,
-        backgroundImage: `url(/img/${props.planeId}/${props.panelId}/background.png)`,
+        backgroundImage: (props) => `url(/img/${props.planeId}/${props.panelId}/background.png)`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100% 100%',
         width: '100%',
@@ -35,8 +36,8 @@ const useStyles = props => makeStyles((theme) => ({
 
 const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
     const { simConnectSystemEvent } = useSimConnectData();
-    const sharedClasses = useStyles(panelInfo)();
-    const panelClasses = panelInfo.styles(panelInfo)();
+    const sharedClasses = useStyles(panelInfo);
+    const panelClasses = panelInfo.styles(panelInfo);
     const [activeButton, setActiveButton] = useState();
     const [reload, setReload] = useState(true);
         
@@ -72,11 +73,15 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
 
     const handleOnClick = (action, button) => {
         if (action !== undefined && action !== null)
-            action();
+            simConnectPost(action, 1)
+        
+        //action();
 
         // one off for G1000Nxi nose up and nose down button. Do not active button
-        if(panelInfo.planetype === 'g1000nxi' && (button === 'btn_nose_up' || button === 'btn_nose_down'))
-            return;
+        //if(panelInfo.planetype === 'g1000nxi' && (button === 'btn_nose_up' || button === 'btn_nose_down'))
+        //    return;
+
+        
         
         setActiveButton(button);
     }
@@ -91,9 +96,9 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
         }
     }, [simConnectSystemEvent])
 
-    return (
+    return useMemo(() => (
         <div className={sharedClasses.root}>
-            { reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'webpanel') && 
+            {reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'webpanel') && 
                 <div className={displayFormat.toLowerCase() === 'webpanel' ? panelClasses.iframePanelMaxSize : panelClasses.iframePanel}>
                     <iframe title='iframePanel' className={sharedClasses.iframe} src={`/assets/webpanel.html?planeId=${panelInfo.planeId}&panelId=${panelInfo.panelId}`} frameBorder="0"></iframe>
                 </div> 
@@ -108,7 +113,7 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
                 </div>
             }
         </div>
-    )
+    ), [panelInfo, activeButton])
 }
 
 export default PopoutPanelContainer;

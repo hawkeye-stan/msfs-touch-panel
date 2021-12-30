@@ -243,7 +243,7 @@ namespace MSFSTouchPanel.TouchPanelHost
 
             try
             {
-                using (StreamReader file = File.OpenText(Path.Combine(AppContext.BaseDirectory, "PlanePanelProfileInfo.json")))
+                using (StreamReader file = File.OpenText(Path.Combine(AppContext.BaseDirectory, @"Data\PlanePanelProfileInfo.json")))
                 using (JsonTextReader reader = new JsonTextReader(file))
                 {
                     panelInfo = (JObject)JToken.ReadFrom(reader);

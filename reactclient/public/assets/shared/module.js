@@ -258,10 +258,6 @@ const createTagElement = (node, parentNodeId, parentTag) => {
                     mapElement.setAttribute('style', 'width:100%; height:100%');
                     mapElement.setAttribute('src',  `http://${window.location.hostname}:${window.location.port}/mappanel/waypoint`);
                     break;
-                case 'inset':
-                             mapElement.setAttribute('style', 'width:100%; height:100%');
-                    mapElement.setAttribute('src',  `http://${window.location.hostname}:${window.location.port}/mappanel/inset`);
-                    break;
             }
             
             element.append(mapElement);
@@ -341,13 +337,9 @@ const setElementAttributes = (nodeId, element, attributes) => {
                     {
                         replaceMapNode.push({nodeId: nodeId, type: 'full'});
                     }
-                    else if (value.includes('waypoint-map'))  // replace G1000NXi MFD waypoint bing map with map from app
+                    else if (value.includes('waypoint-map'))      // replace G1000NXi MFD waypoint bing map with map from app
                     {
                         replaceMapNode.push({nodeId: nodeId, type: 'waypoint'});
-                    }
-                    else if (value.includes('pfd-insetmap'))      // replace G1000NXi PFD inset bing map with map from app
-                    {
-                        replaceMapNode.push({nodeId: nodeId, type: 'inset'});
                     }
                     break;
                 case 'src':

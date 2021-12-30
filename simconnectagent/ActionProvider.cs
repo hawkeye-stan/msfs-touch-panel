@@ -1,29 +1,28 @@
 ﻿using MSFSTouchPanel.ArduinoAgent;
 using MSFSTouchPanel.FSConnector;
-using MSFSTouchPanel.FsuipcAgent;
 using MSFSTouchPanel.Shared;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace MSFSTouchPanel.SimConnectAgent
 {
     public class ActionProvider
     {
-        private ActionEvent _currentSelectedAction;
-        private PlaneProfile _planeProfile;
+        private string _currentSelectedAction;
         private SimConnector _simConnector;
-        private FsuipcProvider _fsuipcProvider;
-        private ArduinoProvider _arduinoProvider;
-
         private bool _isSimConnected;
-        
-        public ActionProvider(SimConnector simConnector, ArduinoProvider arduinoProvider, FsuipcProvider fsuipcProvider)
-        {
-            _currentSelectedAction = ActionEvent.NO_ACTION;
-            _isSimConnected = false;
 
+        private List<EncoderCommandMapping> _encoderCommands;
+        
+        public ActionProvider(SimConnector simConnector, ArduinoProvider arduinoProvider)
+        {
+            _currentSelectedAction = null;
+            _isSimConnected = false;
             _simConnector = simConnector;
-            _fsuipcProvider = fsuipcProvider;
-            _arduinoProvider = arduinoProvider;
+
+            LoadEncoderCommandMapping();
         }
 
         public void Start()
@@ -36,40 +35,54 @@ namespace MSFSTouchPanel.SimConnectAgent
             _isSimConnected = false;
         }
 
-        public void ExecAction(string action, SimActionType actionType, string value, int executionCount, PlaneProfile planeProfile)
+        public void ExecAction(string action, string value, PlaneProfile planeProfile)
         {
-            _planeProfile = planeProfile;
-
             if (_isSimConnected && action != null)
             {
                 try
                 {
-                    ActionEvent simConnectEventId;
+                    _currentSelectedAction = action;
 
-                    switch (actionType)
+                    if (action == "NO_ACTION") return;
+
+                    uint uintValue;
+
+                    switch (action.ToUpper())
                     {
-                        case SimActionType.None:
-                            // no action
+                        case "HEADING_BUG_SYNC":
+                            action = "HEADING_BUG_SET";
+                            uintValue = Convert.ToUInt32(value);
                             break;
-                        case SimActionType.Shared:
-                            simConnectEventId = (ActionEvent)Enum.Parse(typeof(ActionEvent), $"KEY_{action}");
-                            _currentSelectedAction = ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, simConnectEventId, value);
+                        case "AP_ALT_SYNC":
+                            action = "AP_ALT_VAR_SET_ENGLISH";
+                            uintValue = Convert.ToUInt32(value);
                             break;
-                        case SimActionType.HVar:
-                            simConnectEventId = (ActionEvent)Enum.Parse(typeof(ActionEvent), action);
-                            _currentSelectedAction = simConnectEventId;
-                            ActionLogicFsuipc.ExecuteCalculatorCodeHVar(_fsuipcProvider, simConnectEventId, executionCount);
+                        case "COM_STBY_RADIO_SET":
+                        case "COM2_STBY_RADIO_SET":
+                            uintValue = Convert.ToUInt32("0x" + Convert.ToInt32(Convert.ToDouble(value) * 1000).ToString().Substring(1, 4), 16);
                             break;
-                        case SimActionType.Custom:
-                            simConnectEventId = (ActionEvent)Enum.Parse(typeof(ActionEvent), $"CUSTOM_{action}");
-                            _currentSelectedAction = simConnectEventId;
+                        case "NAV1_STBY_SET":
+                        case "NAV2_STBY_SET":
+                            uintValue = Convert.ToUInt32("0x" + Convert.ToInt32(Convert.ToDouble(value) * 100).ToString(), 16);
+                            break;
+                        case "XPNDR_SET":
+                            uintValue = Convert.ToUInt32(value, 16);
+                            break;
+                        case "KOHLSMAN_SET":
+                            uintValue = Convert.ToUInt32(Convert.ToDouble(value) * 33.8639 * 16);      // convert Hg to millibars * 16
+                            break;
+                        case "ADF_COMPLETE_SET":
+                            uintValue = Convert.ToUInt32("0x" + Convert.ToString(value + "0000"), 16);
                             break;
                         default:
-                            simConnectEventId = (ActionEvent)Enum.Parse(typeof(ActionEvent), $"KEY_{action}");
-                            _currentSelectedAction = ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, simConnectEventId, value);
+                            if (Convert.ToInt32(value) < 0)
+                                uintValue = UInt32.MaxValue - Convert.ToUInt32(Math.Abs(Convert.ToInt32(value)));
+                            else
+                                uintValue = Convert.ToUInt32(value);
                             break;
                     }
 
+                    _simConnector.SetEventID(action, uintValue);
                 }
                 catch (Exception e)
                 {
@@ -80,44 +93,30 @@ namespace MSFSTouchPanel.SimConnectAgent
 
         public void ArduinoInputHandler(object sender, EventArgs<ArduinoInputData> e)
         {
-            if(e.Value.InputName == InputName.Keypad)
+            if (e.Value.InputName == InputName.Keypad)
             {
-                switch(e.Value.InputAction)
+                var key = e.Value.InputAction.ToString().Substring(3);
+                _simConnector.SetEventID("ATC_MENU_" + key, 1);
+            }
+            else if (_currentSelectedAction != null)
+            {
+                try
                 {
-                    case InputAction.Key1:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_1, "1");
-                        break;
-                    case InputAction.Key2:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_2, "1");
-                        break;
-                    case InputAction.Key3:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_3, "1");
-                        break;
-                    case InputAction.Key4:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_4, "1");
-                        break;
-                    case InputAction.Key5:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_5, "1");
-                        break;
-                    case InputAction.Key6:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_6, "1");
-                        break;
-                    case InputAction.Key7:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_7, "1");
-                        break;
-                    case InputAction.Key8:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_8, "1");
-                        break;
-                    case InputAction.Key9:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_9, "1");
-                        break;
-                    case InputAction.Key0:
-                        ActionLogicSimConnect.ExecuteSimConnectCommand(_simConnector, ActionEvent.KEY_ATC_MENU_0, "1");
-                        break;
+                    var command = ActionLogicArduino.GetSimConnectCommand(_encoderCommands, _currentSelectedAction, e.Value.InputName, e.Value.InputAction);
+                    _simConnector.SetEventID(command, 1);
+                   
+                }
+                catch (Exception exception)
+                {
+                    Logger.ServerLog(exception.Message, LogLevel.ERROR);
                 }
             }
-            else if (_currentSelectedAction != ActionEvent.NO_ACTION)
-                ActionLogicArduino.ExecuteCommand(_simConnector, _fsuipcProvider, _currentSelectedAction, e.Value.InputAction, e.Value.InputName, e.Value.Acceleration);
+        }
+
+        private void LoadEncoderCommandMapping()
+        {
+            var filePath = Path.Combine(AppContext.BaseDirectory, @"Data\EncoderCommandMapping.json");
+            _encoderCommands = JsonConvert.DeserializeObject<List<EncoderCommandMapping>>(File.ReadAllText(filePath));
         }
     }
 }

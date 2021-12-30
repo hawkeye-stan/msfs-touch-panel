@@ -7,6 +7,10 @@
         <style>
             body { background-color: black; fill: white;  max-width: 100%;  margin: auto; }
 
+            /* draw a border around vcockpit panel */
+            #BacklightBleed { border: 1px solid lightgray }
+            .BacklightBleed { border: 1px solid lightgray }
+
             /* A32nx MCDU override */
             a320-neo-cdu-main-display { width: 100% !important; aspect-ratio: 0.9 }
             a320-neo-cdu-main-display #Mainframe { font-size: calc(42px + 5.3vw) !important }
@@ -17,6 +21,9 @@
             a320-neo-cdu-main-display .line-right { right: 5% !important }
             a320-neo-cdu-main-display .line { height: 7% !important }
 
+            /* G1000 override */
+            .map-inset { display: none }
+            
             /* fix z-index bug of G1000 MFD */
             .mfd-navmap { z-index: 1000 } 
             .popout-dialog { z-index: 1001 }

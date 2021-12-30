@@ -30,8 +30,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "arduinoagent", "arduinoagen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "shared", "shared\shared.csproj", "{A1E92D3F-6C17-4E8A-A953-2A73159F7025}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fsuipcagent", "fsuipcagent\fsuipcagent.csproj", "{B0F0854D-F929-4B74-A604-432E6AE6D94B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fsconnector", "fsconnector\fsconnector.csproj", "{E673F9C9-832D-409C-81A8-FBEDE36CFB15}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "touchpanelhost", "touchpanelhost\touchpanelhost.csproj", "{45DA259A-1561-4512-B5AC-1ADA3AD469AF}"
@@ -72,14 +70,6 @@ Global
 		{A1E92D3F-6C17-4E8A-A953-2A73159F7025}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A1E92D3F-6C17-4E8A-A953-2A73159F7025}.Release|x64.ActiveCfg = Release|x64
 		{A1E92D3F-6C17-4E8A-A953-2A73159F7025}.Release|x64.Build.0 = Release|x64
-		{B0F0854D-F929-4B74-A604-432E6AE6D94B}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{B0F0854D-F929-4B74-A604-432E6AE6D94B}.Debug|Any CPU.Build.0 = Debug|x64
-		{B0F0854D-F929-4B74-A604-432E6AE6D94B}.Debug|x64.ActiveCfg = Debug|x64
-		{B0F0854D-F929-4B74-A604-432E6AE6D94B}.Debug|x64.Build.0 = Debug|x64
-		{B0F0854D-F929-4B74-A604-432E6AE6D94B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0F0854D-F929-4B74-A604-432E6AE6D94B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0F0854D-F929-4B74-A604-432E6AE6D94B}.Release|x64.ActiveCfg = Release|x64
-		{B0F0854D-F929-4B74-A604-432E6AE6D94B}.Release|x64.Build.0 = Release|x64
 		{E673F9C9-832D-409C-81A8-FBEDE36CFB15}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{E673F9C9-832D-409C-81A8-FBEDE36CFB15}.Debug|Any CPU.Build.0 = Debug|x64
 		{E673F9C9-832D-409C-81A8-FBEDE36CFB15}.Debug|x64.ActiveCfg = Debug|x64

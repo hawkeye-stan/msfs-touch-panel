@@ -10,6 +10,7 @@ namespace MSFSTouchPanel.SimConnectAgent
         {
             var flightPlan = new FlightPlan();
             flightPlan.activeLegIndex = data.activeLateralLeg;
+            flightPlan.dtk = data.dtk;
 
             var wayPoints = new List<ATCWaypoint>();
 
@@ -74,6 +75,8 @@ namespace MSFSTouchPanel.SimConnectAgent
         public string destinationAirport { get; set; }
 
         public ProcedureDetail procedureDetails { get; set; }
+
+        public int dtk { get; set; }
     }
     
     public class PlanSegment

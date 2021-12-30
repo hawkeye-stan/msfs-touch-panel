@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\fsuipcagent\fsuipcagent.csproj" />
     <ProjectReference Include="..\simconnectagent\simconnectagent.csproj" />
   </ItemGroup>
 
@@ -61,7 +60,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="PlanePanelProfileInfo.json">
+	  <Content Update="Data\PlanePanelProfileInfo.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
@@ -100,4 +99,6 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PublishDir)plugin-extension\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
 	</Target>
+
+	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>

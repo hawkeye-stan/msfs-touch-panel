@@ -1,12 +1,12 @@
 import { API_URL } from "../ServicesConst";
 
-export const simConnectPost = (actionType, action, value, executionCount = 1) => {
+export const simConnectPost = (action, value) => {
     let planeProfile = localStorage.getItem('planeProfile');
 
     if(action === undefined || value === undefined)
         return;
 
-    let data = {action: action, actionType: actionType, value: value, executionCount: executionCount, planeProfile: planeProfile };
+    let data = {action: action, value: value, planeProfile: planeProfile };
     console.log(data);
 
     fetch(`${API_URL.url}/postdata`, {
