@@ -137,6 +137,8 @@ const drawFlightPath = (waypointsState, layerGroup, mapDisplayType, scaleInNm) =
     })
 }
 
+let legend;
+
 const drawPlaneCircleRadius = (map, layerGroupPlanePosition, planePosition, scaleInNm = 2.5) => {
     // About radius of 178 pixels for a zoom level of 12 has the desire 2.5nm circle radius on screen size
     // Zoom level of 12 is equal to 2.5nm
