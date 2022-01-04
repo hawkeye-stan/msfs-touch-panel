@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const RadioDisplay = ({ id, numberOfDigit, decimalPlaces, activeFreqKey, standbyFreqKey, minFreqValue, maxFreqValue, smallIncrementStep, smallDecrementStep,
+const RadioDisplay = ({ id, numberOfDigit, decimalPlaces, activeFreqKey, standbyFreqKey, minFreqValue, maxFreqValue,
 radioSelectAction, radioSetAction, radioSwappedAction }) => {
     const classes = useStyles();
     const { simConnectData } = useSimConnectData();
@@ -74,11 +74,7 @@ radioSelectAction, radioSetAction, radioSwappedAction }) => {
                         decimalPlaces={decimalPlaces}
                         minValue={minFreqValue}
                         maxValue={maxFreqValue}
-                        largeIncrementStep={1}
-                        smallIncrementStep={smallIncrementStep}
-                        largeDecrementStep={-1}
-                        smallDecrementStep={smallDecrementStep}
-                        loopBack={true}
+                        showDualKnob={true}
                         disableNumPadKeys={['-']}
                         directInput={directInputComNav}
                         onSelect={() => radioSelectAction()}
@@ -87,7 +83,7 @@ radioSelectAction, radioSetAction, radioSwappedAction }) => {
             </Grid>
         </div>
     ), [classes, id, numberOfDigit, decimalPlaces, activeFreq, standbyFreq, minFreqValue, maxFreqValue,
-        smallIncrementStep, smallDecrementStep, directInputComNav, radioSelectAction, radioSetAction, radioSwappedAction])
+        directInputComNav, radioSelectAction, radioSetAction, radioSwappedAction])
 }
 
 RadioDisplay.defaultProps = {

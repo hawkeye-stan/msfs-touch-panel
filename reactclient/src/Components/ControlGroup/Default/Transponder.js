@@ -45,12 +45,9 @@ const Transponder = () => {
                                     <NumericEntryDisplay
                                         id={'transponderEntry' + index}
                                         initialValue={Number(String(TRANSPONDER_CODE).charAt(digit))}
-                                        smallIncrementStep={1}
-                                        smallDecrementStep={-1}
                                         numberOfDigit={1}
                                         minValue={0}
                                         maxValue={7}
-                                        loopBack={true}
                                         disableNumPadKeys={[8, 9, '-']}
                                         directInput={directInputTransponder}
                                         onSet={(value) => simActions.Transponder.set(digit, value, TRANSPONDER_CODE)}

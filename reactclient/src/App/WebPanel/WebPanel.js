@@ -91,37 +91,31 @@ const WebPanel = ({planeId, panelId, displayFormat}) => {
                 }
             }
         })
+
+        
     }, [planeId, panelId, displayFormat]);
 
     return (
         <LocalStorageProvider initialData={{}}>
             <SimConnectDataProvider>
                 <CssBaseline />
-                { planePanelProfileInfo !== undefined && panelProfile !== undefined && displayFormat !== undefined && displayFormat.toLowerCase() === 'framepanel' && 
-                    <Container className={classes.rootFullWidth}>
-                        <div className={classes.framePanelContainer} style={{aspectRatio: String(planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId).panelRatio) }}>
-                            <div className={classes.popoutPanel}>
-                                <PopoutPanelContainer panelInfo={planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId)} displayFormat={displayFormat}/> 
-                            </div>
-                        </div>
-                    </Container>
-                }
 
-                { planePanelProfileInfo !== undefined && panelProfile !== undefined && displayFormat !== undefined && displayFormat.toLowerCase() !== 'framepanel' && 
+
+                { planePanelProfileInfo !== undefined && panelProfile !== undefined && displayFormat !== undefined && 
                     <Container className={classes.rootFullWidth}>
                         <div className={classes.appbar}>
                             <ApplicationBar showMapIcon={panelProfile.hasMap} mapOpenChanged={() => setMapOpen(!mapOpen)} planeInfo={{planeName: planeProfile.name, panelName: panelProfile.name}}></ApplicationBar>
                             { panelProfile.hasTelemetryDisplay && <TelemetryPanel></TelemetryPanel> }
                         </div>
                     
-                        <div className={planeId.toLowerCase() === 'g1000nxi' ? classes.g1000NXiContainer : classes.panelContainer} style={{ aspectRatio: String(planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId).panelRatio) }}>
+                        <div className={classes.panelContainer} style={{ aspectRatio: String(planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId && x.planeId.toLowerCase() == planeId).panelRatio) }}>
                             { panelProfile.hasMap &&
                                 <div className={classes.mapPanel} style={{display: mapOpen ? '' : 'none'}}>
                                     <MapPanel mapType={'full'} refresh={mapOpen}/>
                                 </div>
                             }
                             <div className={classes.popoutPanel} style={{display: mapOpen ? 'none' : ''}}>
-                                <PopoutPanelContainer panelInfo={planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId)} displayFormat={displayFormat}/> 
+                                <PopoutPanelContainer panelInfo={planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId && x.planeId.toLowerCase() == planeId)} displayFormat={displayFormat}/> 
                             </div>
                         </div>
                     </Container>

@@ -184,7 +184,7 @@ namespace MSFSTouchPanel.FSConnector
             uint EventIdx = 0;
             string[] lines;
 
-            var file = $@"{AppDomain.CurrentDomain.BaseDirectory}Presets\msfs2020_eventids.cip";
+            var file = $@"{AppDomain.CurrentDomain.BaseDirectory}Data\MobiFlightPresets\msfs2020_eventids.cip";
             if (File.Exists(file))
             {
                 lines = File.ReadAllLines(file);
@@ -208,7 +208,7 @@ namespace MSFSTouchPanel.FSConnector
                 }
             }
 
-            file = $@"{AppDomain.CurrentDomain.BaseDirectory}Presets\msfs2020_eventids_user.cip";
+            file = $@"{AppDomain.CurrentDomain.BaseDirectory}Data\MobiFlightPresets\msfs2020_eventids_user.cip";
             if (File.Exists(file))
             {
                 lines = File.ReadAllLines(file);

@@ -3,6 +3,8 @@ import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
 import { simConnectPost } from '../../Services/ActionProviders/simConnectPost';
+import { useLocalStorageData } from '../../Services/LocalStorageProvider';
+import KnobPadOverlay from '../../Components/ControlDialog/KnobPadOverlay';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,11 +38,15 @@ const useStyles = makeStyles((theme) => ({
 
 const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
     const { simConnectSystemEvent } = useSimConnectData();
+    const { isUsedArduino } = useLocalStorageData().configurationData;
     const sharedClasses = useStyles(panelInfo);
     const panelClasses = panelInfo.styles(panelInfo);
     const [activeButton, setActiveButton] = useState();
     const [reload, setReload] = useState(true);
-        
+    const [keyPadOpen, setKeyPadOpen] = useState(false);
+    const [showDualKnob, setShowDualKnob] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+
     const setupButtonClasses = (btn) => {
         var styleClasses = [];
 
@@ -57,33 +63,24 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
         return style;
     }
 
-    const setupButtonAction = (actions) => {
-        if (Array.isArray(actions))
+    const handleOnClick = (event, button) => {
+        if (button.action !== undefined && button.action !== null)
+            simConnectPost(button.action, 1)
+       
+        setActiveButton(button.id);
+
+        if(button.useEncoder || button.useDualEncoder)
         {
-            var selectedAction = actions.find(x => x.element === activeButton);
+            setShowDualKnob(button.useDualEncoder)
 
-            if(selectedAction !== undefined)
-                return selectedAction.action;
-
-            return null;
+            setAnchorEl(event.currentTarget);
+            if (!isUsedArduino)
+                setKeyPadOpen(!keyPadOpen);
         }
-        else
-            return actions;
     }
 
-    const handleOnClick = (action, button) => {
-        if (action !== undefined && action !== null)
-            simConnectPost(action, 1)
-        
-        //action();
-
-        // one off for G1000Nxi nose up and nose down button. Do not active button
-        //if(panelInfo.planetype === 'g1000nxi' && (button === 'btn_nose_up' || button === 'btn_nose_down'))
-        //    return;
-
-        
-        
-        setActiveButton(button);
+    const handleKeyPadClose = () => {
+        setKeyPadOpen(!keyPadOpen);
     }
 
     useEffect(() =>{
@@ -107,13 +104,22 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
                 <div className={sharedClasses.buttonOverlay}>
                     { panelInfo.definitions !== undefined && panelInfo.definitions.map(btn =>
                         <div key={btn.id} className={setupButtonClasses(btn)} style={setupButtonStyles(btn)}>
-                            <IconButton className={sharedClasses.iconButton} onClick={() => handleOnClick(setupButtonAction(btn.action), btn.id)} />
+                            <IconButton className={sharedClasses.iconButton} onClick={(event) => handleOnClick(event, btn)} />
                         </div>
                     )}
                 </div>
             }
+            {!isUsedArduino && keyPadOpen &&
+                <KnobPadOverlay
+                    open={keyPadOpen}
+                    onClose={handleKeyPadClose}
+                    allowInputOption={false}
+                    showDualKnob={showDualKnob}
+                    anchorEl={anchorEl}>
+                </KnobPadOverlay>
+            }
         </div>
-    ), [panelInfo, activeButton])
+    ), [panelInfo, activeButton, keyPadOpen])
 }
 
 export default PopoutPanelContainer;

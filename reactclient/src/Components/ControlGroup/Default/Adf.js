@@ -47,13 +47,10 @@ const Adf = () => {
                             <NumericEntryDisplay
                                 id={'adfEntry1'}
                                 initialValue={Number(String(ADF1_ACTIVE_FREQUENCY).slice(0, 2))}
-                                smallIncrementStep={1}
-                                smallDecrementStep={-1}
                                 numberOfDigit={2}
                                 numberOfDisplayDigit={2}
                                 minValue={0}
                                 maxValue={17}
-                                loopBack={true}
                                 disableNumPadKeys={['-']}
                                 directInput={directInputADF}
                                 onSet={(value) => simActions.Navigation.ADF.set(0, value, ADF1_ACTIVE_FREQUENCY)}
@@ -63,13 +60,10 @@ const Adf = () => {
                             <NumericEntryDisplay
                                 id={'adfEntry2'}
                                 initialValue={Number(String(ADF1_ACTIVE_FREQUENCY).charAt(2))}
-                                smallIncrementStep={1}
-                                smallDecrementStep={-1}
                                 numberOfDigit={1}
                                 numberOfDisplayDigit={1}
                                 minValue={0}
                                 maxValue={9}
-                                loopBack={true}
                                 disableNumPadKeys={['-']}
                                 directInput={directInputADF}
                                 onSet={(value) => simActions.Navigation.ADF.set(1, value, ADF1_ACTIVE_FREQUENCY)}
@@ -79,13 +73,10 @@ const Adf = () => {
                             <NumericEntryDisplay
                                 id={'adfEntry3'}
                                 initialValue={Number(String(ADF1_ACTIVE_FREQUENCY).charAt(3))}
-                                smallIncrementStep={1}
-                                smallDecrementStep={-1}
                                 numberOfDigit={1}
                                 numberOfDisplayDigit={1}
                                 minValue={0}
                                 maxValue={9}
-                                loopBack={true}
                                 disableNumPadKeys={['-']}
                                 directInput={directInputADF}
                                 onSet={(value) => simActions.Navigation.ADF.set(2, value, ADF1_ACTIVE_FREQUENCY)}
@@ -102,13 +93,8 @@ const Adf = () => {
                             numberOfDigit={3}
                             numberOfDisplayDigit={3}
                             disableNumPadKeys={['-']}
-                            largeIncrementStep={10}
-                            smallIncrementStep={1}
-                            largeDecrementStep={-10}
-                            smallDecrementStep={-1}
                             minValue={0}
                             maxValue={359}
-                            loopBack={true}
                             directInput={directInputADF}
                             onSet={simActions.Navigation.ADF.cardSet}
                             onSelect={simActions.Navigation.ADF.cardSelect} />

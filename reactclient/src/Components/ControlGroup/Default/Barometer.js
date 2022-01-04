@@ -37,14 +37,12 @@ const Barometer = () => {
                         <NumericEntryDisplay
                             id={'barometer'}
                             initialValue={KOHLSMAN_SETTING_HG}
-                            smallIncrementStep={0.01}
-                            smallDecrementStep={-0.01}
                             numberOfDigit={4}
                             numberOfDisplayDigit={5}
                             decimalPlaces={2}
                             minValue={28}
                             maxValue={32}
-                            allowDirectInput={true}
+                            allowInputOption={true}
                             onSelect={simActions.Barometer.select}
                             onSet={(value) => simActions.Barometer.set(value)} />
                         <div style={{ paddingLeft: '0.25em' }}>

@@ -43,13 +43,8 @@ const Obs = ({ id, label, obsValueKey, entrySetAction, entrySelectAction }) => {
                             numberOfDigit={3}
                             numberOfDisplayDigit={3}
                             disableNumPadKeys={['-']}
-                            largeIncrementStep={10}
-                            smallIncrementStep={1}
-                            largeDecrementStep={-10}
-                            smallDecrementStep={-1}
                             minValue={0}
                             maxValue={359}
-                            loopBack={true}
                             directInput={directInputOBS}
                             onSet={entrySetAction}
                             onSelect={entrySelectAction} />

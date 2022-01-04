@@ -3,22 +3,23 @@
         { "id": 1, "planeId": "g1000nxi", "name": "G1000NXi Enabled Plane",
             "panels": [
                 
-                { "id": 1, "panelId": "pfd", "name": "PFD (button overlay only)", "type": "framepanel", "hasMap": true, "hasTelemetryDisplay": false },
-                { "id": 2, "panelId": "mfd", "name": "MFD (button overlay only)", "type": "framepanel", "hasMap": true, "hasTelemetryDisplay": false },
-                { "id": 3, "panelId": "pfd", "name": "PFD (with button overlay)", "type": "buttonpanel", "hasMap": true, "hasTelemetryDisplay": true },
-                { "id": 4, "panelId": "mfd", "name": "MFD (with button overlay)", "type": "buttonpanel", "hasMap": true, "hasTelemetryDisplay": true },
-                { "id": 5, "panelId": "pfd", "name": "PFD", "type": "webpanel", "hasMap": true, "hasTelemetryDisplay": true },
-                { "id": 6, "panelId": "mfd", "name": "MFD", "type": "webpanel", "hasMap": true, "hasTelemetryDisplay": true }
+                { "id": 1, "panelId": "pfd", "name": "PFD (button overlay only)", "type": "framepanel", "hasMap": true },
+                { "id": 2, "panelId": "mfd", "name": "MFD (button overlay only)", "type": "framepanel", "hasMap": true },
+                { "id": 3, "panelId": "pfd", "name": "PFD (with button overlay)", "type": "buttonpanel", "hasMap": true },
+                { "id": 4, "panelId": "mfd", "name": "MFD (with button overlay)", "type": "buttonpanel", "hasMap": true },
+                { "id": 5, "panelId": "pfd", "name": "PFD", "type": "webpanel", "hasMap": true },
+                { "id": 6, "panelId": "mfd", "name": "MFD", "type": "webpanel", "hasMap": true }
 
             ]
         },
         { "id": 2, "planeId": "fbwa32nx", "name": "FlyByWire A32NX", 
             "panels": [
-                { "id": 1, "panelId": "pfd", "name": "PFD", "type": "webpanel", "hasMap": false, "hasTelemetryDisplay": false },
-                { "id": 2, "panelId": "nd", "name": "Navigation Display", "type": "webpanel", "hasMap": false, "hasTelemetryDisplay": false },
-                { "id": 3, "panelId": "eicas_1", "name": "ECAM 1", "type": "webpanel", "hasMap": false, "hasTelemetryDisplay": false }, 
-                { "id": 4, "panelId": "eicas_2", "name": "ECAM 2", "type": "webpanel", "hasMap": false, "hasTelemetryDisplay": false }, 
-                { "id": 5, "panelId": "cdu", "name": "Multipurpose Control Display Unit (with button overlay)", "type": "buttonpanel", "hasMap": false, "hasTelemetryDisplay": false } 
+                { "id": 1, "panelId": "pfd", "name": "PFD", "type": "webpanel", "hasMap": false },
+                { "id": 2, "panelId": "nd", "name": "Navigation Display", "type": "webpanel", "hasMap": false },
+                { "id": 3, "panelId": "eicas_1", "name": "ECAM 1", "type": "webpanel", "hasMap": false }, 
+                { "id": 4, "panelId": "eicas_2", "name": "ECAM 2", "type": "webpanel", "hasMap": false }, 
+                { "id": 5, "panelId": "cdu", "name": "MCDU (with button overlay)", "type": "buttonpanel", "hasMap": false },
+                { "id": 6, "panelId": "isis", "name": "ISIS", "type": "webpanel", "hasMap": false }
             ]
         }
     ],
@@ -32,6 +33,8 @@
         { "id": 6, "planeId": "fbwa32nx", "panelId": "nd", "panel_coherent_id": "nd_template_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
         { "id": 7, "planeId": "fbwa32nx", "panelId": "eicas_1", "panel_coherent_id": "eicas_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" } ,
         { "id": 8, "planeId": "fbwa32nx", "panelId": "eicas_2", "panel_coherent_id": "eicas_2", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" },
-        { "id": 9, "planeId": "fbwa32nx", "panelId": "cdu", "panel_coherent_id": "a320_neo_cdu", "width": 446, "height": 674, "panelRatio": "446/674", "iframeRatio": "333/255", "definitions": "FBWA32NX_CDU_DEF", "styles": "FBWA32NX_CDU_STYLES" }
+        { "id": 9, "planeId": "fbwa32nx", "panelId": "cdu", "panel_coherent_id": "a320_neo_cdu", "width": 446, "height": 674, "panelRatio": "446/674", "iframeRatio": "333/260", "definitions": "FBWA32NX_CDU_DEF", "styles": "FBWA32NX_CDU_STYLES" },
+        { "id": 8, "planeId": "fbwa32nx", "panelId": "isis", "panel_coherent_id": "isis", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }
+        
     ]
 }

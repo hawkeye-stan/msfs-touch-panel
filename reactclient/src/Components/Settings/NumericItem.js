@@ -34,7 +34,6 @@ const NumericItem = (props) => {
             case 'mapRefreshInterval':
                 updatedData[key] = value;
                 break;
-            case 'numericInputTypeStepper':
             case 'isUsedArduino':
             case 'showLog':
                 updatedData[key] = !configurationData[key];
@@ -61,10 +60,8 @@ const NumericItem = (props) => {
                         decimalPlaces={0}
                         minValue={props.minInterval}
                         maxValue={props.maxInterval}
-                        smallIncrementStep={50}
-                        smallDecrementStep={-50}
                         usedByArduino={false}
-                        allowDirectInput={false}
+                        allowInputOption={false}
                         onSet={(value) => handleChange(props.itemKey, (Number(value)))}
                     />
                 </div>

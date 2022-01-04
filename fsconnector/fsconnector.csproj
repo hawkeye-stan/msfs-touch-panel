@@ -30,16 +30,4 @@
 	  </Reference>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Update="Presets\msfs2020_eventids.cip">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Presets\msfs2020_eventids_user.cip">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Presets\msfs2020_simvars.cip">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
-
 </Project>

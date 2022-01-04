@@ -222,6 +222,11 @@ const createTagElement = (node, parentNodeId, parentTag) => {
             }
         }
 
+        if(parentTag.toLowerCase() === "style")
+        {
+            return node.nodeValue;
+        }
+
         let element = createSpecificElement('place-holder');
         element.setAttribute('name', node.nodeId);
         element.textContent = node.nodeValue;
@@ -374,12 +379,14 @@ const setElementAttributes = (nodeId, element, attributes) => {
 }
 
 const handleRemoveElement = (data) => {
-    // let parentNode = getNodeById(data.parentNodeId);
-    // let node = getNodeById(data.nodeId);
-    // if(parentNode !== undefined && node !== undefined)
-    //     parentNode.removeChild(node);
+    let parentNode = getNodeById(data.parentNodeId);
+    let node = getNodeById(data.nodeId);
+    if(parentNode !== undefined && node !== undefined)
+        parentNode.removeChild(node);
 
-    deletedNodes.push(data.nodeId);
+    // To reduce html element flashing, defer the delete nodes using the code below. But it will
+    // introduce artifact of node lingering on screen
+    //deletedNodes.push(data.nodeId);
 }
 
 const handleInsertNode = (data) => {

@@ -37,15 +37,13 @@ const SimRate = () => {
             <div className={classes.simrateEntry}>
                 <NumericEntryDisplay
                     initialValue={SIMULATION_RATE}
-                    smallIncrementStep={(value) => { return value * 2 }}
-                    smallDecrementStep={(value) => { return value / 2 }}
                     numberOfDigit={1}
                     decimalPlaces={1}
                     minValue={1}
                     maxValue={8}
-                    allowDirectInput={false}
+                    allowInputOption={false}
                     usedByArduino={false}
-                    stepperOnly={true}
+                    disableNumPadKeys={[9, 0, '-']}
                     onColor={'rgb(32, 217, 32, 1)'}
                     onSet={(value) => handleOnSet(value, SIMULATION_RATE)} />
                 <div style={{ paddingLeft: '0.25em' }}>

@@ -37,6 +37,15 @@
     <None Update="cert.pem">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Data\MobiFlightPresets\msfs2020_eventids.cip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\MobiFlightPresets\msfs2020_eventids_user.cip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\MobiFlightPresets\msfs2020_simvars.cip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 	<ItemGroup>
@@ -405,6 +414,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Data\EncoderCommandMapping.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Update="Data\PlanePanelProfileInfo.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

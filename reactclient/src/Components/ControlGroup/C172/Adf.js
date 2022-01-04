@@ -113,13 +113,8 @@ const Adf = () => {
                                 numberOfDigit={3}
                                 numberOfDisplayDigit={3}
                                 disableNumPadKeys={['-']}
-                                largeIncrementStep={10}
-                                smallIncrementStep={1}
-                                largeDecrementStep={-10}
-                                smallDecrementStep={-1}
                                 minValue={0}
                                 maxValue={359}
-                                loopBack={true}
                                 directInput={directInputADF}
                                 onSet={simActions.Navigation.ADF.cardSet}
                                 onSelect={simActions.Navigation.ADF.cardSelect} />

@@ -145,17 +145,10 @@ export const darkTheme = createTheme(adaptV4Theme({
         },
         MuiBackdrop: {
             root: {
-                backgroundColor: 'rgb(10, 10, 10, 0.95)'
+                backgroundColor: 'rgb(10, 10, 10, 0.95)',
+                opacity: '0.2 !important'
             }
         }, 
-        MuiDialog:{
-            backgroundColor: 'transparent',
-            margin: 0,
-            padding: 0,
-            border: '1px solid ' + globalTheme.palette.border,
-            borderRadius: '24px',
-            outline: 'none'
-        },
         MuiPaper:{
             root: {
                 backgroundImage: 'linear-gradient(45deg, rgb(30, 33, 42, 1) 25%, rgb(17, 19, 24, 1) 75%)'
@@ -165,7 +158,8 @@ export const darkTheme = createTheme(adaptV4Theme({
             root: {
                 padding: 0
             }
-        }
+        },
+
     },
     custom: {
         defaultDialog: {

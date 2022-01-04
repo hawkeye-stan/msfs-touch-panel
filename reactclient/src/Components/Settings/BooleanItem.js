@@ -34,7 +34,6 @@ const BooleanItem = (props) => {
             case 'mapRefreshInterval':
                 updatedData[key] = value;
                 break;
-            case 'numericInputTypeStepper':
             case 'isUsedArduino':
             case 'showLog':
                 updatedData[key] = !configurationData[key];

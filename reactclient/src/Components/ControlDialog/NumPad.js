@@ -3,7 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material'
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
+import Popover from '@mui/material/Popover';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 import BackspaceIcon from '@mui/icons-material/Backspace';
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const NumPad = ({ open, numberOfDigit, decimalPlaces, minValue, maxValue, disableNumPadKeys, onSet, onClose, isDirectInput, allowDirectInput, onDirectInputChanged }) => {
+const NumPad = ({ anchorEl, open, numberOfDigit, decimalPlaces, minValue, maxValue, disableNumPadKeys, onSet, onClose, isDirectInput, allowInputOption, onDirectInputChanged }) => {
     const classes = useStyles();
     const [keyPadValue, setKeyPadValue] = useState('');
     const [isValid, setIsValid] = useState(false);
@@ -169,56 +169,69 @@ const NumPad = ({ open, numberOfDigit, decimalPlaces, minValue, maxValue, disabl
     }
 
     return (
-        <div>
-            <Dialog aria-labelledby='KeyPad' aria-describedby='KeyPad' className={classes.dialog} open={open} onClose={handleClose}>
-                <div className={classes.paper}>
-                    <div className={classes.controlBar}>
-                        <IconButton color='inherit' aria-label='close' size='medium' onClick={handleClose}>
-                            <CloseIcon />
-                        </IconButton>
-                        {allowDirectInput &&
-                            <div className={classes.directInputSwitch}>
-                                <Typography variant='h6' style={{paddingRight: '8px'}}>Direct Input</Typography>
-                                <Switch
-                                    checked={isDirectInput}
-                                    onChange={handleDirectInputChanged}
-                                    color='primary'
-                                    size='small'
-                                />
-                            </div>
-                        }
-                        <IconButton color='inherit' aria-label='accept' size='medium' disabled={!isValid} onClick={handleOnSet}>
-                            <CheckIcon />
-                        </IconButton>
-                    </div>
-                    <div className={classes.numericDisplay}>
-                        <Tooltip title={'Must be between ' + minValue + ' and ' + maxValue} placement="top" >
-                            <InfoIcon />
-                        </Tooltip>
-                        <div className={classes.numericValue}>
-                            <Typography variant='h2'>{String(keyPadValue).replace(/^0\.[0]*/, '')}</Typography>
+        <Popover 
+            aria-labelledby='KnobPad' 
+            aria-describedby='KnobPad' 
+            anchorEl={anchorEl} 
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+                }}
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            className={classes.dialog} 
+            open={open} 
+            onClose={handleClose}
+        >
+            <div className={classes.paper}>
+                <div className={classes.controlBar}>
+                    <IconButton color='inherit' aria-label='close' size='medium' onClick={handleClose}>
+                        <CloseIcon />
+                    </IconButton>
+                    {allowInputOption &&
+                        <div className={classes.directInputSwitch}>
+                            <Typography variant='h6' style={{paddingRight: '8px'}}>Direct Input</Typography>
+                            <Switch
+                                checked={isDirectInput}
+                                onChange={handleDirectInputChanged}
+                                color='primary'
+                                size='small'
+                            />
                         </div>
-                        <IconButton color='inherit' aria-label='backspace' size='medium' onClick={handleBackspace}>
-                            <BackspaceIcon />
-                        </IconButton>
-                    </div>
-
-                    <div>
-                        <Grid container className={classes.keypadBox}>
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, '-', 0].map((v, index) => {
-                                return (
-                                    <Grid item xs={v === 0 ? 8 : 4} key={'key' + index} className={classes.keypadKey}>
-                                        <Button disabled={disableNumPadKeys.includes(v)} variant='outlined' className={v === 0 ? classes.keypadButtonZero : classes.keypadButton} onClick={() => handleKeyPress(v)}>
-                                            <Typography variant='h2'>{v}</Typography>
-                                        </Button>
-                                    </Grid>
-                                )
-                            })}
-                        </Grid>
-                    </div>
+                    }
+                    <IconButton color='inherit' aria-label='accept' size='medium' disabled={!isValid} onClick={handleOnSet}>
+                        <CheckIcon />
+                    </IconButton>
                 </div>
-            </Dialog>
-        </div>
+                <div className={classes.numericDisplay}>
+                    <Tooltip title={'Must be between ' + minValue + ' and ' + maxValue} placement="top" >
+                        <InfoIcon />
+                    </Tooltip>
+                    <div className={classes.numericValue}>
+                        <Typography variant='h2'>{String(keyPadValue).replace(/^0\.[0]*/, '')}</Typography>
+                    </div>
+                    <IconButton color='inherit' aria-label='backspace' size='medium' onClick={handleBackspace}>
+                        <BackspaceIcon />
+                    </IconButton>
+                </div>
+
+                <div>
+                    <Grid container className={classes.keypadBox}>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, '-', 0].map((v, index) => {
+                            return (
+                                <Grid item xs={v === 0 ? 8 : 4} key={'key' + index} className={classes.keypadKey}>
+                                    <Button disabled={disableNumPadKeys.includes(v)} variant='outlined' className={v === 0 ? classes.keypadButtonZero : classes.keypadButton} onClick={() => handleKeyPress(v)}>
+                                        <Typography variant='h2'>{v}</Typography>
+                                    </Button>
+                                </Grid>
+                            )
+                        })}
+                    </Grid>
+                </div>
+            </div>
+        </Popover>
     );
 }
 

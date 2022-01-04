@@ -24,8 +24,7 @@ const LocalStorageProvider = ({ initialData, children }) => {
         let settings = {
             dataRefreshInterval: 100,
             mapRefreshInterval: 250,
-            isUsedArduino: true,
-            numericInputType: 'knob',
+            isUsedArduino: false,
             showLog: false,
             panelVisibility: { }
         };

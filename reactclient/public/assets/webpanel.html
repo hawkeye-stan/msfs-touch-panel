@@ -8,18 +8,21 @@
             body { background-color: black; fill: white;  max-width: 100%;  margin: auto; }
 
             /* draw a border around vcockpit panel */
-            #BacklightBleed { border: 1px solid lightgray }
-            .BacklightBleed { border: 1px solid lightgray }
+            #BacklightBleed { border: 1px solid #444444; border-radius: 20px !important; }
+            .BacklightBleed { border: 1px solid #444444; border-radius: 20px !important; }
 
             /* A32nx MCDU override */
             a320-neo-cdu-main-display { width: 100% !important; aspect-ratio: 0.9 }
-            a320-neo-cdu-main-display #Mainframe { font-size: calc(42px + 5.3vw) !important }
+            a320-neo-cdu-main-display #Mainframe { font-size: calc(64px) !important }
             a320-neo-cdu-main-display #header { margin-top: 2.5% !important; margin-bottom: 0 !important }
             a320-neo-cdu-main-display #title-left { top: 2.5% !important }
             a320-neo-cdu-main-display #page-info { top: 2.5% !important }
             a320-neo-cdu-main-display .line-left { left: 5% !important }
             a320-neo-cdu-main-display .line-right { right: 5% !important }
             a320-neo-cdu-main-display .line { height: 7% !important }
+
+            /* A32nx ISI override - fix bug */
+            a32nx-isis .mask { fill: transparent }
 
             /* G1000 override */
             .map-inset { display: none }

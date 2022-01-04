@@ -16,26 +16,6 @@ const useStyles = makeStyles((theme) => ({
     
 }));
 
-const comSmallIncrementFunc = (value) => {
-    let val = Number(value);
-    let decimalPart = Number((val * 10 % 1).toFixed(3));
-
-    if (decimalPart === 0.90 || decimalPart === 0.65 || decimalPart === 0.40 || decimalPart === 0.15)
-        return val += 0.01;
-
-    return val += 0.005;
-}
-
-const comSmallDecrementFunc = (value) => {
-    let val = Number(value);
-    let decimalPart = Number((val * 10 % 1).toFixed(3));
-
-    if (decimalPart === 0 || decimalPart === 0.75 || decimalPart === 0.50 || decimalPart === 0.25)
-        return val -= 0.01;
-
-    return val -= 0.005;
-}
-
 const ComRadio = ({ id, label, transmitOnKey, activeFreqKey, standbyFreqKey, transmitChangedAction, radioSelectAction, radioSetAction, radioSwappedAction }) => {
     const classes = useStyles();
     const onColor = 'rgb(32, 217, 32, 1)';
@@ -65,10 +45,6 @@ const ComRadio = ({ id, label, transmitOnKey, activeFreqKey, standbyFreqKey, tra
                         standbyFreqKey={standbyFreqKey}
                         minFreqValue={118}
                         maxFreqValue={136.99}
-                        smallIncrementStep={comSmallIncrementFunc}
-                        smallDecrementStep={comSmallDecrementFunc}
-                        largeIncrementStep={1}
-                        largeDecrementStep={-1}
                         radioSelectAction={radioSelectAction}
                         radioSetAction={radioSetAction}
                         radioSwappedAction={radioSwappedAction} />

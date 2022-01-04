@@ -9,8 +9,8 @@ export const PANEL_CONTROL_STYLE_DEFINITION = {
             border: '0',
             backgroundColor: 'black',
             margin: 'auto',
-            paddingTop: '1em',
-            paddingBottom: '1em',
+            paddingTop: '0.5em',
+            paddingBottom: '0.5em',
             zIndex: 999
         },
     }),

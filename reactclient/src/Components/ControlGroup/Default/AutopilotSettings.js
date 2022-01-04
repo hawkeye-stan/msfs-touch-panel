@@ -65,10 +65,7 @@ const AutoPilotSettings = () => {
                             initialValue={AUTOPILOT_ALTITUDE}
                             numberOfDigit={5}
                             numberOfDisplayDigit={5}
-                            largeIncrementStep={1000}
-                            smallIncrementStep={100}
-                            largeDecrementStep={-1000}
-                            smallDecrementStep={-100}
+                            showDualKnob={true}
                             minValue={-2000}
                             maxValue={99900}
                             directInput={directInputAutopilot}
@@ -91,8 +88,6 @@ const AutoPilotSettings = () => {
                             initialValue={AUTOPILOT_VS}
                             numberOfDigit={4}
                             numberOfDisplayDigit={5}
-                            smallIncrementStep={100}
-                            smallDecrementStep={-100}
                             minValue={-9900}
                             maxValue={9900}
                             directInput={directInputAutopilot}
@@ -113,13 +108,9 @@ const AutoPilotSettings = () => {
                             numberOfDigit={3}
                             numberOfDisplayDigit={5}
                             disableNumPadKeys={['-']}
-                            largeIncrementStep={10}
-                            smallIncrementStep={1}
-                            largeDecrementStep={-10}
-                            smallDecrementStep={-1}
+                            showDualKnob={true}
                             minValue={0}
                             maxValue={359}
-                            loopBack={true}
                             directInput={directInputAutopilot}
                             onSet={simActions.Autopilot.Heading.set}
                             onSelect={simActions.Autopilot.Heading.select} />
@@ -141,10 +132,6 @@ const AutoPilotSettings = () => {
                             numberOfDigit={3}
                             numberOfDisplayDigit={5}
                             disableNumPadKeys={['-']}
-                            largeIncrementStep={10}
-                            smallIncrementStep={1}
-                            largeDecrementStep={-10}
-                            smallDecrementStep={-1}
                             minValue={0}
                             maxValue={999}
                             directInput={directInputAutopilot}

@@ -14,11 +14,22 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         justifyContent: 'center',
         touchAction: 'none',
+        backgroundColor: 'transparent',
+        opacity: 0.9,
+        '& .MuiPopover-paper':
+        {
+            backgroundImage: 'none !important',
+            backgroundColor: 'transparent',
+            border: '0 !important',
+            boxShadow: 'none'
+        }
     },
     paper: {
+        ...theme.custom.defaultDialog,
         width: '255px',
         height: '255px',
-        ...theme.custom.defaultDialog
+        backgroundColor: 'transparent',
+        border: '1px solid transparent'
     },
     controlBar: {
         display: 'flex',
@@ -44,10 +55,11 @@ const useStyles = makeStyles((theme) => ({
     knob: {
         [theme.breakpoints.up('sm')]: { marginTop: '100px' },
         [theme.breakpoints.up('md')]: { marginTop: '125px' }
-    }
+    },
+
 }));
 
-const KnobPad = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChanged, showDualKnob = false }) => {
+const KnobOverlay = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChanged, allowInputOption = true, showDualKnob = false }) => {
     const classes = useStyles();
 
     const handleClose = () => {
@@ -71,6 +83,10 @@ const KnobPad = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChanged,
         simActions.Encoder.lowerDecrease();
     }
 
+    const HandleEncoderPush = () => {
+        simActions.Encoder.push();
+    }
+
     const handleDirectInputChanged = () => {
         if (onDirectInputChanged != null)
             onDirectInputChanged(true);
@@ -82,32 +98,34 @@ const KnobPad = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChanged,
             aria-describedby='KnobPad' 
             anchorEl={anchorEl} 
             anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+                vertical: 'center',
+                horizontal: 'center',
                 }}
             transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: 'center',
+                horizontal: 'center',
             }}
             className={classes.dialog} 
             open={open} 
             onClose={handleClose}
         >
-            <div className={classes.controlBar}>
-                <IconButton color='inherit' aria-label='close' size='medium' onClick={handleClose}>
-                    <CloseIcon />
-                </IconButton>
-                <div className={classes.directInputSwitch}>
-                    <Typography variant='h6' style={{ paddingRight: '8px' }}>Direct Input</Typography>
-                    <Switch
-                        checked={!isDirectInput}
-                        onChange={handleDirectInputChanged}
-                        color='primary'
-                        size='small'
-                    />
-                    </div>
-                <div>&nbsp;</div>
-            </div>
+            { allowInputOption && 
+                <div className={classes.controlBar}>
+                    <IconButton color='inherit' aria-label='close' size='medium' onClick={handleClose}>
+                        <CloseIcon />
+                    </IconButton>
+                    <div className={classes.directInputSwitch}>
+                        <Typography variant='h6' style={{ paddingRight: '8px' }}>Direct Input</Typography>
+                        <Switch
+                            checked={!isDirectInput}
+                            onChange={handleDirectInputChanged}
+                            color='primary'
+                            size='small'
+                        />
+                        </div>
+                    <div>&nbsp;</div>
+                </div>
+            }
             <div className={classes.paper}>
                 <div className={classes.knob}>
                     <DualKnob
@@ -115,6 +133,8 @@ const KnobPad = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChanged,
                         onUpperKnobDecrease={HandleUpperKnobDecrease}
                         onLowerKnobIncrease={HandleLowerKnobIncrease}
                         onLowerKnobDecrease={HandleLowerKnobDecrease}
+                        onKnobPush={HandleEncoderPush}
+                        showKnobButton={true}
                         showDualKnob={showDualKnob}>
                     </DualKnob>
                 </div>
@@ -123,4 +143,4 @@ const KnobPad = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChanged,
     )
 }
 
-export default KnobPad;
+export default KnobOverlay;

@@ -65,7 +65,6 @@ const SettingConfiguration = () => {
             case 'mapRefreshInterval':
                 updatedData[key] = value;
                 break;
-            case 'numericInputTypeStepper':
             case 'isUsedArduino':
             case 'showLog':
                 updatedData[key] = !configurationData[key];
@@ -117,10 +116,8 @@ const SettingConfiguration = () => {
                         decimalPlaces={0}
                         minValue={props.minInterval}
                         maxValue={props.maxInterval}
-                        smallIncrementStep={50}
-                        smallDecrementStep={-50}
                         usedByArduino={false}
-                        allowDirectInput={false}
+                        allowInputOption={false}
                         onSet={(value) => handleChange(props.itemKey, (Number(value)))}
                     />
                 </div>
@@ -144,9 +141,7 @@ const SettingConfiguration = () => {
                         </Grid>
                         <NumericItem itemKey='dataRefreshInterval' itemLabel='Data Refresh Interval' minInterval={50} maxInterval={5000}></NumericItem>
                         <NumericItem itemKey='mapRefreshInterval' itemLabel='Map Refresh Interval' minInterval={50} maxInterval={5000}></NumericItem>
-                        <BooleanItem itemKey='numericInputTypeStepper' itemLabel='Number Input Method' onLabel='Stepper' offLabel='Knob' onFunc={configurationData.numericInputTypeStepper}></BooleanItem>
                         <BooleanItem itemKey='isUsedArduino' itemLabel='Use Arduino' onLabel='Yes' offLabel='No' onFunc={configurationData.isUsedArduino}></BooleanItem>
-
                         <Grid item xs={12} className={classes.gridTitle}>
                             <Typography variant='h5'>Panels</Typography>
                         </Grid>
