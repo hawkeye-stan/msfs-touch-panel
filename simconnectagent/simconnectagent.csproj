@@ -6,6 +6,7 @@
     <Platforms>AnyCPU;x64</Platforms>
     <AssemblyName>MSFSTouchPanel.SimConnectAgent</AssemblyName>
 	<DebugType Condition=" '$(Configuration)' == 'Release' ">None</DebugType>
+	  <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <ItemGroup>

@@ -6,6 +6,7 @@
     <AssemblyName>MSFSTouchPanel.FSConnector</AssemblyName>
     <Platforms>AnyCPU;x64</Platforms>
 	<DebugType Condition=" '$(Configuration)' == 'Release' ">None</DebugType>
+	  <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
 
 	<ItemGroup>

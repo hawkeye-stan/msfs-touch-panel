@@ -6,6 +6,7 @@
     <AssemblyName>MSFSTouchPanel.shared</AssemblyName>
     <Platforms>AnyCPU;x64</Platforms>
 	<DebugType Condition=" '$(Configuration)' == 'Release' ">None</DebugType>
+	  <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
