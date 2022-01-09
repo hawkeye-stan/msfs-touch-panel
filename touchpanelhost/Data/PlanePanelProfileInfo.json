@@ -21,6 +21,14 @@
                 { "id": 5, "panelId": "cdu", "name": "MCDU (with button overlay)", "type": "buttonpanel", "hasMap": false },
                 { "id": 6, "panelId": "isis", "name": "ISIS", "type": "webpanel", "hasMap": false }
             ]
+        },
+        { "id": 3, "planeId": "cj4", "name": "Asobo Cessna Citation CJ4", 
+            "panels": [
+                { "id": 1, "panelId": "pfd", "name": "PFD", "type": "webpanel", "hasMap": false },
+                { "id": 2, "panelId": "mfd", "name": "MFD", "type": "webpanel", "hasMap": false },
+                { "id": 3, "panelId": "fmc", "name": "FMC", "type": "webpanel", "hasMap": false }, 
+                { "id": 4, "panelId": "sai", "name": "SAI", "type": "webpanel", "hasMap": false }
+            ]
         }
     ],
 
@@ -29,12 +37,18 @@
         { "id": 2, "planeId": "g1000nxi", "panelId": "pfd", "panel_coherent_id": "wtg1000_pfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "styles": "G1000NXI_STYLES" },
         { "id": 3, "planeId": "g1000nxi", "panelId": "mfd", "panel_coherent_id": "as1000_mfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "definitions": "G1000NXI_MFD_DEF", "styles": "G1000NXI_STYLES" },
         { "id": 4, "planeId": "g1000nxi", "panelId": "mfd", "panel_coherent_id": "as1000_mfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "styles": "G1000NXI_STYLES" },
-        { "id": 5, "planeId": "fbwa32nx", "panelId": "pfd", "panel_coherent_id": "pfd_template_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
-        { "id": 6, "planeId": "fbwa32nx", "panelId": "nd", "panel_coherent_id": "nd_template_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
-        { "id": 7, "planeId": "fbwa32nx", "panelId": "eicas_1", "panel_coherent_id": "eicas_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" } ,
-        { "id": 8, "planeId": "fbwa32nx", "panelId": "eicas_2", "panel_coherent_id": "eicas_2", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" },
-        { "id": 9, "planeId": "fbwa32nx", "panelId": "cdu", "panel_coherent_id": "a320_neo_cdu", "width": 446, "height": 674, "panelRatio": "446/674", "iframeRatio": "333/260", "definitions": "FBWA32NX_CDU_DEF", "styles": "FBWA32NX_CDU_STYLES" },
-        { "id": 8, "planeId": "fbwa32nx", "panelId": "isis", "panel_coherent_id": "isis", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }
+        
+        { "id": 11, "planeId": "fbwa32nx", "panelId": "pfd", "panel_coherent_id": "pfd_template_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
+        { "id": 12, "planeId": "fbwa32nx", "panelId": "nd", "panel_coherent_id": "nd_template_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
+        { "id": 13, "planeId": "fbwa32nx", "panelId": "eicas_1", "panel_coherent_id": "eicas_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" },
+        { "id": 14, "planeId": "fbwa32nx", "panelId": "eicas_2", "panel_coherent_id": "eicas_2", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" },
+        { "id": 15, "planeId": "fbwa32nx", "panelId": "cdu", "panel_coherent_id": "a320_neo_cdu", "width": 446, "height": 674, "panelRatio": "446/674", "iframeRatio": "333/260", "definitions": "FBWA32NX_CDU_DEF", "styles": "FBWA32NX_CDU_STYLES" },
+        { "id": 16, "planeId": "fbwa32nx", "panelId": "isis", "panel_coherent_id": "isis", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" },
+        
+        { "id": 21, "planeId": "cj4", "panelId": "pfd", "panel_coherent_id": "cj4_pfd", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
+        { "id": 22, "planeId": "cj4", "panelId": "mfd", "panel_coherent_id": "cj4_mfd", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
+        { "id": 23, "planeId": "cj4", "panelId": "fmc", "panel_coherent_id": "cj4_fmc", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" },
+        { "id": 24, "planeId": "cj4", "panelId": "sai", "panel_coherent_id": "cj4_sai", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }
         
     ]
 }

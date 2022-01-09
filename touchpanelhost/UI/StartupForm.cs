@@ -35,8 +35,7 @@ namespace MSFSTouchPanel.TouchPanelHost
             StartServers();
 
             // Get app version label
-            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            lblVersion.Text = version.ToString();
+            lblVersion.Text = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major}.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor}.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build}";
 
             // Create system menus
             SetupSystemMenus();
