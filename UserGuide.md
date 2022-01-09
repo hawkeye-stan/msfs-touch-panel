@@ -16,10 +16,12 @@ The menu bar displays the current connection status of the application as well a
 
 <img src="screenshots/app/screenshot11.png" width="980" hspace="10" />
 
-Explanation of menu bar icons from the left to right:
+Explanation of menu bar icons/info from the left to right:
 
 * Connection status to MSFS - This will become active when MSFS/SimConnect is connected.
 * Connection status for Arduino - This will become active if Arduino is connected.
+* Plane Title
+* [Web Panel Feature](ExperiementalFeatuere2.md)
 * [Switch to map screen](#map-screen)
 * Plane profile settings
 
@@ -27,7 +29,6 @@ Explanation of menu bar icons from the left to right:
 				
 	<img src="screenshots/app/screenshot9.png"  hspace="10"/>
 
-* Experimental feature - This is used toggle between experimental feature and the regular app.
 * Configuration Settings
 
 	The configuration settings allow you to adjust various features of the application.
@@ -36,7 +37,6 @@ Explanation of menu bar icons from the left to right:
 		
 	* **Data Refresh Interval** - data will refresh every X milliseconds. The valid refresh rate is between 50ms to 5000ms. If the application seems slow or unresponsive, you can increase the refresh interval. The refresh interval will affect how fast the telemetry and UI is being updated. For any recently built computer, the lowest refresh interval will work just fine.		
 	* **Map Refresh Interval** - map will refresh every X milliseconds. The valid refresh rate is between 50ms to 5000ms. When using plane following, the map will move smoother when using lower refresh interval.
-	* [Number Input Method](#input-method) - when not using direct input, you can either use the knob method or stepper method to input data.
 	* [Use Arduino](#arduino-input-method) - enable input using Arduino hardware.
 	* **Panels** - show or hide the selected panel on the main screen. The show/hide panel configuration is saved per plane configuration. 
 
@@ -50,7 +50,19 @@ The flight control panels consist of some of the frequently use functions during
 
 ## Input Method
 
-There are 4 ways to input data into flight control. For choosing direct input or non-direct input, your configuration will be saved for the individual inputs. For example, if you want to use direct input for NAV/COM and knob input for Autopilot heading, you can do that!
+There are three ways to input data into flight control. For choosing direct input or non-direct input, your configuration will be saved for the individual inputs. For example, if you want to use direct input for NAV/COM and knob input for Autopilot heading, you can do that!
+
+* Dial Knob Input Method
+
+	<img src="screenshots/app/screenshot4.png" hspace="10"/>
+
+	* 	For a more immersive and fun way to enter data. The dual knobs behaves exactly like the dual knob control in flight instrument panel within the simulation. 
+	 
+	*	Depending on the input field, there maybe only a single knob for the input instead of dual knobs.
+
+	* 	To exit or cancel your input, either press the "X" button or press anywhere outside the knob pad popup.
+	
+	* 	To switch between direct input or knob input, you can press the "Direct Input" switch at the top. The popup will change to direct input number pad for data entry.
 
 * Direct Input
 
@@ -63,35 +75,7 @@ There are 4 ways to input data into flight control. For choosing direct input or
 	* To exit or cancel your input, either press the "X" button or press anywhere outside the number pad popup.
 	
 	* To switch between direct input or knob/stepper input, you can press the "Direct Input" switch at the top. The popup will change to either knob or stepper input that is configured in the [Configuration Settings](#configuration-settings) menu.
-	 
-
-* Knob Input Method
-
-	<img src="screenshots/app/screenshot4.png" hspace="10"/>
-
-	* 	For a more immersive and fun way to enter data. The dual knobs behaves exactly like the dual knob control in flight instrument panel within the simulation. 
-	 
-	*	Depending on the input field, there maybe only a single knob for the input instead of dual knobs.
-	
-	*	To accept the input value, press the "Check" button in the upper right corner.
-	
-	* 	To exit or cancel your input, either press the "X" button or press anywhere outside the knob pad popup.
-	
-	* 	To switch between direct input or knob input, you can press the "Direct Input" switch at the top. The popup will change to direct input number pad for data entry.
-
-* Stepper Input Method
-
-	<img src="screenshots/app/screenshot6.png" hspace="10"/>
-
-	* 	If you prefer, the stepper input gives a set of small arrows and a set of big arrows to input data. The small arrows change the data value in a smaller increment and the big arrows change the data value in a bigger increment. 
-	 
-	*	Depending on the input field, there maybe only one set of arrows for the data input.
-	
-	*	To accept the input value, press the "Check" button in the upper right corner.
-	
-	* 	To exit or cancel your input, either press the "X" button or press anywhere outside the stepper pad popup.
-	
-	* 	To switch between direct input or stepper input, you can press the "Direct Input" switch at the top. The popup will change to direct input number pad for data entry.
+ 
 
 <br/>
 
@@ -123,15 +107,13 @@ The map screen gives you a prettier VFR map compare to the MSFS built-in VFR Map
 
 It includes the following features:
 
-* Current flight data display - Heading, Altitude, Airspeed, and Vertical Speed.
 * Enable/disable flight following (by dragging to different location on the map, flight following is automatically disable).
 * Center plane - set current plane location to the center of the map.
-* Show flight plan - current flight plan will be automatically loaded if available.
-* Show flight plan label - display waypoint's label and expected altitude at that waypoint.
+* Show/hide flight plan - current flight plan will be automatically loaded if available.
 
-For the map overlay, you can select it by pressing on the overlay icon at the upper right hand corner of the map. The map display uses OpenStreet map as default. The following map types are also available for selection:
+For the map overlay, you can select it by pressing on the overlay icon at the upper right hand corner of the map. The map display uses OpenTop map as default. The following map types are also available for selection:
 
-* Topography map
+* OpenStreet map
 * Dark version of map
 * Google Street
 * Google Terrain

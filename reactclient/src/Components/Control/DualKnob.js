@@ -105,7 +105,7 @@ const DualKnob = ({ width, onUpperKnobIncrease, onUpperKnobDecrease, onLowerKnob
             <div className={classes.knobSection}>
                 <div className={classes.knob}>
                     <Basic
-                        diameter={width === 'sm' ? 180 : 250}
+                        diameter={width === 'sm' ? 180 : (showDualKnob ? 250: 180)}
                         min={MIN_DIAL_STEP}
                         max={MAX_DIAL_STEP}
                         step={1}

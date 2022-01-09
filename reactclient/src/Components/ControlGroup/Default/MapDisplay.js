@@ -338,6 +338,7 @@ const MapDisplay = ({displayType, refresh}) => {
         {
             case 'full':
                 planePosition.current = newPosition;
+                drawPlaneCircleRadius(map, layerGroupPlanePosition.current, planePosition.current, mapDisplayType.planeRadiusCircleRange);
                 break;
             case 'waypoint':
                 if(waypoints.length <= 1)
@@ -369,12 +370,13 @@ const MapDisplay = ({displayType, refresh}) => {
 
 
     useEffect(() => {
-        if(waypointsState.length > 1)
+        if(waypointsState != null && waypointsState.length > 1)
         {
             layerGroupFlightPlan.current.clearLayers();
 
             if(mapDisplayType.displayType === 'full')
             {
+                
                 if(showFlightPlan)
                     drawFlightPath(waypointsState, layerGroupFlightPlan.current, mapDisplayType.displayType, mapDisplayType.planeRadiusCircleRange)
                 else
@@ -389,17 +391,18 @@ const MapDisplay = ({displayType, refresh}) => {
                 layerGroupFlightPlan.current.addLayer(marker);
             }
         }
-    }, [showFlightPlan, nextWaypointState])
+    }, [showFlightPlan, nextWaypointState, waypointsState])
 
 
     useEffect(() => {
-        if ((simConnectSystemEvent !== null && simConnectSystemEvent === 'SIMSTART')) {
-
+        //if ((simConnectSystemEvent !== null && simConnectSystemEvent === 'SIMSTART')) {
             simConnectGetFlightPlan().then(data => {
                 if (data !== undefined && data !== null) {
+                    console.log(data.waypoints);
                     setWaypointsState(data.waypoints);
                 }
 
+                
                 // override with G1000Nxi waypoint data
                 if(g1000NxiFlightPlan != null && g1000NxiFlightPlan.waypoints !== null && g1000NxiFlightPlan.waypoints.length > 0)
                 {
@@ -411,8 +414,8 @@ const MapDisplay = ({displayType, refresh}) => {
                     }
                 }
             });
-        }
-    }, [simConnectSystemEvent])
+        //}
+    }, [simConnectSystemEvent, refresh])
 
     useEffect(() => {
         if(mapDisplayType.displayType === 'full')

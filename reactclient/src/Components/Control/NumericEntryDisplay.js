@@ -74,9 +74,6 @@ const NumericEntryDisplay = ({ id, initialValue, labelLeft, labelRight, numberOf
         }
     }
 
-    console.log(configurationData['directInput_' + id] );
-    console.log(allowInputOption);
-
     return (
         <div>
             <div className={classes.segmentContainer} >
