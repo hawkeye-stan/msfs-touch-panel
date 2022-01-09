@@ -24,7 +24,7 @@ The panels below are real-time rendering of in-game pop out panels.
 
 To create the replica of the HTML panel, HTML assets for each supported plane has to be referenced in my app. To do this, symbolic folder links are created against certain MSFS game folders for the  HTML_UI assets.
 
-1. Relaunch MSFS Touch Panel server as administrator. This is important since Windows PowerScript needs administrator access to create symbolic folder links.
+1. Launch MSFS Touch Panel server as administrator. This is important since Windows PowerScript needs administrator access to create symbolic folder links.
 
 2. Select Advanced -> Created HTML assets folders (run as administrator)
 <div float="left">
@@ -55,7 +55,7 @@ Because of the lag of ability to pull Bing Map information / HTML canvas informa
 
 1. Launch the server application. (MSFS Touch Panel Server.exe)
 
-2. Navigate to the main application for the main app at:
+2. Navigate to the main application at:
 
 	http://(Your server ip):5000
 	
@@ -77,7 +77,7 @@ Because of the lag of ability to pull Bing Map information / HTML canvas informa
 
 6. The selected panel should automatically connnects.
 
-7. If panel is not connecting, click the "refresh" to reload the panel.
+7. If panel does not connect, click the "refresh" icon to reload the panel.
 
 # Direct Access to Panels
 
