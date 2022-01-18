@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundSize: '100% 100%',
         width: '100%',
         height: '100%',
+        aspectRatio: (props) => props.panelRatio,
         zIndex: 1000
     },
     iframe: {
@@ -39,8 +40,8 @@ const useStyles = makeStyles((theme) => ({
 const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
     const { simConnectSystemEvent } = useSimConnectData();
     const { isUsedArduino } = useLocalStorageData().configurationData;
-    const sharedClasses = useStyles(panelInfo);
-    const panelClasses = panelInfo.styles(panelInfo);
+    const sharedClasses = useStyles(panelInfo[0]);
+    const panelClasses = panelInfo[0].styles(panelInfo[0]);
     const [activeButton, setActiveButton] = useState();
     const [reload, setReload] = useState(true);
     const [keyPadOpen, setKeyPadOpen] = useState(false);
@@ -59,7 +60,7 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
     }
 
     const setupButtonStyles = (btn) => {
-        let style = {backgroundImage: `url(/img/${panelInfo.planeId}/${btn.image})`, left: (btn.left / panelInfo.width * 100.0) + '%', top: (btn.top / panelInfo.height * 100.0) + '%'};
+        let style = {backgroundImage: `url(/img/${panelInfo[0].planeId}/${btn.image})`, left: (btn.left / panelInfo[0].width * 100.0) + '%', top: (btn.top / panelInfo[0].height * 100.0) + '%'};
         return style;
     }
 
@@ -96,13 +97,16 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
     return useMemo(() => (
         <div className={sharedClasses.root}>
             {reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'webpanel') && 
-                <div className={displayFormat.toLowerCase() === 'webpanel' ? panelClasses.iframePanelMaxSize : panelClasses.iframePanel}>
-                    <iframe title='iframePanel' className={sharedClasses.iframe} src={`/assets/webpanel.html?planeId=${panelInfo.planeId}&panelId=${panelInfo.panelId}`} frameBorder="0"></iframe>
-                </div> 
-            }
+                panelInfo.map((panel, index) => { 
+                    return (
+                        <div key={'atc' + index} className={displayFormat.toLowerCase() === 'webpanel' ? panelClasses.iframePanelMaxSize : panelClasses['iframePanel_' + index]}>
+                            <iframe title='iframePanel' className={sharedClasses.iframe} src={`/assets/webpanel.html?planeId=${panel.planeId}&panelId=${panel.panel_coherent_id}`} frameBorder="0"></iframe>
+                        </div>
+                    )}
+                )}
             { reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'framepanel') &&
                 <div className={sharedClasses.buttonOverlay}>
-                    { panelInfo.definitions !== undefined && panelInfo.definitions.map(btn =>
+                    { panelInfo[0].definitions !== undefined && panelInfo[0].definitions.map(btn =>
                         <div key={btn.id} className={setupButtonClasses(btn)} style={setupButtonStyles(btn)}>
                             <IconButton className={sharedClasses.iconButton} onClick={(event) => handleOnClick(event, btn)} />
                         </div>

@@ -338,7 +338,6 @@ const MapDisplay = ({displayType, refresh}) => {
         {
             case 'full':
                 planePosition.current = newPosition;
-                drawPlaneCircleRadius(map, layerGroupPlanePosition.current, planePosition.current, mapDisplayType.planeRadiusCircleRange);
                 break;
             case 'waypoint':
                 if(waypoints.length <= 1)

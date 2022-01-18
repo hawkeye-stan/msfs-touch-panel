@@ -28,7 +28,8 @@ const useStyles = props => makeStyles((theme) => ({
         maxWidth: 'inherit'
     },
     mapPanel: {
-        height: '100%',
+        width: '100vw',
+        height: '100%'
     },
     popoutPanel: {
         width: '100%',
@@ -108,14 +109,14 @@ const WebPanel = ({planeId, panelId, displayFormat}) => {
                             { panelProfile.hasTelemetryDisplay && <TelemetryPanel></TelemetryPanel> }
                         </div>
                     
-                        <div className={classes.panelContainer} style={{ aspectRatio: String(planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId && x.planeId.toLowerCase() == planeId).panelRatio) }}>
+                        <div className={classes.panelContainer} style={{ aspectRatio: String(planePanelProfileInfo.panels.filter(x => x.panelId === panelProfile.panelId && x.planeId.toLowerCase() == planeId).panelRatio) }}>
                             { panelProfile.hasMap &&
                                 <div className={classes.mapPanel} style={{display: mapOpen ? '' : 'none'}}>
                                     <MapPanel mapType={'full'} refresh={mapOpen}/>
                                 </div>
                             }
                             <div className={classes.popoutPanel} style={{display: mapOpen ? 'none' : ''}}>
-                                <PopoutPanelContainer panelInfo={planePanelProfileInfo.panels.find(x => x.panelId === panelProfile.panelId && x.planeId.toLowerCase() == planeId)} displayFormat={displayFormat}/> 
+                                <PopoutPanelContainer panelInfo={planePanelProfileInfo.panels.filter(x => x.panelId === panelProfile.panelId && x.planeId.toLowerCase() == planeId)} displayFormat={displayFormat}/> 
                             </div>
                         </div>
                     </Container>

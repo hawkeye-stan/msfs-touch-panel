@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         touchAction: 'none',
         backgroundColor: 'transparent',
-        opacity: 0.9,
+        opacity: 0.6,
         '& .MuiPopover-paper':
         {
             backgroundImage: 'none !important',

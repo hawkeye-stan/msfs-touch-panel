@@ -14,7 +14,7 @@ namespace MSFSTouchPanel.FSConnector
     {
         private uint MaxClientDataDefinition = 0;
         private const int MSFS_CONNECTION_RETRY_TIMEOUT = 1000;
-        private const int MSFS_DATA_REFRESH_TIMEOUT = 50;
+        private const int MSFS_TRANSMIT_LOCK_TIMEOUT = 50;
         private const string STANDARD_EVENT_GROUP = "STANDARD";
         private const string SIMCONNECT_EVENT_GROUP = "SIMCONNECT_EVENT";
         private const string MOBIFLIGHT_CLIENT_DATA_NAME_SIMVAR = "MobiFlight.LVars";
@@ -26,7 +26,6 @@ namespace MSFSTouchPanel.FSConnector
         private SimConnect _simConnect;
         private bool _connected;
         private Timer _connectionTimer;
-        private Timer _requestDataTimer;
         private Dictionary<String, List<Tuple<String, uint>>> _simConnectEvents;
 
         public event EventHandler<EventArgs<string>> OnException;
@@ -53,25 +52,7 @@ namespace MSFSTouchPanel.FSConnector
             {
                 try
                 {
-                    // The constructor is similar to SimConnect_Open in the native API
-                    _simConnect = new SimConnect("Simconnect - Simvar test", Process.GetCurrentProcess().MainWindowHandle, WM_USER_SIMCONNECT, null, 0);
-
-                    // Listen to connect and quit msgs
-                    _simConnect.OnRecvOpen += HandleOnRecvOpen;
-                    _simConnect.OnRecvQuit += HandleOnRecvQuit;
-                    _simConnect.OnRecvException += HandleOnRecvException;
-                    _simConnect.OnRecvEvent += HandleOnReceiveEvent;
-
-                    _simConnect.OnRecvSimobjectDataBytype += HandleOnRecvSimobjectDataBytype;
-                    var definitions = DataDefinition.GetDefinition();
-                    foreach (var (PropName, SimConnectName, SimConnectUnit, SimConnectDataType) in definitions)
-                        _simConnect.AddToDataDefinition(SIMCONNECT_DATA_DEFINITION.SIMCONNECT_DATA_STRUCT, SimConnectName, SimConnectUnit, SimConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-                    _simConnect.RegisterDataDefineStruct<SimConnectStruct>(SIMCONNECT_DATA_DEFINITION.SIMCONNECT_DATA_STRUCT);
-
-                    _connectionTimer.Enabled = false;
-
-                    System.Threading.Thread.Sleep(2000);
-                    ReceiveMessage();
+                    InitializeSimConnect();
                 }
                 catch (COMException ex)
                 {
@@ -137,21 +118,33 @@ namespace MSFSTouchPanel.FSConnector
 
             Tuple<String, uint> eventItem = null;
 
-            foreach (String GroupKey in _simConnectEvents.Keys)
+            try
             {
-                eventItem = _simConnectEvents[GroupKey].Find(x => x.Item1 == eventID);
-                if (eventItem != null) break;
-            }
+                foreach (String GroupKey in _simConnectEvents.Keys)
+                {
+                    eventItem = _simConnectEvents[GroupKey].Find(x => x.Item1 == eventID);
+                    if (eventItem != null) break;
+                }
 
-            if (eventItem == null) return;
-            
-            _simConnect?.TransmitClientEvent(
-                0,
-                (MOBIFLIGHT_EVENTS)eventItem.Item2,
-                value,
-                SIMCONNECT_NOTIFICATION_GROUP_ID.SIMCONNECT_GROUP_PRIORITY_DEFAULT,
-                SIMCONNECT_EVENT_FLAG.GROUPID_IS_PRIORITY
-            );
+                if (eventItem == null) return;
+
+                lock (_simConnect)
+                {
+                    _simConnect?.TransmitClientEvent(
+                        0,
+                        (MOBIFLIGHT_EVENTS)eventItem.Item2,
+                        value,
+                        SIMCONNECT_NOTIFICATION_GROUP_ID.SIMCONNECT_GROUP_PRIORITY_DEFAULT,
+                        SIMCONNECT_EVENT_FLAG.GROUPID_IS_PRIORITY
+                    );
+
+                    System.Threading.Thread.Sleep(MSFS_TRANSMIT_LOCK_TIMEOUT);
+                }
+            }
+            catch (Exception exception)
+            {
+                Logger.ServerLog(exception.Message, LogLevel.ERROR);
+            }
         }
 
         public float GetSimVar(String SimVarName)
@@ -232,6 +225,31 @@ namespace MSFSTouchPanel.FSConnector
             }
         }
 
+        private void InitializeSimConnect()
+        {
+            // The constructor is similar to SimConnect_Open in the native API
+            _simConnect = new SimConnect("Simconnect - Simvar test", Process.GetCurrentProcess().MainWindowHandle, WM_USER_SIMCONNECT, null, 0);
+
+            // Listen to connect and quit msgs
+            _simConnect.OnRecvOpen += HandleOnRecvOpen;
+            _simConnect.OnRecvQuit += HandleOnRecvQuit;
+            _simConnect.OnRecvException += HandleOnRecvException;
+            _simConnect.OnRecvEvent += HandleOnReceiveEvent;
+
+            _simConnect.OnRecvSimobjectDataBytype += HandleOnRecvSimobjectDataBytype;
+            var definitions = DataDefinition.GetDefinition();
+            foreach (var (PropName, SimConnectName, SimConnectUnit, SimConnectDataType) in definitions)
+                _simConnect.AddToDataDefinition(SIMCONNECT_DATA_DEFINITION.SIMCONNECT_DATA_STRUCT, SimConnectName, SimConnectUnit, SimConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simConnect.RegisterDataDefineStruct<SimConnectStruct>(SIMCONNECT_DATA_DEFINITION.SIMCONNECT_DATA_STRUCT);
+
+            _connectionTimer.Enabled = false;
+
+            System.Threading.Thread.Sleep(2000);
+            ReceiveMessage();
+
+            OnConnected?.Invoke(this, null);
+        }
+
         private void HandleOnRecvSimobjectDataBytype(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data)
         {
             if (data.dwRequestID == 0)
@@ -288,8 +306,6 @@ namespace MSFSTouchPanel.FSConnector
 
             InitializeClientDataAreas(sender);
             (sender).OnRecvClientData += HandleOnRecvClientData;
-
-            OnConnected?.Invoke(this, null);
         }
 
         private void InitializeClientDataAreas(SimConnect sender)

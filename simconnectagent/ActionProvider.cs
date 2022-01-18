@@ -126,16 +126,8 @@ namespace MSFSTouchPanel.SimConnectAgent
             }
             else if (_currentSelectedAction != null)
             {
-                try
-                {
-                    var command = ActionLogicArduino.GetSimConnectCommand(_encoderCommands, _currentSelectedAction, e.Value.InputName, e.Value.InputAction);
-                    _simConnector.SetEventID(command, 1);
-                   
-                }
-                catch (Exception exception)
-                {
-                    Logger.ServerLog(exception.Message, LogLevel.ERROR);
-                }
+                var command = ActionLogicArduino.GetSimConnectCommand(_encoderCommands, _currentSelectedAction, e.Value.InputName, e.Value.InputAction);
+                _simConnector.SetEventID(command, 1);
             }
         }
 

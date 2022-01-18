@@ -16,11 +16,70 @@ export const PANEL_CONTROL_STYLE_DEFINITION = {
     }),
 
     G1000NXI_STYLES: makeStyles({
-        iframePanel: {
+        iframePanel_0: {
             position: 'absolute',
             top: (props) => `calc(100% * 43 / ${props.height})`,
             left: (props) => `calc(100% * 186 / ${props.width})`,
-            width:  (props) => `calc(100% * 1034 / ${props.width})`,
+            width:  (props) => `calc(100% * 1040 / ${props.width})`,
+            height:  (props) => `calc(100% * 776 / ${props.height})`,
+            aspectRatio: (props) => `${props.iframeRatio}`,
+            border: '0',
+            backgroundColor: 'black',
+            zIndex: 1001        // allows iframe to response to touch over button overlay
+        },
+        iframePanelMaxSize: {
+            height:   (props) => `calc(100% * 914 / ${props.height})`,
+            aspectRatio: (props) => `${props.iframeRatio}`,
+            border: '0',
+            backgroundColor: 'black',
+            margin: 'auto',
+            zIndex: 1001        // allows iframe to response to touch over button overlay
+        },
+        buttonBase: {
+            position: 'absolute',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '100%',
+            width: (props) => `calc(100% * 56 / ${props.width})`,
+            aspectRatio: 1.5
+        },
+        knobBase: {
+            position: 'absolute',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '100%',
+            aspectRatio: 1
+        },
+        regularKnob: {
+            width: (props) => `calc(100% * 77 / ${props.width})`,
+        },
+        crsKnob: {
+            width: (props) => `calc(100% * 79 / ${props.width})`,
+        },
+        volKnob: {
+            width: (props) => `calc(100% * 49 / ${props.width})`
+        },
+        rangeKnob: {
+        width: (props) => `calc(100% * 66 / ${props.width})`
+        },
+    }),
+
+    G1000NXI_COMBO_STYLES: makeStyles({
+        iframePanel_0: {
+            position: 'absolute',
+            top: (props) => `calc(100% * 43 / ${props.height})`,
+            left: (props) => `calc(100% * 186 / ${props.width})`,
+            width:  (props) => `calc(100% * 1040 / ${props.width})`,
+            height:  (props) => `calc(100% * 776 / ${props.height})`,
+            aspectRatio: (props) => `${props.iframeRatio}`,
+            border: '0',
+            backgroundColor: 'black',
+            zIndex: 1001        // allows iframe to response to touch over button overlay
+        },
+        iframePanel_1: {
+            position: 'absolute',
+            top: (props) => `calc(100% * 43 / ${props.height})`,
+            left: (props) => `calc(100% * 1236 / ${props.width})`,
+            width:  (props) => `calc(100% * 1040 / ${props.width})`,
+            height:  (props) => `calc(100% * 776 / ${props.height})`,
             aspectRatio: (props) => `${props.iframeRatio}`,
             border: '0',
             backgroundColor: 'black',
@@ -62,7 +121,7 @@ export const PANEL_CONTROL_STYLE_DEFINITION = {
     }),
 
     FBWA32NX_CDU_STYLES: makeStyles({
-        iframePanel: {
+        iframePanel_0: {
             position: 'absolute',
             top: (props) => `calc(100% * 49 / ${props.height})`,
             left: (props) => `calc(100% * 60 / ${props.width})`,

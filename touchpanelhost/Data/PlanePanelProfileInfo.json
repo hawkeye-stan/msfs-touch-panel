@@ -8,8 +8,9 @@
                 { "id": 3, "panelId": "pfd", "name": "PFD (with button overlay)", "type": "buttonpanel", "hasMap": true },
                 { "id": 4, "panelId": "mfd", "name": "MFD (with button overlay)", "type": "buttonpanel", "hasMap": true },
                 { "id": 5, "panelId": "pfd", "name": "PFD", "type": "webpanel", "hasMap": true },
-                { "id": 6, "panelId": "mfd", "name": "MFD", "type": "webpanel", "hasMap": true }
-
+                { "id": 6, "panelId": "mfd", "name": "MFD", "type": "webpanel", "hasMap": true },
+                { "id": 7, "panelId": "pfd_mfd_combo", "name": "PFD/MFD Combo (button overlay only)", "type": "framepanel", "hasMap": true },
+                { "id": 8, "panelId": "pfd_mfd_combo", "name": "PFD/MFD Combo (with button overlay)", "type": "buttonpanel", "hasMap": true }
             ]
         },
         { "id": 2, "planeId": "fbwa32nx", "name": "FlyByWire A32NX", 
@@ -33,11 +34,11 @@
     ],
 
     "panels": [
-        { "id": 1, "planeId": "g1000nxi", "panelId": "pfd", "panel_coherent_id": "wtg1000_pfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "definitions": "G1000NXI_PFD_DEF", "styles": "G1000NXI_STYLES" },
-        { "id": 2, "planeId": "g1000nxi", "panelId": "pfd", "panel_coherent_id": "wtg1000_pfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "styles": "G1000NXI_STYLES" },
-        { "id": 3, "planeId": "g1000nxi", "panelId": "mfd", "panel_coherent_id": "as1000_mfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "definitions": "G1000NXI_MFD_DEF", "styles": "G1000NXI_STYLES" },
-        { "id": 4, "planeId": "g1000nxi", "panelId": "mfd", "panel_coherent_id": "as1000_mfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "styles": "G1000NXI_STYLES" },
-        
+        { "id": 1, "planeId": "g1000nxi", "panelId": "pfd", "panel_coherent_id": "as1000_pfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "definitions": "G1000NXI_PFD_DEF", "styles": "G1000NXI_STYLES" },
+        { "id": 2, "planeId": "g1000nxi", "panelId": "mfd", "panel_coherent_id": "as1000_mfd", "width": 1408, "height": 914, "panelRatio": "1408/914", "iframeRatio": "1024/768", "definitions": "G1000NXI_MFD_DEF", "styles": "G1000NXI_STYLES" },
+        { "id": 3, "planeId": "g1000nxi", "panelId": "pfd_mfd_combo", "panel_coherent_id": "as1000_pfd", "width": 2458, "height": 914, "panelRatio": "2458/914", "iframeRatio": "1024/768", "definitions": "G1000NXI_PFD_MFD_COMBO_DEF", "styles": "G1000NXI_COMBO_STYLES" },
+        { "id": 4, "planeId": "g1000nxi", "panelId": "pfd_mfd_combo", "panel_coherent_id": "as1000_mfd", "width": 2458, "height": 914, "panelRatio": "2458/914", "iframeRatio": "1024/768", "styles": "G1000NXI_COMBO_STYLES" },
+
         { "id": 11, "planeId": "fbwa32nx", "panelId": "pfd", "panel_coherent_id": "pfd_template_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
         { "id": 12, "planeId": "fbwa32nx", "panelId": "nd", "panel_coherent_id": "nd_template_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" }, 
         { "id": 13, "planeId": "fbwa32nx", "panelId": "eicas_1", "panel_coherent_id": "eicas_1", "width": "100%", "height": "100%", "panelRatio": "1", "iframeRatio": "1", "styles": "DEFAULT_STYLES" },
