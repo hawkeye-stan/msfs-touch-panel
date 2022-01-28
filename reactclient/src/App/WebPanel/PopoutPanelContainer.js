@@ -9,8 +9,9 @@ import KnobPadOverlay from '../../Components/ControlDialog/KnobPadOverlay';
 const useStyles = makeStyles((theme) => ({
     root: {
         position: 'relative',
-        width: '100%',
-        height: '100%'
+        height: '100%',
+        aspectRatio: (props) => props.panelRatio,
+        margin: '0 auto'
     },
     buttonOverlay:
     {
@@ -21,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundSize: '100% 100%',
         width: '100%',
         height: '100%',
-        aspectRatio: (props) => props.panelRatio,
+        //aspectRatio: (props) => props.panelRatio,
         zIndex: 1000
     },
     iframe: {

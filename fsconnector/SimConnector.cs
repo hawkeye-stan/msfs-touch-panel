@@ -22,6 +22,7 @@ namespace MSFSTouchPanel.FSConnector
         private const string MOBIFLIGHT_CLIENT_DATA_NAME_RESPONSE = "MobiFlight.Response";
         private const int MOBIFLIGHT_MESSAGE_SIZE = 1024;       // The message size for commands and responses, this has to be changed also in SimConnectDefintions
         private const int WM_USER_SIMCONNECT = 0x0402;
+        private object _msfs_transmit_lock = new object();
 
         private SimConnect _simConnect;
         private bool _connected;
@@ -128,7 +129,7 @@ namespace MSFSTouchPanel.FSConnector
 
                 if (eventItem == null) return;
 
-                lock (_simConnect)
+                if (System.Threading.Monitor.TryEnter(_msfs_transmit_lock))
                 {
                     _simConnect?.TransmitClientEvent(
                         0,
@@ -139,6 +140,8 @@ namespace MSFSTouchPanel.FSConnector
                     );
 
                     System.Threading.Thread.Sleep(MSFS_TRANSMIT_LOCK_TIMEOUT);
+
+                    System.Threading.Monitor.Exit(_msfs_transmit_lock);
                 }
             }
             catch (Exception exception)
