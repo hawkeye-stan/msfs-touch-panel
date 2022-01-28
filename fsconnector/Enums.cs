@@ -76,7 +76,9 @@ namespace MSFSTouchPanel.FSConnector
         FOURSECS,
         SIMSTART,
         SIMSTOP,
-        FLIGHTLOADED
+        FLIGHTLOADED,
+        PAUSED,
+        VIEW,
     };
 
     public enum SimActionType
