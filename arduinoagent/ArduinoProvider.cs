@@ -125,8 +125,7 @@ namespace MSFSTouchPanel.ArduinoAgent
                 }
                 catch(Exception ex)
                 {
-                    _serialPort.Close();
-                    _serialPort.Open();
+                    _serialPort.DiscardInBuffer();
                     Logger.ServerLog("Arduino Error - corrupt serial data", LogLevel.ERROR);
                 }
             }

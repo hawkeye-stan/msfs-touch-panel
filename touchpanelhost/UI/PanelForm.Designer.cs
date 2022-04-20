@@ -66,9 +66,8 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
             this.ClientSize = new System.Drawing.Size(1362, 914);
             this.Controls.Add(this.buttonToggleTitleBar);
             this.Controls.Add(this.webView);
-            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Location = new System.Drawing.Point(1000, 0);
+            this.Location = new System.Drawing.Point(1000, 60);
             this.Name = "PanelForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.TransparencyKey = System.Drawing.Color.PowderBlue;
