@@ -42,7 +42,7 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
             this.webView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webView.Location = new System.Drawing.Point(0, 0);
             this.webView.Name = "webView";
-            this.webView.Size = new System.Drawing.Size(1362, 914);
+            this.webView.Size = new System.Drawing.Size(120, 21);
             this.webView.TabIndex = 0;
             this.webView.UseWaitCursor = true;
             this.webView.ZoomFactor = 1D;
@@ -63,9 +63,10 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.PowderBlue;
-            this.ClientSize = new System.Drawing.Size(1362, 914);
+            this.ClientSize = new System.Drawing.Size(120, 21);
             this.Controls.Add(this.buttonToggleTitleBar);
             this.Controls.Add(this.webView);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(1000, 60);
             this.Name = "PanelForm";
