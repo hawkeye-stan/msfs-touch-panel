@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const KnobOverlay = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChanged, allowInputOption = true, showDualKnob = false }) => {
+const KnobOverlay = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChanged, allowInputOption = true, showDualKnob = false, onKnobPadActivate }) => {
     const classes = useStyles();
 
     const handleClose = () => {
@@ -69,22 +69,27 @@ const KnobOverlay = ({ open, onClose, anchorEl, isDirectInput, onDirectInputChan
 
     const HandleUpperKnobIncrease = () => {
         simActions.Encoder.upperIncrease();
+        onKnobPadActivate();
     }
 
     const HandleUpperKnobDecrease = () => {
         simActions.Encoder.upperDecrease();
+        onKnobPadActivate();
     }
 
     const HandleLowerKnobIncrease = () => {
         simActions.Encoder.lowerIncrease();
+        onKnobPadActivate();
     }
 
     const HandleLowerKnobDecrease = () => {
         simActions.Encoder.lowerDecrease();
+        onKnobPadActivate();
     }
 
     const HandleEncoderPush = () => {
         simActions.Encoder.push();
+        onKnobPadActivate();
     }
 
     const handleDirectInputChanged = () => {

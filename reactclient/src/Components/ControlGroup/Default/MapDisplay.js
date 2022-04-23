@@ -397,7 +397,6 @@ const MapDisplay = ({displayType, refresh}) => {
         //if ((simConnectSystemEvent !== null && simConnectSystemEvent === 'SIMSTART')) {
             simConnectGetFlightPlan().then(data => {
                 if (data !== undefined && data !== null) {
-                    console.log(data.waypoints);
                     setWaypointsState(data.waypoints);
                 }
 

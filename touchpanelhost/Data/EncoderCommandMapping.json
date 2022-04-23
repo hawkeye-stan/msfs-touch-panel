@@ -60,6 +60,11 @@
     "encoder2switch": "AS1000_PFD_CRS_PUSH"
   },
   {
+    "command": [ "AIRSPEED_BUG_SELECT", "KODIAK_SPEED_KNOB_SELECT" ],
+    "encoder1cw": "AS1000_MFD_NOSE_DN",
+    "encoder1ccw": "AS1000_MFD_NOSE_UP"
+  },
+  {
     "command": [ "AS1000_PFD_MAP_KNOB_SELECT" ],
     "encoder1cw": "AS1000_PFD_RANGE_INC",
     "encoder1ccw": "AS1000_PFD_RANGE_DEC",
@@ -287,5 +292,19 @@
     "encoder1ccw": "VOR2_OBI_DEC",
     "encoder2cw": "VOR2_OBI_INC",
     "encoder2ccw": "VOR2_OBI_DEC"
+  },
+
+  // Kodiak
+  {
+    "command": [ "KODIAK_INSTRUMENTS_LIGHT_KNOB_SELECT" ],
+    "encoder1cw": "INCREASE_GLARESHIELD",
+    "encoder1ccw": "DECREASE_GLARESHIELD",
+    "encoder2cw": "INCREASE_INSTRUMENT",
+    "encoder2ccw": "DECREASE_INSTRUMENT"
+  },
+  {
+    "command": [ "KODIAK_PANEL_LIGHT_KNOB_SELECT" ],
+    "encoder1cw": "INCREASE",
+    "encoder1ccw": "DECREASE"
   }
 ]

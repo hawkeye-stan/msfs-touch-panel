@@ -2,7 +2,7 @@
     "planes": [
         { "id": 4, "planeId": "kodiak", "name": "Daher Kodiak 100",
             "panels": [
-                { "id": 1, "panelId": "pfd_mfd_combo", "name": "PFD/MFD Combo", "type": "framepanel", "hasMap": true }
+                { "id": 1, "panelId": "pfd_mfd_combo", "name": "Panel", "type": "framepanel", "hasMap": true }
             ]
         }
     ],

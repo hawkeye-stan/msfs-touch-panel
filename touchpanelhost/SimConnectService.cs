@@ -80,9 +80,14 @@ namespace MSFSTouchPanel.TouchPanelHost
             }
         }
 
-        public void ExecAction(string action, string value, PlaneProfile planeProfile)
+        public void ExecAction(string action, string actionType, string value, PlaneProfile planeProfile)
         {
-            _simConnectorProvider.ExecAction(action, value, planeProfile);
+            _simConnectorProvider.ExecAction(action, actionType, value, planeProfile);
+        }
+
+        public void SetLVar(string propName, string value)
+        {
+            _simConnectorProvider.SetLVar(propName, value);
         }
 
         public string GetFlightPlan()
@@ -111,7 +116,9 @@ namespace MSFSTouchPanel.TouchPanelHost
 
         public void Stop();
 
-        public void ExecAction(string action, string value, PlaneProfile planeProfile);
+        public void ExecAction(string action, string actionType, string value, PlaneProfile planeProfile);
+
+        public void SetLVar(string propName, string value);
 
         public string GetFlightPlan();
 

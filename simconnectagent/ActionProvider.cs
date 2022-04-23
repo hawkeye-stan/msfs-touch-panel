@@ -35,7 +35,24 @@ namespace MSFSTouchPanel.SimConnectAgent
             _isSimConnected = false;
         }
 
-        public void ExecAction(string action, string value, PlaneProfile planeProfile)
+        public void SetLVar(string propName, string value)
+        {
+            if (_isSimConnected && propName != null)
+            {
+                try
+                {
+                    var dataDefinitions = DataDefinition.GetDefinition();
+                    var definition = dataDefinitions.Find(x => x.propName == propName);
+                    _simConnector.SetSimVar($"{value} (>L:{definition.variableName})");
+                }
+                catch (Exception e)
+                {
+                    Logger.ServerLog(e.Message, LogLevel.ERROR);
+                }
+            }
+        }
+
+        public void ExecAction(string action, string actionType, string value, PlaneProfile planeProfile)
         {
             if (_isSimConnected && action != null)
             {
@@ -65,12 +82,74 @@ namespace MSFSTouchPanel.SimConnectAgent
                                 action = ActionLogicArduino.GetSimConnectCommand(_encoderCommands, _currentSelectedAction, InputName.Encoder1, InputAction.SW);
                                 break;
                         }
-                       
-                        uintValue = 1;
+
+                        // Kodiak
+                        int currentValue;
+                        switch (_currentSelectedAction)
+                        {
+                            case "KODIAK_INSTRUMENTS_LIGHT_KNOB_SELECT":
+                                switch(action)
+                                {
+                                    case "INCREASE_GLARESHIELD":
+                                        currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_GLARESHIELD_SETTING * 100);
+                                        if (currentValue != 100)
+                                        {
+                                            _simConnector.SetSimVar($"{currentValue + 5} (>K:LIGHT_POTENTIOMETER_3_SET) 1 (>K:GLARESHIELD_LIGHTS_ON)");
+                                            return;
+                                        }
+                                        break;
+                                    case "DECREASE_GLARESHIELD":
+                                        currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_GLARESHIELD_SETTING * 100);
+                                        if (currentValue != 0)
+                                        {
+                                            _simConnector.SetSimVar($"{currentValue - 5} (>K:LIGHT_POTENTIOMETER_3_SET)");
+                                            return;
+                                        }
+                                        break;
+                                    case "INCREASE_INSTRUMENT":
+                                        currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_INSTRUMENTATION_LIGHT_SETTING * 100);
+                                        if (currentValue != 100)
+                                        {
+                                            _simConnector.SetSimVar($"{currentValue + 5} (>K:LIGHT_POTENTIOMETER_2_SET) 1 (>K:PANEL_LIGHTS_ON)");
+                                            return;
+                                        }
+                                        break;
+                                    case "DECREASE_INSTRUMENT":
+                                        currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_INSTRUMENTATION_LIGHT_SETTING * 100);
+                                        if (currentValue != 0)
+                                        {
+                                            _simConnector.SetSimVar($"{currentValue - 5} (>K:LIGHT_POTENTIOMETER_2_SET)");
+                                            return;
+                                        }
+                                        break;
+                                }
+                                return;
+                            case "KODIAK_PANEL_LIGHT_KNOB_SELECT":
+                                currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_PANEL_LIGHT_SETTING * 100);
+                                if (action == "INCREASE")
+                                {
+                                    if (currentValue != 100)
+                                    {
+                                        _simConnector.SetSimVar($"{currentValue + 5} (>K:LIGHT_POTENTIOMETER_21_SET) 1 (>K:PEDESTRAL_LIGHTS_ON)");
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    if (currentValue != 0)
+                                    {
+                                        _simConnector.SetSimVar($"{currentValue - 5} (>K:LIGHT_POTENTIOMETER_21_SET)");
+                                        return;
+                                    }
+                                }
+                                break;
+                        }
                     }
                     else
                     {
                         _currentSelectedAction = action;
+
+                        uintValue = Convert.ToUInt32(value);
 
                         switch (action.ToUpper())
                         {
@@ -106,9 +185,12 @@ namespace MSFSTouchPanel.SimConnectAgent
                                     uintValue = Convert.ToUInt32(value);
                                 break;
                         }
-                    }
 
-                    _simConnector.SetEventID(action, uintValue);
+                        if (actionType == "MobiFlight")
+                            _simConnector.SetEventID(action, uintValue);
+                        else if (actionType == "SimConnect")
+                            _simConnector.SetSimVar($"{uintValue} (>K:{action.ToUpper()})");
+                    }
                 }
                 catch (Exception e)
                 {

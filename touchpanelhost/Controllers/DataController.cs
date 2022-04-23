@@ -76,11 +76,25 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
             var value = Convert.ToString(data.Value);
             var planeProfile = (PlaneProfile)Enum.Parse(typeof(PlaneProfile), data.PlaneProfile);
 
-            _simConnectService.ExecAction(data.Action, value, planeProfile);
+            _simConnectService.ExecAction(data.Action, data.ActionType, value, planeProfile);
 
             var clientIP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
 
             Logger.ClientLog($"ClientIP: {clientIP, -20} Action: {data.Action,-35} Value: {value, -7} Profile: {data.PlaneProfile}", LogLevel.INFO);
+
+            return Ok();
+        }
+
+        [HttpPost("/setlvar")]
+        public IActionResult SetLVar(SimConnectSetLVarData data)
+        {
+            var value = Convert.ToString(data.Value);
+
+            _simConnectService.SetLVar(data.PropName, value);
+
+            var clientIP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+
+            Logger.ClientLog($"ClientIP: {clientIP,-20} LVar: {data.PropName,-35} Value: {value,-7}", LogLevel.INFO);
 
             return Ok();
         }
@@ -150,6 +164,12 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         public int ExecutionCount { get; set; }
 
         public string PlaneProfile { get; set; }
+    }
 
+    public class SimConnectSetLVarData
+    { 
+        public string PropName { get; set; }
+
+        public string Value { get; set; }
     }
 }

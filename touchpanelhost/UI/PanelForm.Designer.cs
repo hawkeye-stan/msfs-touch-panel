@@ -49,12 +49,12 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
             // 
             // buttonToggleTitleBar
             // 
-            this.buttonToggleTitleBar.Location = new System.Drawing.Point(97, 3);
+            this.buttonToggleTitleBar.Location = new System.Drawing.Point(97, 8);
             this.buttonToggleTitleBar.Name = "buttonToggleTitleBar";
             this.buttonToggleTitleBar.Padding = new System.Windows.Forms.Padding(5);
-            this.buttonToggleTitleBar.Size = new System.Drawing.Size(96, 22);
+            this.buttonToggleTitleBar.Size = new System.Drawing.Size(102, 22);
             this.buttonToggleTitleBar.TabIndex = 1;
-            this.buttonToggleTitleBar.Text = "Toggle Titlebar";
+            this.buttonToggleTitleBar.Text = "Toggle Title Bar";
             this.buttonToggleTitleBar.UseWaitCursor = true;
             this.buttonToggleTitleBar.Click += new System.EventHandler(this.buttonToggleTitleBar_Click);
             // 
