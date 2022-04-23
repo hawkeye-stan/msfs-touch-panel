@@ -17,12 +17,16 @@ namespace MSFSTouchPanel.FSConnector
         private SimConnect _simConnect;
         private MobiFlightWasmClient _mobiFlightWasmClient;
         private Timer _connectionTimer;
+        private SimConnectSystemEvent _lastSimConnectSystemEvent;
+        private bool _isInActiveFlightSession;
 
         public event EventHandler<EventArgs<string>> OnException;
         public event EventHandler<EventArgs<dynamic>> OnReceivedData;
         public event EventHandler<EventArgs<string>> OnReceiveSystemEvent;
         public event EventHandler OnConnected;
         public event EventHandler OnDisconnected;
+        public event EventHandler OnFlightSessionStarted;
+        public event EventHandler OnFlightSessionStopped;
 
         public dynamic SimData { get; set; }
 
@@ -71,6 +75,8 @@ namespace MSFSTouchPanel.FSConnector
 
         public bool Stop()
         {
+            _isInActiveFlightSession = false;
+
             _mobiFlightWasmClient.Stop();
 
             if (_simConnect != null)
@@ -138,10 +144,12 @@ namespace MSFSTouchPanel.FSConnector
             _simConnect.OnRecvSimobjectDataBytype += HandleOnRecvSimobjectDataBytype;
 
             // Register simConnect system events
-            _simConnect.UnsubscribeFromSystemEvent(SystemEvent.SIMSTART);
-            _simConnect.SubscribeToSystemEvent(SystemEvent.SIMSTART, "SimStart");
-            _simConnect.UnsubscribeFromSystemEvent(SystemEvent.SIMSTOP);
-            _simConnect.SubscribeToSystemEvent(SystemEvent.SIMSTOP, "SimStop");
+            _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.SIMSTART);
+            _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.SIMSTART, "SimStart");
+            _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.SIMSTOP);
+            _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.SIMSTOP, "SimStop");
+            _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.VIEW);
+            _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.VIEW, "View");
 
             _connectionTimer.Enabled = false;
 
@@ -246,8 +254,34 @@ namespace MSFSTouchPanel.FSConnector
 
         private void HandleOnReceiveSystemEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
         {
-            var eventId = ((SystemEvent)data.uEventID).ToString();
-            OnReceiveSystemEvent?.Invoke(this, new EventArgs<string>(eventId));
+            var systemEvent = ((SimConnectSystemEvent)data.uEventID);
+
+            // Detect flight session starts and ends
+            if (_lastSimConnectSystemEvent == SimConnectSystemEvent.SIMSTART && systemEvent == SimConnectSystemEvent.VIEW)
+            {
+                _isInActiveFlightSession = true;
+                _lastSimConnectSystemEvent = SimConnectSystemEvent.NONE;
+                OnFlightSessionStarted?.Invoke(this, null);
+
+                if (_mobiFlightWasmClient.Connected)
+                    _mobiFlightWasmClient.GetLVarList();
+
+                return;
+            }
+
+            // look for pair of events denoting sim ended after sim is active
+            if ((_isInActiveFlightSession && _lastSimConnectSystemEvent == SimConnectSystemEvent.SIMSTOP && systemEvent == SimConnectSystemEvent.VIEW) ||
+                (_isInActiveFlightSession && _lastSimConnectSystemEvent == SimConnectSystemEvent.SIMSTOP && systemEvent == SimConnectSystemEvent.SIMSTART))
+            {
+                _isInActiveFlightSession = false;
+                _lastSimConnectSystemEvent = SimConnectSystemEvent.NONE;
+                OnFlightSessionStopped?.Invoke(this, null);
+                return;
+            }
+
+            _lastSimConnectSystemEvent = systemEvent;
+
+            OnReceiveSystemEvent?.Invoke(this, new EventArgs<string>(systemEvent.ToString()));
         }
     }
 }

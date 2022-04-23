@@ -40,7 +40,7 @@ namespace MSFSTouchPanel.FSConnector
         REQUEST_1
     }
 
-    public enum SystemEvent
+    public enum SimConnectSystemEvent
     {
         FOURSECS,
         SIMSTART,
@@ -48,6 +48,7 @@ namespace MSFSTouchPanel.FSConnector
         FLIGHTLOADED,
         PAUSED,
         VIEW,
+        NONE
     };
 
     public enum DataDefinitionType

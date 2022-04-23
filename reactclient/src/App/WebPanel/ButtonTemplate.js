@@ -29,38 +29,41 @@ const ButtonTemplate = ({ btn, panelInfo, showEncoder }) => {
         for(let i = 0; i < btn.classes.length; i++)
             styleClasses.push(panelClasses[btn.classes[i]]);
 
-        styleClasses.push(activeButton.current? sharedClasses.iconImageHighlight : '');
+        if(btn.highlight === undefined || btn.highlight)    
+            styleClasses.push(activeButton.current? sharedClasses.iconImageHighlight : '');
 
         return styleClasses.join(' ');
     }
 
-    const setupButtonStyles = (btn) => {
+    const setupButtonBackgroundStyle = (btn) => {
         if (btn.images !== undefined) {
             let dataValue = simConnectData[btn.binding];
-            let imageUrl = btn.images.find(x => x.val == dataValue).url
+            let imageUrl = btn.images.find(x => x.val == dataValue).url;
 
-            let style = { backgroundImage: `url(/img/${panelInfo[0].planeId}/${imageUrl})`, left: (btn.left / panelInfo[0].width * 100.0) + '%', top: (btn.top / panelInfo[0].height * 100.0) + '%' };
-            return style;
+            return { backgroundImage: `url(/img/${panelInfo[0].planeId}/${imageUrl})`};
         }
 
-        let style = { backgroundImage: `url(/img/${panelInfo[0].planeId}/${btn.image})`, left: (btn.left / panelInfo[0].width * 100.0) + '%', top: (btn.top / panelInfo[0].height * 100.0) + '%' };
-        return style;
+        return { backgroundImage: `url(/img/${panelInfo[0].planeId}/${btn.image})`};
+    }
+    
+    const setupButtonLocationStyle = (btn) => {
+        return { left: (btn.left / panelInfo[0].width * 100.0) + '%', top: (btn.top / panelInfo[0].height * 100.0) + '%' };
     }
 
-    const handleOnClick = (event, button) => {
-        if (button.valueSequence !== undefined && button.valueSequence.length > 0)
+    const handleOnClick = (event, btn) => {
+        if (btn.valueSequence !== undefined && btn.valueSequence.length > 0)
         {
-            var sequence = button.valueSequence.find(x => x.lastValue === dataBindingValue);
-            simConnectSetLVar(button.binding, sequence.newValue);
+            var sequence = btn.valueSequence.find(x => x.lastValue === dataBindingValue);
+            simConnectSetLVar(btn.binding, sequence.newValue);
         }
 
-        if (button.action !== undefined && button.action !== null)
-            simConnectPost(button.action, button.actionValue !== undefined? button.actionValue : 1, button.actionType);
+        if (btn.action !== undefined && btn.action !== null)
+            simConnectPost(btn.action, btn.actionValue !== undefined? btn.actionValue : 1, btn.actionType);
 
-        if(!isUsedArduino && (button.useEncoder || button.useDualEncoder))
-            showEncoder(event, button.useDualEncoder);
+        if(!isUsedArduino && (btn.useEncoder || btn.useDualEncoder))
+            showEncoder(event, btn.useDualEncoder);
 
-        if(button.highlight === undefined || button.highlight)    
+        if(btn.highlight === undefined || btn.highlight)    
         {
             activeButton.current = true;
             setTimeout(() => {activeButton.current = false; }, 500);
@@ -68,7 +71,7 @@ const ButtonTemplate = ({ btn, panelInfo, showEncoder }) => {
     }
 
     return useMemo(() => (
-        <div className={setupButtonClasses(btn)} style={setupButtonStyles(btn)}>
+        <div className={setupButtonClasses(btn)} style={{...setupButtonLocationStyle(btn), ...setupButtonBackgroundStyle(btn)}}>
             <IconButton className={sharedClasses.iconButton} onClick={(event) => handleOnClick(event, btn)} />
         </div>
     ), [btn, dataBindingValue, activeButton.current])

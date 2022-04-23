@@ -121,8 +121,7 @@ namespace MSFSTouchPanel.FSConnector
             );
 
             // Reset LVARs
-            ClearSimVars();
-            GetLVarList();
+            ResetSimVar();
 
             _simConnect.OnRecvClientData += HandleOnRecvClientData;         // MobiFlight wasm event
         }
@@ -141,6 +140,21 @@ namespace MSFSTouchPanel.FSConnector
         public void SetSimVar(String simVarCode)
         {
             SendWasmCmd("MF.SimVars.Set." + simVarCode);
+            DummyCommand();
+        }
+
+        public void ResetSimVar()
+        {
+            ClearSimVars();
+            GetLVarList();
+        }
+
+        public void GetLVarList()
+        {
+            if (_simConnect == null)
+                return;
+
+            SendWasmCmd("MF.LVars.List");
             DummyCommand();
         }
 
@@ -238,15 +252,6 @@ namespace MSFSTouchPanel.FSConnector
                     _simConnectEvents[GroupKey].Add(new Tuple<string, uint>(cols[0], EventIdx++));
                 }
             }
-        }
-
-        private void GetLVarList()
-        {
-            if (_simConnect == null) 
-                return;
-
-            SendWasmCmd("MF.LVars.List");
-            DummyCommand();
         }
 
         private void RegisterSimVar(string simVarName)
