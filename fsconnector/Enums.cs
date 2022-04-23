@@ -25,31 +25,6 @@ namespace MSFSTouchPanel.FSConnector
         }
     }
 
-    public struct ResponseString
-    {
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-        public String Data;
-    }
-
-    public class SimVar
-    {
-        public UInt32 Id { get; set; }
-        public String Name { get; set; }
-        public float Data { get; set; }
-    }
-
-    public enum SIMCONNECT_CLIENT_DATA_ID
-    {
-        MOBIFLIGHT_LVARS,
-        MOBIFLIGHT_CMD,
-        MOBIFLIGHT_RESPONSE
-    }
-
-    public enum SIMCONNECT_REQUEST_ID
-    {
-        Dummy = 0
-    }
-
     public enum SIMCONNECT_DEFINE_ID
     {
         Dummy = 0
@@ -65,12 +40,6 @@ namespace MSFSTouchPanel.FSConnector
         REQUEST_1
     }
 
-    public enum SIMCONNECT_NOTIFICATION_GROUP_ID
-    {
-        SIMCONNECT_GROUP_PRIORITY_DEFAULT,
-        SIMCONNECT_GROUP_PRIORITY_HIGHEST
-    }
-
     public enum SystemEvent
     {
         FOURSECS,
@@ -79,19 +48,6 @@ namespace MSFSTouchPanel.FSConnector
         FLIGHTLOADED,
         PAUSED,
         VIEW,
-    };
-
-    public enum SimActionType
-    {
-        None,
-        Shared,
-        Custom,
-        HVar
-    }
-
-    public enum MOBIFLIGHT_EVENTS
-    {
-        DUMMY
     };
 
     public enum DataDefinitionType

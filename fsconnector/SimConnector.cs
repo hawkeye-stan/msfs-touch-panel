@@ -4,56 +4,33 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Timers;
 
 namespace MSFSTouchPanel.FSConnector
 {
-    public enum ActionEvent
-    {
-        KEY_LIGHT_POTENTIOMETER_2_SET
-    }
-
     public class SimConnector
     {
-        private uint MaxClientDataDefinition = 0;
         private const int MSFS_CONNECTION_RETRY_TIMEOUT = 1000;
-        private const int MSFS_TRANSMIT_LOCK_TIMEOUT = 50;
-        private const string STANDARD_EVENT_GROUP = "STANDARD";
-        private const string SIMCONNECT_EVENT_GROUP = "SIMCONNECT_EVENT";
-        private const string MOBIFLIGHT_CLIENT_DATA_NAME_SIMVAR = "MobiFlight.LVars";
-        private const string MOBIFLIGHT_CLIENT_DATA_NAME_COMMAND = "MobiFlight.Command";
-        private const string MOBIFLIGHT_CLIENT_DATA_NAME_RESPONSE = "MobiFlight.Response";
-        private const int MOBIFLIGHT_MESSAGE_SIZE = 1024;       // The message size for commands and responses, this has to be changed also in SimConnectDefintions
         private const int WM_USER_SIMCONNECT = 0x0402;
-        private object _msfs_transmit_lock = new object();
 
         private SimConnect _simConnect;
-        private bool _connected;
-        private bool _wasmConnected;
+        private MobiFlightWasmClient _mobiFlightWasmClient;
         private Timer _connectionTimer;
-        private Dictionary<String, List<Tuple<String, uint>>> _simConnectEvents;
-
-        public List<SimVar> SimVars = new List<SimVar>();
 
         public event EventHandler<EventArgs<string>> OnException;
         public event EventHandler<EventArgs<dynamic>> OnReceivedData;
         public event EventHandler<EventArgs<string>> OnReceiveSystemEvent;
         public event EventHandler OnConnected;
         public event EventHandler OnDisconnected;
-        public event EventHandler LVarListUpdated;
-
-        private List<String> LVars = new List<String>();
-        private String ResponseStatus = "NEW";
 
         public dynamic SimData { get; set; }
 
+        public bool Connected { get; set; }
+
         public void Start()
         {
-            LoadEventPresets();
-
-            _connectionTimer = new System.Timers.Timer();
+            _connectionTimer = new Timer();
             _connectionTimer.Interval = MSFS_CONNECTION_RETRY_TIMEOUT;
             _connectionTimer.Enabled = true;
             _connectionTimer.Elapsed += (source, e) =>
@@ -69,6 +46,85 @@ namespace MSFSTouchPanel.FSConnector
             };
         }
 
+        private void HandleOnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
+        {
+            Connected = true;
+
+            if(_mobiFlightWasmClient != null)
+                _mobiFlightWasmClient.Stop();
+
+            _mobiFlightWasmClient = new MobiFlightWasmClient(_simConnect);
+            _mobiFlightWasmClient.Initialize();
+
+            AddDataDefinitions();
+      
+            _mobiFlightWasmClient.Ping();
+
+            OnConnected?.Invoke(this, null);
+        }
+     
+        public void StopAndReconnect()
+        {
+            Stop();
+            _connectionTimer.Enabled = true;
+        }
+
+        public bool Stop()
+        {
+            _mobiFlightWasmClient.Stop();
+
+            if (_simConnect != null)
+            {
+                // Dispose serves the same purpose as SimConnect_Close()
+                _simConnect.Dispose();
+                _simConnect = null;
+            }
+
+            Connected = true;
+
+            return true;
+        }
+
+        public void RequestData()
+        {
+            if (_simConnect == null || !Connected || !_mobiFlightWasmClient.Connected) 
+                return;
+
+            _simConnect.RequestDataOnSimObjectType(DATA_REQUEST.REQUEST_1, SIMCONNECT_DEFINE_ID.Dummy, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
+        }
+
+        public void ReceiveMessage()
+        {
+            if (_simConnect == null) 
+                return;
+            
+            try
+            {
+                _simConnect.ReceiveMessage();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message != "0xC00000B0")
+                    OnException?.Invoke(this, new EventArgs<string>($"SimConnect receive message exception: {ex.Message}"));
+            }
+        }
+
+        public void SetSimVar(String simVarCode)
+        {
+            if (_simConnect == null || !Connected || _mobiFlightWasmClient == null || !_mobiFlightWasmClient.Connected)
+                return;
+
+            _mobiFlightWasmClient.SetSimVar(simVarCode);
+        }
+
+        public void SetEventID(string eventID, uint value)
+        {
+            if (_simConnect == null || !Connected || _mobiFlightWasmClient == null || !_mobiFlightWasmClient.Connected)
+                return;
+
+            _mobiFlightWasmClient.SetEventID(eventID, value);
+        }
+
         private void InitializeSimConnect()
         {
             // The constructor is similar to SimConnect_Open in the native API
@@ -78,7 +134,7 @@ namespace MSFSTouchPanel.FSConnector
             _simConnect.OnRecvOpen += HandleOnRecvOpen;
             _simConnect.OnRecvQuit += HandleOnRecvQuit;
             _simConnect.OnRecvException += HandleOnRecvException;
-            _simConnect.OnRecvEvent += HandleOnReceiveEvent;
+            _simConnect.OnRecvEvent += HandleOnReceiveSystemEvent;
             _simConnect.OnRecvSimobjectDataBytype += HandleOnRecvSimobjectDataBytype;
 
             // Register simConnect system events
@@ -93,77 +149,22 @@ namespace MSFSTouchPanel.FSConnector
             ReceiveMessage();
         }
 
-        private void HandleOnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
+        private void AddDataDefinitions()
         {
-            _connected = true;
-
-            foreach (string GroupKey in _simConnectEvents.Keys)
-            {
-                foreach (Tuple<string, uint> eventItem in _simConnectEvents[GroupKey])
-                {
-                    var prefix = "";
-                    if (GroupKey != STANDARD_EVENT_GROUP) prefix = "MobiFlight.";
-                    (sender).MapClientEventToSimEvent((MOBIFLIGHT_EVENTS)eventItem.Item2, prefix + eventItem.Item1);
-                }
-            }
-
-            InitializeClientDataAreas(sender);
-
-            // register receive data events
-            _simConnect.OnRecvClientData += HandleOnRecvClientData;
-
-            OnConnected?.Invoke(this, null);
-
-            PingMobiFlight();
-        }
-
-        private void InitializeClientDataAreas(SimConnect sender)
-        {
-            // register Client Data (for SimVars)
-            (sender).MapClientDataNameToID(MOBIFLIGHT_CLIENT_DATA_NAME_SIMVAR, SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_LVARS);
-            (sender).CreateClientData(SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_LVARS, 4096, SIMCONNECT_CREATE_CLIENT_DATA_FLAG.DEFAULT);
-
-            // register Client Data (for WASM Module Commands)
-            var ClientDataStringSize = (uint)Marshal.SizeOf(typeof(ClientDataString));
-            (sender).MapClientDataNameToID(MOBIFLIGHT_CLIENT_DATA_NAME_COMMAND, SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_CMD);
-            (sender).CreateClientData(SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_CMD, MOBIFLIGHT_MESSAGE_SIZE, SIMCONNECT_CREATE_CLIENT_DATA_FLAG.DEFAULT);
-
-            // register Client Data (for WASM Module Responses)
-            (sender).MapClientDataNameToID(MOBIFLIGHT_CLIENT_DATA_NAME_RESPONSE, SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_RESPONSE);
-            (sender).CreateClientData(SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_RESPONSE, MOBIFLIGHT_MESSAGE_SIZE, SIMCONNECT_CREATE_CLIENT_DATA_FLAG.DEFAULT);
-
-            (sender).AddToClientDataDefinition((SIMCONNECT_DEFINE_ID)0, 0, MOBIFLIGHT_MESSAGE_SIZE, 0, 0);
-            (sender).RegisterStruct<SIMCONNECT_RECV_CLIENT_DATA, ResponseString>((SIMCONNECT_DEFINE_ID)0);
-            (sender).RequestClientData(
-                SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_RESPONSE,
-                (SIMCONNECT_REQUEST_ID)0,
-                (SIMCONNECT_DEFINE_ID)0,
-                SIMCONNECT_CLIENT_DATA_PERIOD.ON_SET,
-                SIMCONNECT_CLIENT_DATA_REQUEST_FLAG.DEFAULT,
-                0,
-                0,
-                0
-            );
-
-            // Reset LVARs
-            ClearSimVars();
-            GetLVarList();
-
             var definitions = DataDefinition.GetDefinition();
             foreach (var (propName, variableName, simConnectUnit, dataType, dataDefinitionType) in definitions)
             {
-                switch(dataDefinitionType)
+                switch (dataDefinitionType)
                 {
                     case DataDefinitionType.AVar:
-                        GetSimVar($"(A:{variableName})");
+                        _mobiFlightWasmClient.GetSimVar($"(A:{variableName})");
                         break;
                     case DataDefinitionType.LVar:
-                        GetSimVar($"(L:{variableName})");
+                        _mobiFlightWasmClient.GetSimVar($"(L:{variableName})");
                         break;
                     case DataDefinitionType.SimConnect:
                         SIMCONNECT_DATATYPE simmConnectDataType;
-
-                        switch(dataType)
+                        switch (dataType)
                         {
                             case DataType.String:
                                 simmConnectDataType = SIMCONNECT_DATATYPE.STRING256;
@@ -185,66 +186,11 @@ namespace MSFSTouchPanel.FSConnector
             _simConnect.RegisterDataDefineStruct<SimConnectStruct>(SIMCONNECT_DATA_DEFINITION.SIMCONNECT_DATA_STRUCT);
         }
 
-        private void HandleOnRecvClientData(SimConnect sender, SIMCONNECT_RECV_CLIENT_DATA data)
-        {
-            if (data.dwRequestID != 0)
-            {
-                var simData = (ClientDataValue)(data.dwData[0]);
-                if (SimVars.Count < (int)(data.dwRequestID)) return;
-                SimVars[(int)(data.dwRequestID - 1)].Data = simData.data;
-            }
-            else
-            {
-                var simData = (ResponseString)(data.dwData[0]);
-
-                if (simData.Data == "MF.Pong")
-                {
-                    _wasmConnected = true;
-                }
-
-                if (simData.Data == "MF.LVars.List.Start")
-                {
-                    ResponseStatus = "LVars.List.Receiving";
-                    LVars.Clear();
-                }
-                else if (simData.Data == "MF.LVars.List.End")
-                {
-                    ResponseStatus = "LVars.List.Completed";
-                    LVarListUpdated?.Invoke(LVars, new EventArgs());
-                }
-                else if (ResponseStatus == "LVars.List.Receiving")
-                {
-                    LVars.Add(simData.Data);
-                }
-            }
-        }
 
         private void HandleOnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
         {
             Stop();
             OnDisconnected?.Invoke(this, null);
-        }
-
-        public void StopAndReconnect()
-        {
-            Stop();
-            _connectionTimer.Enabled = true;
-        }
-
-        public bool Stop()
-        {
-            StopMobiFlight();
-            MaxClientDataDefinition = 0;
-
-            if (_simConnect != null)
-            {
-                // Dispose serves the same purpose as SimConnect_Close()
-                _simConnect.Dispose();
-                _simConnect = null;
-            }
-            _connected = false;
-
-            return true;
         }
 
         private void HandleOnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
@@ -257,301 +203,51 @@ namespace MSFSTouchPanel.FSConnector
             }   
         }
 
-        public void SetEventID(string eventID, uint value)
+        private void HandleOnRecvSimobjectDataBytype(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data)
         {
-            if (_simConnect == null || !_connected) return;
+            if(_simConnect == null || !Connected || !_mobiFlightWasmClient.Connected) 
+                return;
 
-            Tuple<String, uint> eventItem = null;
+            if(data.dwRequestID != 0)
+                Logger.ServerLog($"SimConnect unknown request ID: {data.dwRequestID}", LogLevel.ERROR);
 
             try
             {
-                foreach (String GroupKey in _simConnectEvents.Keys)
+                var simConnectStruct = (SimConnectStruct)data.dwData[0];
+                var simConnectStructFields = typeof(SimConnectStruct).GetFields();
+                var simData = new ExpandoObject();
+
+                var definition = DataDefinition.GetDefinition();
+                int i = 0;
+                foreach (var item in definition)
                 {
-                    eventItem = _simConnectEvents[GroupKey].Find(x => x.Item1 == eventID);
-                    if (eventItem != null) break;
-                }
-
-                if (eventItem == null) return;
-
-                if (System.Threading.Monitor.TryEnter(_msfs_transmit_lock))
-                {
-                    _simConnect?.TransmitClientEvent(
-                        0,
-                        (MOBIFLIGHT_EVENTS)eventItem.Item2,
-                        value,
-                        SIMCONNECT_NOTIFICATION_GROUP_ID.SIMCONNECT_GROUP_PRIORITY_DEFAULT,
-                        SIMCONNECT_EVENT_FLAG.GROUPID_IS_PRIORITY
-                    );
-
-                    System.Threading.Thread.Sleep(MSFS_TRANSMIT_LOCK_TIMEOUT);
-
-                    System.Threading.Monitor.Exit(_msfs_transmit_lock);
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.ServerLog(exception.Message, LogLevel.ERROR);
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public void RequestData()
-        {
-            if (_simConnect != null && _wasmConnected)
-            {
-                _simConnect.RequestDataOnSimObjectType(DATA_REQUEST.REQUEST_1, SIMCONNECT_DEFINE_ID.Dummy, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
-            }
-
-        }
-
-        public void ReceiveMessage()
-        {
-            if (_simConnect != null)
-                try
-                {
-                    _simConnect.ReceiveMessage();
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message != "0xC00000B0")
-                        OnException?.Invoke(this, new EventArgs<string>($"SimConnect receive message exception: {ex.Message}"));
-                }
-        }
-
-        
-
-     
-
-        private void LoadEventPresets()
-        {
-
-            if (_simConnectEvents == null) _simConnectEvents = new Dictionary<string, List<Tuple<String, uint>>>();
-            _simConnectEvents.Clear();
-
-            var GroupKey = "Dummy";
-            uint EventIdx = 0;
-            string[] lines;
-
-            var file = $@"{AppDomain.CurrentDomain.BaseDirectory}Data\MobiFlightPresets\msfs2020_eventids.cip";
-            if (File.Exists(file))
-            {
-                lines = File.ReadAllLines(file);
-
-                _simConnectEvents[GroupKey] = new List<Tuple<String, uint>>();
-                foreach (string line in lines)
-                {
-                    if (line.StartsWith("//")) continue;
-
-                    var cols = line.Split(':');
-                    if (cols.Length > 1)
+                    switch(item.dataDefinitionType)
                     {
-                        GroupKey = cols[0];
-                        if (_simConnectEvents.ContainsKey(GroupKey)) continue;
-
-                        _simConnectEvents[GroupKey] = new List<Tuple<String, uint>>();
-                        continue; // we found a group
+                        case DataDefinitionType.AVar:
+                            simData.TryAdd(item.propName, _mobiFlightWasmClient.GetSimVar($"(A:{item.variableName})"));
+                            break;
+                        case DataDefinitionType.LVar:
+                            simData.TryAdd(item.propName, _mobiFlightWasmClient.GetSimVar($"(L:{item.variableName})"));
+                            break;
+                        case DataDefinitionType.SimConnect:
+                            simData.TryAdd(item.propName, simConnectStructFields[i++].GetValue(simConnectStruct));      // increment structure counter after assignment
+                            break;
                     }
-
-                    _simConnectEvents[GroupKey].Add(new Tuple<string, uint>(cols[0], EventIdx++));
                 }
+
+                SimData = simData;
+                OnReceivedData?.Invoke(this, new EventArgs<dynamic>(simData));
             }
-
-            file = $@"{AppDomain.CurrentDomain.BaseDirectory}Data\MobiFlightPresets\msfs2020_eventids_user.cip";
-            if (File.Exists(file))
+            catch (Exception ex)
             {
-                lines = File.ReadAllLines(file);
-                GroupKey = "User";
-                _simConnectEvents[GroupKey] = new List<Tuple<String, uint>>();
-                foreach (string line in lines)
-                {
-                    if (line.StartsWith("//")) continue;
-                    var cols = line.Split(':');
-                    if (cols.Length > 1)
-                    {
-                        GroupKey = cols[0];
-                        if (_simConnectEvents.ContainsKey(GroupKey)) continue;
-
-                        _simConnectEvents[GroupKey] = new List<Tuple<String, uint>>();
-                        continue; // we found a group
-                    }
-
-                     _simConnectEvents[GroupKey].Add(new Tuple<string, uint>(cols[0], EventIdx++));
-                }
+                Logger.ServerLog($"SimConnect receive data exception: {ex.Message}", LogLevel.ERROR);
             }
         }
 
-        private void HandleOnRecvSimobjectDataBytype(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data)
-        {
-            if(!_wasmConnected) return;
-
-            if (data.dwRequestID == 0)
-            {
-                try
-                {
-                    var simConnectStruct = (SimConnectStruct)data.dwData[0];
-                    var simConnectStructFields = typeof(SimConnectStruct).GetFields();
-                    var simData = new ExpandoObject();
-
-                    var definition = DataDefinition.GetDefinition();
-                    int i = 0;
-                    foreach (var item in definition)
-                    {
-                        switch(item.dataDefinitionType)
-                        {
-                            case DataDefinitionType.AVar:
-                                simData.TryAdd(item.propName, GetSimVar($"(A:{item.variableName})"));
-                                break;
-                            case DataDefinitionType.LVar:
-                                simData.TryAdd(item.propName, GetSimVar($"(L:{item.variableName})"));
-                                break;
-                            case DataDefinitionType.SimConnect:
-                                simData.TryAdd(item.propName, simConnectStructFields[i++].GetValue(simConnectStruct));      // increment structure counter after assignment
-                                break;
-                        }
-                    }
-
-                    SimData = simData;
-                    OnReceivedData?.Invoke(this, new EventArgs<dynamic>(simData));
-                }
-                catch (Exception ex)
-                {
-                    Logger.ServerLog($"SimConnect receive data exception: {ex.Message}", LogLevel.ERROR);
-                }
-            }
-            else
-            {
-                Logger.ServerLog($"SimConnect unknown request ID: {data.dwRequestID}", LogLevel.ERROR);
-            }
-        }
-
-        private void HandleOnReceiveEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
+        private void HandleOnReceiveSystemEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
         {
             var eventId = ((SystemEvent)data.uEventID).ToString();
             OnReceiveSystemEvent?.Invoke(this, new EventArgs<string>(eventId));
         }
-
-        #region MobiFlight
-        public void PingMobiFlight()
-        {
-            if (_simConnect == null) return;
-
-            SendWasmCmd("MF.Ping");
-            DummyCommand();
-        }
-
-        public void StopMobiFlight()
-        {
-            if (_simConnect == null) return;
-            SendWasmCmd("MF.SimVars.Clear");
-
-            SimVars.Clear();
-
-            _wasmConnected = false;
-        }
-
-        public void DummyCommand()
-        {
-            if (_simConnect == null) return;
-
-            SendWasmCmd("MF.DummyCmd");
-        }
-
-        public void SendWasmCmd(String command)
-        {
-            if (_simConnect == null) return;
-
-            _simConnect.SetClientData(
-                SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_CMD,
-               (SIMCONNECT_CLIENT_DATA_ID)0,
-               SIMCONNECT_CLIENT_DATA_SET_FLAG.DEFAULT, 0,
-               new ClientDataString(command)
-            );
-        }
-        public void GetLVarList()
-        {
-            if (_simConnect == null) return;
-
-            SendWasmCmd("MF.LVars.List");
-            DummyCommand();
-        }
-
-        public float GetSimVar(String simVarName)
-        {
-            float result = 0;
-            if (!SimVars.Exists(lvar => lvar.Name == simVarName))
-            {
-                RegisterSimVar(simVarName);
-                SendWasmCmd("MF.SimVars.Add." + simVarName);
-            }
-
-            result = SimVars.Find(lvar => lvar.Name == simVarName).Data;
-
-            return result;
-        }
-
-        public void SetSimVar(String simVarCode)
-        {
-            SendWasmCmd("MF.SimVars.Set." + simVarCode);
-            DummyCommand();
-        }
-
-        private void RegisterSimVar(string simVarName)
-        {
-            SimVar newSimVar = new SimVar() { Name = simVarName, Id = (uint)SimVars.Count + 1 };
-            SimVars.Add(newSimVar);
-
-            if (MaxClientDataDefinition >= newSimVar.Id)
-            {
-                return;
-            }
-
-            MaxClientDataDefinition = newSimVar.Id;
-
-            _simConnect?.AddToClientDataDefinition(
-                (SIMCONNECT_DEFINE_ID)newSimVar.Id,
-                (uint)((SimVars.Count - 1) * sizeof(float)),
-                sizeof(float),
-                0,
-                0);
-
-            _simConnect?.RegisterStruct<SIMCONNECT_RECV_CLIENT_DATA, ClientDataValue>((SIMCONNECT_DEFINE_ID)newSimVar.Id);
-
-            _simConnect?.RequestClientData(
-                SIMCONNECT_CLIENT_DATA_ID.MOBIFLIGHT_LVARS,
-                (SIMCONNECT_REQUEST_ID)newSimVar.Id,
-                (SIMCONNECT_DEFINE_ID)newSimVar.Id,
-                SIMCONNECT_CLIENT_DATA_PERIOD.ON_SET,
-                SIMCONNECT_CLIENT_DATA_REQUEST_FLAG.CHANGED,
-                0,
-                0,
-                0
-            );
-        }
-
-        internal void RefreshLVarsList()
-        {
-            if (_simConnect == null) return;
-            GetLVarList();
-        }
-
-        public void ClearSimVars()
-        {
-            SimVars.Clear();
-        }
-
-        #endregion
-
-
     }
 }

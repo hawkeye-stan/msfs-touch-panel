@@ -52,12 +52,13 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
         if (!isUsedArduino)
             setKeyPadOpen(true);
 
-        knobPadTimeout.current = setTimeout(() => setKeyPadOpen(false), 2000);
+        clearTimeout(knobPadTimeout.current);
+        knobPadTimeout.current = setTimeout(() => setKeyPadOpen(false), 12000);
     }
 
     const handleOnKnobPadActivate = () => {
         clearTimeout(knobPadTimeout.current);
-        knobPadTimeout.current = setTimeout(() => setKeyPadOpen(false), 2000);
+        knobPadTimeout.current = setTimeout(() => setKeyPadOpen(false), 12000);
     }
 
     useEffect(() =>{

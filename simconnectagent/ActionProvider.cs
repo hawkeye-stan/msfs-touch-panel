@@ -144,6 +144,8 @@ namespace MSFSTouchPanel.SimConnectAgent
                                 }
                                 break;
                         }
+
+                        uintValue = 1;
                     }
                     else
                     {
@@ -185,12 +187,12 @@ namespace MSFSTouchPanel.SimConnectAgent
                                     uintValue = Convert.ToUInt32(value);
                                 break;
                         }
-
-                        if (actionType == "MobiFlight")
-                            _simConnector.SetEventID(action, uintValue);
-                        else if (actionType == "SimConnect")
-                            _simConnector.SetSimVar($"{uintValue} (>K:{action.ToUpper()})");
                     }
+
+                    if (actionType == "KEvent")
+                        _simConnector.SetSimVar($"{uintValue} (>K:{action.ToUpper()})");
+                    else
+                        _simConnector.SetEventID(action, uintValue);
                 }
                 catch (Exception e)
                 {

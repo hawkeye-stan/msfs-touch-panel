@@ -197,7 +197,7 @@ export const PANEL_CONTROL_DEFINITION = {
         { id: 'btn_softkey_pfd_9', action: 'AS1000_PFD_SOFTKEYS_9', classes: ['buttonBase'], image: 'button_softkey.png', left: 888, top: 848 },
         { id: 'btn_softkey_pfd_10', action: 'AS1000_PFD_SOFTKEYS_10', classes: ['buttonBase'], image: 'button_softkey.png', left: 973, top: 848 },
         { id: 'btn_softkey_pfd_11', action: 'AS1000_PFD_SOFTKEYS_11', classes: ['buttonBase'], image: 'button_softkey.png', left: 1058, top: 848 },
-        { id: 'btn_softkey_pfd_12', action: 'AS1000_PFD_SOFTKEYS_12', classes: ['buttonBase'], image: 'button_softkey.png', left: 1142, top: 848 },
+        { id: 'btn_softkey_pfd_12', action: 'AS1000_PFD_SOFTKEYS_12', actionType:'MobiFlight', classes: ['buttonBase'], image: 'button_softkey.png', left: 1142, top: 848 },
 
         { id: 'btn_softkey_mfd_1', action: 'AS1000_MFD_SOFTKEYS_1', classes: ['buttonBase'], image: 'button_softkey.png', left: 1257, top: 848 },
         { id: 'btn_softkey_mfd_2', action: 'AS1000_MFD_SOFTKEYS_2', classes: ['buttonBase'], image: 'button_softkey.png', left: 1342, top: 848 },
@@ -239,11 +239,11 @@ export const PANEL_CONTROL_DEFINITION = {
         { id: 'btn_switch_panel_light__knob', action: 'KODIAK_PANEL_LIGHT_KNOB_SELECT', actionValue: '0', classes: ['lightKnob'], image: 'knob_light.png', left: 1616, top: 978, useEncoder: true },
 
         { id: 'btn_engine_inlet_bypass_override', classes: ['toggleButtonBase'], image: 'toggle_down.png', left: 919, top: 1140, highlight: false },
-        { id: 'btn_engine_inlet_bypass', action: 'ANTI_ICE_TOGGLE_ENG1', actionType:'MobiFlight', binding: 'ENG_ANTI_ICE_1',  classes: ['toggleButtonBase'], images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1016, top: 1140, highlight: false },
-        { id: 'btn_pitot_heat_left', action: 'PITOT_HEAT_TOGGLE', actionValue: 1, binding: 'KODIAK_PITOT_HEAT_1', classes: ['toggleButtonBase'], images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1110, top: 1140, highlight: false },
-        { id: 'btn_pitot_heat_right', action: 'PITOT_HEAT_TOGGLE', actionValue: 2, binding: 'KODIAK_PITOT_HEAT_2', classes: ['toggleButtonBase'], images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1205, top: 1140, highlight: false },
+        { id: 'btn_engine_inlet_bypass', action: 'ANTI_ICE_TOGGLE_ENG1', actionType: 'KEvent', binding: 'ENG_ANTI_ICE_1',  classes: ['toggleButtonBase'], images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1016, top: 1140, highlight: false },
+        { id: 'btn_pitot_heat_left', action: 'PITOT_HEAT_TOGGLE', actionValue: 1, actionType: 'KEvent', binding: 'KODIAK_PITOT_HEAT_1', classes: ['toggleButtonBase'], images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1110, top: 1140, highlight: false },
+        { id: 'btn_pitot_heat_right', action: 'PITOT_HEAT_TOGGLE', actionValue: 2, actionType: 'KEvent', binding: 'KODIAK_PITOT_HEAT_2', classes: ['toggleButtonBase'], images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1205, top: 1140, highlight: false },
         { id: 'btn_ice_knob', action: 'TOGGLE_PROPELLER_DEICE', binding: 'PROP_DEICE_SWITCH', classes: ['iceKnob'], images: [{ url: 'knob_ice_off.png', val: 0 }, { url: 'knob_ice_on.png', val: 1 }], left: 1320, top: 1160, highlight: false },
-        { id: 'btn_wind_shield_heat', action: 'KODIAK_100_DEICE_WINDSHIELD_TOGGLE', actionType:'MobiFlight', classes: ['toggleButtonBase'], binding: 'WINDSHIELD_DEICE_SWITCH', images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1441, top: 1140, highlight: false },
+        { id: 'btn_wind_shield_heat', action: 'KODIAK_100_DEICE_WINDSHIELD_TOGGLE', classes: ['toggleButtonBase'], binding: 'WINDSHIELD_DEICE_SWITCH', images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1441, top: 1140, highlight: false },
         { id: 'btn_backup_pump_heat', classes: ['toggleButtonBase'], image: 'toggle_down.png', left: 1534, top: 1140, highlight: false },
         { id: 'btn_ice_light', action: 'TOGGLE_WING_LIGHTS', binding: 'LIGHT_WING', classes: ['toggleButtonBase'], images: [{ url: 'toggle_down.png', val: 0 }, { url: 'toggle_up.png', val: 1 }], left: 1627, top: 1140, highlight: false },
 
