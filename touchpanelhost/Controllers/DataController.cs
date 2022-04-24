@@ -57,17 +57,16 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
             try
             {
                 var data = _memoryCache.Get<string>("simdata");
-                var lvar = _memoryCache.Get<string>("simdataLVar");
                 var arudinoStatus = _memoryCache.Get<bool>("arduinoStatus");
                 var msfsStatus = _memoryCache.Get<bool>("msfsStatus");
                 var simSystemEvent = _memoryCache.Get<string>("simSystemEvent");
                 var g1000nxiFlightPlan = _memoryCache.Get<string>("g1000nxiFlightPlan");
 
-                return new SimConnectData { Data = data, LVar = lvar, MsfsStatus = Convert.ToBoolean(msfsStatus), ArduinoStatus = Convert.ToBoolean(arudinoStatus), SystemEvent = simSystemEvent, G1000NxiFlightPlan = g1000nxiFlightPlan };
+                return new SimConnectData { Data = data, MsfsStatus = Convert.ToBoolean(msfsStatus), ArduinoStatus = Convert.ToBoolean(arudinoStatus), SystemEvent = simSystemEvent, G1000NxiFlightPlan = g1000nxiFlightPlan };
             }
             catch
             {
-                return new SimConnectData { Data = null, LVar = null, MsfsStatus = false, ArduinoStatus = false, SystemEvent = null, G1000NxiFlightPlan = null };
+                return new SimConnectData { Data = null, MsfsStatus = false, ArduinoStatus = false, SystemEvent = null, G1000NxiFlightPlan = null };
             }
         }
 
@@ -131,10 +130,22 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 });
+            }
+            catch (Exception ex)
+            {
+                Logger.ServerLog(ex.Message, LogLevel.ERROR);
+            }
 
-                //var filePath = Path.Combine(AppContext.BaseDirectory, @"Data\PlanePanelProfileInfo.json");
-                //return System.IO.File.ReadAllText(filePath);
+            return string.Empty;
+        }
 
+        [HttpGet("/getPopoutPanelDefinitions")]
+        public string GetPopoutPanelDefinitions()
+        {
+            try
+            {
+                var filePath = Path.Combine(AppContext.BaseDirectory, @"Data\PopoutPanelDefinition.json");
+                return System.IO.File.ReadAllText(filePath);
             }
             catch (Exception ex)
             {

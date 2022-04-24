@@ -14,6 +14,7 @@
     "@testing-library/user-event": "^12.8.3",
     "console-feed": "^3.2.2",
     "geolib": "^3.3.1",
+    "json-ref-lite": "^1.1.0",
     "leaflet": "^1.7.1",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-marker-rotation": "^0.4.0",

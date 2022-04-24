@@ -1,6 +1,7 @@
 ﻿using MSFSTouchPanel.FSConnector;
 using MSFSTouchPanel.Shared;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -91,15 +92,9 @@ namespace MSFSTouchPanel.SimConnectAgent
             }
         }
 
-        public void HandleDataReceived(object sender, EventArgs<dynamic> e)
+        public void HandleDataReceived(object sender, EventArgs<List<SimConnectDataDefinition>> e)
         {
-            //var simData = _simConnector.LatestSimData;
-            var simData = JsonConvert.DeserializeObject<dynamic>(JsonConvert.SerializeObject(e.Value));
-
-            // Add simrate is valid calculation result
-            // AddSimRateValidData(simData);
-
-            var jsonData = JsonConvert.SerializeObject(simData);
+            var jsonData = JsonConvert.SerializeObject(e.Value, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
 
             // Invoke on data refresh event by listener
             OnDataRefreshed?.Invoke(this, new EventArgs<string>(jsonData));

@@ -1,7 +1,7 @@
 import React, {  useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
-import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
+import { useSimConnectData } from '../Services/SimConnectDataProvider';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
@@ -13,6 +13,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
 import SettingConfiguration from './SettingConfiguration';
+import Telemetry from './Telemetry';
 
 const useStyles = makeStyles(() => ({
     toolbar: {
@@ -54,17 +55,19 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
+
+
 const ApplicationBar = ({showMapIcon, mapOpenChanged, planeInfo}) => {
     const classes = useStyles();
     const history = useHistory();
-    const { networkStatus, arduinoStatus } = useSimConnectData();
+    const { networkStatus, arduinoStatus, simConnectData } = useSimConnectData();
 
     return useMemo(() => (
         <div className={classes.root}>
             <AppBar position='static'>
                 <Toolbar className={classes.toolbar}>
                     <Grid container>
-                        <Grid item xs={3} className={classes.statusIcons}>
+                        <Grid item xs={2} className={classes.statusIcons}>
                             <IconButton color='inherit' aria-label='network status' size='small' className={classes.menuButton}>
                                 <NetworkCheckIcon className={networkStatus ? classes.networkConnected : classes.networkDisconnected} />
                             </IconButton>
@@ -72,10 +75,11 @@ const ApplicationBar = ({showMapIcon, mapOpenChanged, planeInfo}) => {
                                 <UsbIcon className={arduinoStatus ? classes.networkConnected : classes.networkDisconnected} />
                             </IconButton>
                         </Grid>
-                        <Grid item xs={6}>
-                            <Typography variant="h6" className={classes.planeTitle}>{ planeInfo === undefined ? 'MSFS Web Panel' : planeInfo.planeName + ' - ' + planeInfo.panelName}</Typography>
+                        <Grid item xs={8}>
+                            <Telemetry simConnectData={simConnectData}></Telemetry>
+                            {/* <Typography variant="h6" className={classes.planeTitle}>{ planeInfo === undefined ? 'MSFS Web Panel' : planeInfo.planeName + ' - ' + planeInfo.panelName}</Typography> */}
                         </Grid>
-                        <Grid item xs={3} className={classes.menuIcons}>
+                        <Grid item xs={2} className={classes.menuIcons}>
                             <IconButton color='inherit' aria-label='settings' size='small' className={classes.menuButton} onClick={() => history.push('/')}>
                                 <ArrowBackIcon></ArrowBackIcon>
                             </IconButton>

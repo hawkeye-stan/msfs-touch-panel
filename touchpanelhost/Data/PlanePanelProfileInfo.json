@@ -13,8 +13,7 @@
         "height": 1304,
         "panelRatio": "2458/1350",
         "iframeRatio": "1024/768",
-        "definitions": "KODIAK_DEF",
-        "styles": "KODIAK_STYLES"
+        "definitions": "KODIAK_DEF"
       }
     ]
   }

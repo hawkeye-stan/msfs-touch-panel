@@ -3,7 +3,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import LocalStorageProvider from '../Services/LocalStorageProvider';
-import SimConnectDataProvider, { simConnectGetPlanePanelProfilesInfo }  from '../Services/DataProviders/SimConnectDataProvider';
+import SimConnectDataProvider, { simConnectGetPlanePanelProfilesInfo, getPopoutPanelDefinitions }  from '../Services/SimConnectDataProvider';
 import { useWindowDimensions } from '../Components/Util/hooks';
 import ApplicationBar from './ApplicationBar';
 import MapPanel from './MapPanel';
@@ -38,15 +38,13 @@ const useStyles = props => makeStyles((theme) => ({
         position: 'relative',
         backgroundColor: 'transparent',
         margin: '2em auto 0 auto',
-        height: `calc(${props.windowHeight - 1}px - 2em)`,
-        //aspectRatio: 1
+        height: `calc(${props.windowHeight - 1}px - 2em)`
     },
     framePanelContainer: {
         position: 'relative',
         backgroundColor: 'transparent',
         margin: '0 auto',
-        height: `calc(${props.windowHeight - 1}px)`,
-        //aspectRatio: 1
+        height: `calc(${props.windowHeight - 1}px)`
     }
 }));
 
@@ -56,38 +54,34 @@ const WebPanel = ({planeId, panelId, displayFormat}) => {
     const [ planeProfile, setPlaneProfile] = useState();
     const [ panelProfile, setPanelProfile] = useState();
 
-    useEffect(() => {
+    useEffect(async() => {
         if (displayFormat.toLowerCase() === 'framepanel')
             document.body.style.backgroundColor = 'transparent';
         else
             document.body.style.backgroundColor = 'black';
 
-        simConnectGetPlanePanelProfilesInfo().then(data => 
+        let data = await simConnectGetPlanePanelProfilesInfo();
+       
+        if(data !== null && data !== undefined)
         {
-            if(data !== null)
+            // setup plane and panel profile
+            let planeProfile = data.find(x => x.planeId.toLowerCase() === planeId);
+            planeProfile.panels.forEach(x => x.planeId = planeId);      // adds plane id into panel object
+
+            var panelProfile = planeProfile.panels.find(x => x.panelId.toLowerCase() === panelId);
+
+            if(panelProfile !== undefined)
             {
-                // setup plane and panel profile
-                let planeProfile = data.find(x => x.planeId.toLowerCase() === planeId);
-                planeProfile.panels.forEach(x => x.planeId = planeId);      // adds plane id into panel object
-
-                var panelProfile = planeProfile.panels.find(x => x.panelId.toLowerCase() === panelId);
-                
-                if(panelProfile !== undefined)
-                {
-                    setPlaneProfile(planeProfile);
-                    setPanelProfile(panelProfile)   
-                }
+                setPlaneProfile(planeProfile);
+                setPanelProfile(panelProfile)   
             }
-        })
-
-        
+        }
     }, [planeId, panelId, displayFormat]);
 
     return (
         <LocalStorageProvider initialData={{}}>
             <SimConnectDataProvider>
                 <CssBaseline />
-
                 { panelProfile !== undefined && displayFormat !== undefined && 
                     <Container className={classes.rootFullWidth}>
                         <div className={classes.appbar}>
@@ -96,7 +90,7 @@ const WebPanel = ({planeId, panelId, displayFormat}) => {
                     
                         <div className={classes.panelContainer} style={{ aspectRatio: String(panelProfile.panelRatio) }}>
                             <div className={classes.mapPanel} style={{display: mapOpen ? '' : 'none'}}>
-                                <MapPanel mapType={'full'} refresh={mapOpen}/>
+                                <MapPanel refresh={mapOpen}/>
                             </div>
                             <div className={classes.popoutPanel} style={{display: mapOpen ? 'none' : ''}}>
                                 <PopoutPanelContainer panelInfo={panelProfile} displayFormat={displayFormat}/> 

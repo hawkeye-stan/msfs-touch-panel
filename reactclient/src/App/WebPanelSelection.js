@@ -12,7 +12,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import FlightIcon from '@mui/icons-material/Flight';
 import SensorWindowIcon from '@mui/icons-material/SensorWindow';
-import { simConnectGetPlanePanelProfilesInfo }  from '../Services/DataProviders/SimConnectDataProvider';
+import { simConnectGetPlanePanelProfilesInfo }  from '../Services/SimConnectDataProvider';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -60,12 +60,12 @@ const WebPanelSelection = () => {
     const classes = useStyles();
     const [ planePanelProfileInfo, setPlanePanelProfileInfo ] = useState();
 
-    useEffect(() => {
-        simConnectGetPlanePanelProfilesInfo().then(data => 
-        {
-            if(data !== null)
-                setPlanePanelProfileInfo(data);
-        })
+    useEffect(async() => {
+        let data = await simConnectGetPlanePanelProfilesInfo();
+        
+        if(data !== null)
+            setPlanePanelProfileInfo(data);
+        
     }, []);
 
     return (

@@ -50,18 +50,4 @@ namespace MSFSTouchPanel.FSConnector
         VIEW,
         NONE
     };
-
-    public enum DataDefinitionType
-    {
-        AVar,
-        LVar,
-        SimConnect
-    }
-
-    public enum DataType
-    {
-        String,
-        Float64,
-        Default
-    }
 }

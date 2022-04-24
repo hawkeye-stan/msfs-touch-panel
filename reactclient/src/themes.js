@@ -55,35 +55,6 @@ export const darkTheme = createTheme(adaptV4Theme({
                 borderBottom: '1px solid ' + globalTheme.palette.border,
             },
         },
-        MuiCard: {
-            root: {
-                padding: 0,
-                border: '1px solid ' + globalTheme.palette.border + ' !important'
-            }
-        },
-        MuiCardActions: {
-            root: {
-                padding: '2px 2px 2px 8px',
-                height: '1.5em',
-                background: 'linear-gradient(rgb(82, 83, 124, 1) 30%, rgb(17, 19, 24, 1) 99%)',
-                zIndex: 100
-            }
-        },
-        MuiCardContent: {
-            root: {
-                padding: '4px 0px 4px 4px !important',
-                backgroundColor: globalTheme.palette.background.default,
-            }
-        },
-        MuiSvgIcon: {
-            root: {
-                padding: 0,
-                '&:hover': {
-                    color: globalTheme.palette.action.hover,
-                    backgroundColor: 'transparent'
-                }
-            }
-        },
         MuiButton: {
             root: {
                 //color: 'rgb(255, 255, 255, 1)',
@@ -118,37 +89,11 @@ export const darkTheme = createTheme(adaptV4Theme({
                 margin: '0 !important'
             }
         },
-        MuiSwitch: {
-            switchBase: {
-                '&.Mui-checked': {
-                    color: globalTheme.palette.primary.main + ' !important'
-                }
-            },
-            thumb: {
-                color: 'rgb(189, 189, 189, 1)'
-            }
-        },
-        MuiGrid: {
-            root: {
-                marginTop: '0px',
-                marginLeft: '0px',
-            },
-            item: {
-                marginLeft: 0,
-                padding: '4px'
-            }
-        },
         MuiTooltip: {
             tooltip: {
                 fontSize: "0.75em",
             }
         },
-        MuiBackdrop: {
-            root: {
-                backgroundColor: 'rgb(10, 10, 10, 0.95)',
-                opacity: '0.2 !important'
-            }
-        }, 
         MuiPaper:{
             root: {
                 backgroundImage: 'linear-gradient(45deg, rgb(30, 33, 42, 1) 25%, rgb(17, 19, 24, 1) 75%)'
@@ -159,7 +104,6 @@ export const darkTheme = createTheme(adaptV4Theme({
                 padding: 0
             }
         },
-
     },
     custom: {
         defaultDialog: {
@@ -181,13 +125,6 @@ export const darkTheme = createTheme(adaptV4Theme({
                 cursor: 'pointer'
             }
         },
-        panelGrid: {
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            padding: '0 4px'
-            //padding: '0.25em 0.5em 0.5em 0.5em'
-        },
         panelSection: {
             display: 'flex',
             flexDirection: 'row',
@@ -195,9 +132,7 @@ export const darkTheme = createTheme(adaptV4Theme({
             alignItems: 'center',
             border: '1px solid ' + globalTheme.palette.border,
             backgroundColor: globalTheme.palette.background.paper,
-            //padding: '0.25em',
             minHeight: '3em',
-            //flexGrow: 1,
         }
     }
 }, globalTheme))

@@ -17,7 +17,6 @@ namespace MSFSTouchPanel.SimConnectAgent
         public event EventHandler OnMsfsDisconnected;
         public event EventHandler OnMsfsException;
         public event EventHandler<EventArgs<string>> OnDataRefreshed;
-        public event EventHandler<EventArgs<string>> OnLVarReceived;
         public event EventHandler<EventArgs<string>> OnReceiveSystemEvent;
         public event EventHandler<EventArgs<bool>> OnArduinoConnectionChanged;
 

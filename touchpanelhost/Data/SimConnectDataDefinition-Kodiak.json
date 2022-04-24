@@ -1,0 +1,183 @@
+[
+
+  {
+    "propName": "KODIAK_LANDING_LIGHT",
+    "variableName": "SWS_LIGHTING_Switch_Light_Landing",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_CABIN_LIGHT",
+    "variableName": "SWS_LIGHTING_Switch_Light_CABIN_12",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_PITOT_HEAT_1",
+    "variableName": "DEICE_Pitot_1",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_PITOT_HEAT_2",
+    "variableName": "DEICE_Pitot_2",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_AUX_BUS",
+    "variableName": "XMLVAR_AUX_Bus_ON",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_FUEL_PUMP",
+    "variableName": "SWS_FUEL_Switch_Pump_1",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_IGNITION",
+    "variableName": "SWS_ENGINE_Switch_Ignition_1",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_STARTER",
+    "variableName": "SWS_ENGINE_Switch_Starter_ThreeState_1",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_FUEL_SHUTOFF_LEFT",
+    "variableName": "SWS_Kodiak_TankSelector_1",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_FUEL_SHUTOFF_RIGHT",
+    "variableName": "SWS_Kodiak_TankSelector_2",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_OXYGEN",
+    "variableName": "XMLVAR_Oxygen",
+    "simConnectUnit": null,
+    "dataType": "Default",
+    "dataDefinitionType": "LVar",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "ENG_ANTI_ICE_1",
+    "variableName": "ENG ANTI ICE:1",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "PROP_DEICE_SWITCH",
+    "variableName": "PROP DEICE SWITCH:1",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "WINDSHIELD_DEICE_SWITCH",
+    "variableName": "WINDSHIELD DEICE SWITCH",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "LIGHT_WING_ON",
+    "variableName": "LIGHT WING",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "ALTERNATOR_1_ON",
+    "variableName": "GENERAL ENG MASTER ALTERNATOR:1",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "ALTERNATOR_2_ON",
+    "variableName": "GENERAL ENG MASTER ALTERNATOR:2",
+    "simConnectUnit": "bool",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_GLARESHIELD_SETTING",
+    "variableName": "LIGHT POTENTIOMETER:3",
+    "simConnectUnit": "number",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_INSTRUMENTATION_LIGHT_SETTING",
+    "variableName": "LIGHT POTENTIOMETER:2",
+    "simConnectUnit": "number",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  },
+  {
+    "propName": "KODIAK_PANEL_LIGHT_SETTING",
+    "variableName": "LIGHT POTENTIOMETER:21",
+    "simConnectUnit": "number",
+    "dataType": "Float64",
+    "dataDefinitionType": "SimConnect",
+    "defaultValue": 0,
+    "JavaScriptFormatting": null
+  }
+]

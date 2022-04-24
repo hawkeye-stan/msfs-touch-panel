@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { MapContainer } from 'react-leaflet';
-import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
+import { useSimConnectData } from '../Services/SimConnectDataProvider';
 import MapDisplay from '../Components/Control/MapDisplay';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const MapPanel = ({mapType, refresh}) => {
+const MapPanel = ({refresh}) => {
     const { simConnectSystemEvent } = useSimConnectData();
     const classes = useStyles();
     const [reload, setReload] = useState(true);
@@ -35,7 +35,7 @@ const MapPanel = ({mapType, refresh}) => {
         <div className={classes.root}>
             { reload && 
                 <MapContainer zoom={15} scrollWheelZoom={true} style={{ height: '100%'}}>
-                    <MapDisplay displayType={mapType} refresh={refresh} />
+                    <MapDisplay refresh={refresh} />
                 </MapContainer>
             }
         </div>

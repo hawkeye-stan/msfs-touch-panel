@@ -10,7 +10,6 @@ import BackspaceIcon from '@mui/icons-material/Backspace';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import Tooltip from '@mui/material/Tooltip';
-import Switch from '@mui/material/Switch';
 
 const useStyles = makeStyles((theme) => ({
     dialog: {
@@ -81,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const NumPad = ({ anchorEl, open, numberOfDigit, decimalPlaces, minValue, maxValue, disableNumPadKeys, onSet, onClose, isDirectInput, allowInputOption, onDirectInputChanged }) => {
+const NumPad = ({ anchorEl, open, numberOfDigit, decimalPlaces, minValue, maxValue, disableNumPadKeys, onSet, onClose }) => {
     const classes = useStyles();
     const [keyPadValue, setKeyPadValue] = useState('');
     const [isValid, setIsValid] = useState(false);
@@ -113,11 +112,6 @@ const NumPad = ({ anchorEl, open, numberOfDigit, decimalPlaces, minValue, maxVal
             onSet(Number(keyPadValue));
 
         handleClose();
-    }
-
-    const handleDirectInputChanged = () => {
-        if (onDirectInputChanged != null)
-            onDirectInputChanged(false);
     }
 
     const addDigit = (digit) => {
@@ -190,17 +184,6 @@ const NumPad = ({ anchorEl, open, numberOfDigit, decimalPlaces, minValue, maxVal
                     <IconButton color='inherit' aria-label='close' size='medium' onClick={handleClose}>
                         <CloseIcon />
                     </IconButton>
-                    {allowInputOption &&
-                        <div className={classes.directInputSwitch}>
-                            <Typography variant='h6' style={{paddingRight: '8px'}}>Direct Input</Typography>
-                            <Switch
-                                checked={isDirectInput}
-                                onChange={handleDirectInputChanged}
-                                color='primary'
-                                size='small'
-                            />
-                        </div>
-                    }
                     <IconButton color='inherit' aria-label='accept' size='medium' disabled={!isValid} onClick={handleOnSet}>
                         <CheckIcon />
                     </IconButton>

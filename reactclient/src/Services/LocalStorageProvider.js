@@ -4,7 +4,6 @@ const LocalStorageDataContext = createContext(null);
 
 const LocalStorageProvider = ({ initialData, children }) => {
     const [configurationData, setConfigurationData] = useState(initialData);
-    const [planeProfile, setPlaneProfile] = useState();
     const [mapConfig, setMapConfig] = useState();
 
     useEffect(() => {
@@ -42,7 +41,7 @@ const LocalStorageProvider = ({ initialData, children }) => {
     }, [])
 
     return (
-        <LocalStorageDataContext.Provider value={{ configurationData, updateConfigurationData, planeProfile, mapConfig }}>
+        <LocalStorageDataContext.Provider value={{ configurationData, updateConfigurationData, mapConfig }}>
             {children}
         </LocalStorageDataContext.Provider>
     )
@@ -52,7 +51,3 @@ export default LocalStorageProvider;
 
 // custom hook
 export const useLocalStorageData = () => useContext(LocalStorageDataContext);
-
-export const getSelectedPlanProfile = () => {
-    return localStorage.getItem('planeProfile');
-}

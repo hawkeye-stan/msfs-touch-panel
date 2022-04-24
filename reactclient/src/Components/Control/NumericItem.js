@@ -61,7 +61,6 @@ const NumericItem = (props) => {
                         minValue={props.minInterval}
                         maxValue={props.maxInterval}
                         usedByArduino={false}
-                        allowInputOption={false}
                         onSet={(value) => handleChange(props.itemKey, (Number(value)))}
                     />
                 </div>

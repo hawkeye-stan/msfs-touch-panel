@@ -3,7 +3,6 @@ using MSFSTouchPanel.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Dynamic;
 using System.Runtime.InteropServices;
 using System.Timers;
 
@@ -19,18 +18,23 @@ namespace MSFSTouchPanel.FSConnector
         private Timer _connectionTimer;
         private SimConnectSystemEvent _lastSimConnectSystemEvent;
         private bool _isInActiveFlightSession;
-
+        
         public event EventHandler<EventArgs<string>> OnException;
-        public event EventHandler<EventArgs<dynamic>> OnReceivedData;
+        public event EventHandler<EventArgs<List<SimConnectDataDefinition>>> OnReceivedData;
         public event EventHandler<EventArgs<string>> OnReceiveSystemEvent;
         public event EventHandler OnConnected;
         public event EventHandler OnDisconnected;
         public event EventHandler OnFlightSessionStarted;
         public event EventHandler OnFlightSessionStopped;
 
-        public dynamic SimData { get; set; }
-
         public bool Connected { get; set; }
+
+        public List<SimConnectDataDefinition> SimConnectDataDefinitions;
+
+        public SimConnector()
+        {
+            SimConnectDataDefinitions = ConfigurationReader.GetSimConnectDataDefinitions();
+        }
 
         public void Start()
         {
@@ -157,20 +161,19 @@ namespace MSFSTouchPanel.FSConnector
 
         private void AddDataDefinitions()
         {
-            var definitions = DataDefinition.GetDefinition();
-            foreach (var (propName, variableName, simConnectUnit, dataType, dataDefinitionType) in definitions)
+            foreach (var definition in SimConnectDataDefinitions)
             {
-                switch (dataDefinitionType)
+                switch (definition.DataDefinitionType)
                 {
                     case DataDefinitionType.AVar:
-                        _mobiFlightWasmClient.GetSimVar($"(A:{variableName})");
+                        _mobiFlightWasmClient.GetSimVar($"(A:{definition.VariableName})");
                         break;
                     case DataDefinitionType.LVar:
-                        _mobiFlightWasmClient.GetSimVar($"(L:{variableName})");
+                        _mobiFlightWasmClient.GetSimVar($"(L:{definition.VariableName})");
                         break;
                     case DataDefinitionType.SimConnect:
                         SIMCONNECT_DATATYPE simmConnectDataType;
-                        switch (dataType)
+                        switch (definition.DataType)
                         {
                             case DataType.String:
                                 simmConnectDataType = SIMCONNECT_DATATYPE.STRING256;
@@ -183,7 +186,7 @@ namespace MSFSTouchPanel.FSConnector
                                 break;
                         }
 
-                        _simConnect.AddToDataDefinition(SIMCONNECT_DATA_DEFINITION.SIMCONNECT_DATA_STRUCT, variableName, simConnectUnit, simmConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+                        _simConnect.AddToDataDefinition(SIMCONNECT_DATA_DEFINITION.SIMCONNECT_DATA_STRUCT, definition.VariableName, definition.SimConnectUnit, simmConnectDataType, 0.0f, SimConnect.SIMCONNECT_UNUSED);
                         break;
                 }
             }
@@ -221,28 +224,25 @@ namespace MSFSTouchPanel.FSConnector
             {
                 var simConnectStruct = (SimConnectStruct)data.dwData[0];
                 var simConnectStructFields = typeof(SimConnectStruct).GetFields();
-                var simData = new ExpandoObject();
 
-                var definition = DataDefinition.GetDefinition();
                 int i = 0;
-                foreach (var item in definition)
+                foreach (var definition in SimConnectDataDefinitions)
                 {
-                    switch(item.dataDefinitionType)
+                    switch(definition.DataDefinitionType)
                     {
                         case DataDefinitionType.AVar:
-                            simData.TryAdd(item.propName, _mobiFlightWasmClient.GetSimVar($"(A:{item.variableName})"));
+                            definition.Value = _mobiFlightWasmClient.GetSimVar($"(A:{definition.VariableName})");
                             break;
                         case DataDefinitionType.LVar:
-                            simData.TryAdd(item.propName, _mobiFlightWasmClient.GetSimVar($"(L:{item.variableName})"));
+                            definition.Value = _mobiFlightWasmClient.GetSimVar($"(L:{definition.VariableName})");
                             break;
                         case DataDefinitionType.SimConnect:
-                            simData.TryAdd(item.propName, simConnectStructFields[i++].GetValue(simConnectStruct));      // increment structure counter after assignment
+                            definition.Value = simConnectStructFields[i++].GetValue(simConnectStruct); // increment structure counter after assignment
                             break;
                     }
                 }
 
-                SimData = simData;
-                OnReceivedData?.Invoke(this, new EventArgs<dynamic>(simData));
+                OnReceivedData?.Invoke(this, new EventArgs<List<SimConnectDataDefinition>>(SimConnectDataDefinitions));
             }
             catch (Exception ex)
             {

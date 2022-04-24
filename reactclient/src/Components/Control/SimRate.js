@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
+import { useSimConnectData } from '../../Services/SimConnectDataProvider';
 import { simActions } from '../../Services/ActionProviders/simConnectActionHandler';
 import { Typography } from '@mui/material';
 import NumericEntryDisplay from '../Control/NumericEntryDisplay';
@@ -41,7 +41,6 @@ const SimRate = () => {
                     decimalPlaces={1}
                     minValue={1}
                     maxValue={8}
-                    allowInputOption={false}
                     usedByArduino={false}
                     disableNumPadKeys={[9, 0, '-']}
                     onColor={'rgb(32, 217, 32, 1)'}

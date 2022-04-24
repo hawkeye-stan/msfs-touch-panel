@@ -32,8 +32,5 @@ namespace MSFSTouchPanel.Shared
         public string IframeRatio { get; set; }
 
         public string Definitions { get; set; }
-
-        public string Styles { get; set; }
-
     }
 }

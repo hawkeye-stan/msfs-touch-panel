@@ -4,7 +4,6 @@ import { useLocalStorageData } from '../../Services/LocalStorageProvider';
 import { Typography } from '@mui/material';
 import SevenSegmentDisplay from '../Control/SevenSegmentDisplay';
 import NumPad from '../ControlDialog/NumPad';
-import KnobPad from '../ControlDialog/KnobPad';
 
 const useStyles = makeStyles((theme) => ({
     segmentContainer: {
@@ -33,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NumericEntryDisplay = ({ id, initialValue, labelLeft, labelRight, numberOfDigit, numberOfDisplayDigit, decimalPlaces, minValue, maxValue, disableNumPadKeys,
-    onSelect, onSet, disableEntry, allowInputOption, usedByArduino, onColor, showDualKnob}) => {
+    onSelect, onSet, disableEntry, usedByArduino, onColor}) => {
 
     const classes = useStyles();
     const { configurationData, updateConfigurationData } = useLocalStorageData();
@@ -65,15 +64,6 @@ const NumericEntryDisplay = ({ id, initialValue, labelLeft, labelRight, numberOf
             onSet(value);
     }
 
-    const handleDirectInputChanged = (value) => {
-        if(allowInputOption)
-        {
-            let updatedData = { ...configurationData };
-            updatedData['directInput_' + id] = value;
-            updateConfigurationData(updatedData);
-        }
-    }
-
     return (
         <div>
             <div className={classes.segmentContainer} >
@@ -94,32 +84,18 @@ const NumericEntryDisplay = ({ id, initialValue, labelLeft, labelRight, numberOf
                     <Typography className={classes.segmentDisplayLabel} variant='body1'>{labelRight}</Typography>
                 }
             </div>
-            {!disabled && keyPadOpen && (configurationData['directInput_' + id] || !allowInputOption) &&
-                <NumPad
-                    anchorEl={anchorEl}
-                    open={keyPadOpen}
-                    onSet={handleOnSet}
-                    numberOfDigit={numberOfDigit}
-                    decimalPlaces={decimalPlaces}
-                    onClose={handleClose}
-                    minValue={minValue}
-                    maxValue={maxValue}
-                    disableNumPadKeys={disableNumPadKeys}
-                    isDirectInput={configurationData['directInput_' + id]}
-                    allowInputOption={allowInputOption}
-                    onDirectInputChanged={handleDirectInputChanged}>
-                </NumPad>
-            }
-            {!disabled && keyPadOpen && allowInputOption && (!configurationData['directInput_' + id] || configurationData['directInput_' + id] === undefined) &&
-                <KnobPad
-                    open={keyPadOpen}
-                    onClose={handleClose}
-                    showDualKnob={showDualKnob}
-                    anchorEl={anchorEl}
-                    isDirectInput={!configurationData['directInput_' + id]}
-                    onDirectInputChanged={handleDirectInputChanged}>
-                </KnobPad>
-            }
+            <NumPad
+                anchorEl={anchorEl}
+                open={keyPadOpen}
+                onSet={handleOnSet}
+                numberOfDigit={numberOfDigit}
+                decimalPlaces={decimalPlaces}
+                onClose={handleClose}
+                minValue={minValue}
+                maxValue={maxValue}
+                disableNumPadKeys={disableNumPadKeys}>
+            </NumPad>
+          
         </div>
     )
 }
@@ -136,8 +112,7 @@ NumericEntryDisplay.defaultProps = {
     disabled: false,
     disableNumPadKeys: [],
     disableEntry: false,
-    usedByArduino: true,
-    allowInputOption: true
+    usedByArduino: true
 };
 
 export default NumericEntryDisplay;

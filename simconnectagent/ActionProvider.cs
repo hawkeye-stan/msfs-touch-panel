@@ -41,9 +41,8 @@ namespace MSFSTouchPanel.SimConnectAgent
             {
                 try
                 {
-                    var dataDefinitions = DataDefinition.GetDefinition();
-                    var definition = dataDefinitions.Find(x => x.propName == propName);
-                    _simConnector.SetSimVar($"{value} (>L:{definition.variableName})");
+                    var definition = _simConnector.SimConnectDataDefinitions.Find(x => x.PropName == propName);
+                    _simConnector.SetSimVar($"{value} (>L:{definition.VariableName})");
                 }
                 catch (Exception e)
                 {
@@ -91,7 +90,7 @@ namespace MSFSTouchPanel.SimConnectAgent
                                 switch(action)
                                 {
                                     case "INCREASE_GLARESHIELD":
-                                        currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_GLARESHIELD_SETTING * 100);
+                                        currentValue = Convert.ToInt32(Convert.ToDouble(_simConnector.SimConnectDataDefinitions.Find(x => x.PropName == "KODIAK_GLARESHIELD_SETTING").Value) * 100);
                                         if (currentValue != 100)
                                         {
                                             _simConnector.SetSimVar($"{currentValue + 5} (>K:LIGHT_POTENTIOMETER_3_SET) 1 (>K:GLARESHIELD_LIGHTS_ON)");
@@ -99,7 +98,7 @@ namespace MSFSTouchPanel.SimConnectAgent
                                         }
                                         break;
                                     case "DECREASE_GLARESHIELD":
-                                        currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_GLARESHIELD_SETTING * 100);
+                                        currentValue = Convert.ToInt32(Convert.ToDouble(_simConnector.SimConnectDataDefinitions.Find(x => x.PropName == "KODIAK_GLARESHIELD_SETTING").Value) * 100);
                                         if (currentValue != 0)
                                         {
                                             _simConnector.SetSimVar($"{currentValue - 5} (>K:LIGHT_POTENTIOMETER_3_SET)");
@@ -107,7 +106,7 @@ namespace MSFSTouchPanel.SimConnectAgent
                                         }
                                         break;
                                     case "INCREASE_INSTRUMENT":
-                                        currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_INSTRUMENTATION_LIGHT_SETTING * 100);
+                                        currentValue = Convert.ToInt32(Convert.ToDouble(_simConnector.SimConnectDataDefinitions.Find(x => x.PropName == "KODIAK_INSTRUMENTATION_LIGHT_SETTING").Value) * 100);
                                         if (currentValue != 100)
                                         {
                                             _simConnector.SetSimVar($"{currentValue + 5} (>K:LIGHT_POTENTIOMETER_2_SET) 1 (>K:PANEL_LIGHTS_ON)");
@@ -115,7 +114,7 @@ namespace MSFSTouchPanel.SimConnectAgent
                                         }
                                         break;
                                     case "DECREASE_INSTRUMENT":
-                                        currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_INSTRUMENTATION_LIGHT_SETTING * 100);
+                                        currentValue = Convert.ToInt32(Convert.ToDouble(_simConnector.SimConnectDataDefinitions.Find(x => x.PropName == "KODIAK_INSTRUMENTATION_LIGHT_SETTING").Value) * 100);
                                         if (currentValue != 0)
                                         {
                                             _simConnector.SetSimVar($"{currentValue - 5} (>K:LIGHT_POTENTIOMETER_2_SET)");
@@ -125,7 +124,7 @@ namespace MSFSTouchPanel.SimConnectAgent
                                 }
                                 return;
                             case "KODIAK_PANEL_LIGHT_KNOB_SELECT":
-                                currentValue = Convert.ToInt32(_simConnector.SimData.KODIAK_PANEL_LIGHT_SETTING * 100);
+                                currentValue = Convert.ToInt32(Convert.ToDouble(_simConnector.SimConnectDataDefinitions.Find(x => x.PropName == "KODIAK_PANEL_LIGHT_SETTING").Value) * 100);
                                 if (action == "INCREASE")
                                 {
                                     if (currentValue != 100)

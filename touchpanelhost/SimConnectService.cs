@@ -35,11 +35,6 @@ namespace MSFSTouchPanel.TouchPanelHost
                 try { _memCache.Set("simdata", e.Value); } catch { }
             };
 
-            _simConnectorProvider.OnLVarReceived += (source, e) =>
-            {
-                try { _memCache.Set("simdataLVar", e.Value); } catch { }
-            };
-
             _simConnectorProvider.OnReceiveSystemEvent += (source, e) =>
             {
                 try

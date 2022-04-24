@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
+import { useSimConnectData } from '../Services/SimConnectDataProvider';
 import { useLocalStorageData } from '../Services/LocalStorageProvider';
-import KnobPadOverlay from '../Components/ControlDialog/KnobPadOverlay';
-import ButtonTemplate from './ButtonTemplate';
+import KnobPadOverlay from '../Components/ControlDialog/KnobOverlay';
+import InteractiveControlTemplate from './InteractiveControlTemplate';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -12,16 +12,15 @@ const useStyles = makeStyles((theme) => ({
         aspectRatio: (props) => props.panelRatio,
         margin: '0 auto'
     },
-    buttonOverlay:
+    backgroundOverlay:
     {
         position: 'relative',
         backgroundColor: theme.palette.background,
-        backgroundImage: (props) => `url(/img/${props.planeId}/${props.panelId}/background.png)`,
+        backgroundImage: (props) => `url(/profiles/${props.planeId}/panel/${props.panelId}/background.png)`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100% 100%',
         width: '100%',
         height: '100%',
-        //aspectRatio: (props) => props.panelRatio,
         zIndex: 1000
     },
     iframe: {
@@ -33,8 +32,7 @@ const useStyles = makeStyles((theme) => ({
 const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
     const { simConnectSystemEvent } = useSimConnectData();
     const { isUsedArduino } = useLocalStorageData().configurationData;
-    const sharedClasses = useStyles(panelInfo);
-    const panelClasses = panelInfo.styles(panelInfo);
+    const classes = useStyles(panelInfo);
     const [reload, setReload] = useState(true);
     const [keyPadOpen, setKeyPadOpen] = useState(false);
     const [showDualKnob, setShowDualKnob] = useState(false);
@@ -73,16 +71,16 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
 
     
     return useMemo(() => (
-        <div className={sharedClasses.root}>
+        <div className={classes.root}>
             { reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'framepanel') &&
-                <div className={sharedClasses.buttonOverlay}>
-                    { panelInfo.definitions !== undefined && panelInfo.definitions.map(btn =>
-                        <ButtonTemplate 
+                <div className={classes.backgroundOverlay}>
+                    { Array.isArray(panelInfo.definitions) && panelInfo.definitions !== undefined && panelInfo.definitions.map(btn =>
+                        <InteractiveControlTemplate 
                             key={btn.id} 
                             btn={btn}
                             panelInfo={panelInfo}
                             showEncoder={(e, useDualEncoder) => handleShowEncoder(e, useDualEncoder)}>
-                        </ButtonTemplate>
+                        </InteractiveControlTemplate>
                     )}
                 </div>
             }
@@ -90,7 +88,6 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
                 <KnobPadOverlay
                     open={keyPadOpen}
                     onClose={handleKeyPadClose}
-                    allowInputOption={false}
                     showDualKnob={showDualKnob}
                     anchorEl={anchorEl}
                     onKnobPadActivate={() => handleOnKnobPadActivate()}>

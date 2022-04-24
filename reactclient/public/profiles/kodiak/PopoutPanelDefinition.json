@@ -1,0 +1,123 @@
+{
+    "CONTROL_SIZE" : {
+        "KODIAK": {
+            "regularKnob": { "width": 77, "height": 77 },
+            "crsKnob": { "width": 79, "height": 79 },
+            "volKnob": { "width": 49, "height": 49 },
+            "rangeKnob": { "width": 66, "height": 66 },
+            "buttonBase": { "width": 57, "height": 36},
+            "toggleButtonBase": { "width": 50, "height": 98 },
+            "lightKnob": { "width": 70, "height": 70 },
+            "iceKnob": { "width": 65, "height": 65 },
+            "speedKnob": { "width": 53, "height": 94 },
+            "masterBase": { "width": 80, "height": 141 },
+            "rockerBase": { "width": 55, "height": 115 },
+            "fuelLever": { "width": 158, "height": 158 },
+            "oxygenBase": { "width": 49, "height": 69 },
+            "oxygenIndicatorBase": { "width": 10, "height": 107 },
+            "buttonStatusIndicator": { "width": 4, "height": 32 }
+        }
+    },
+
+    "PANEL_CONTROL_DEFINITION": {
+        "KODIAK_DEF": [
+            { "id": "btn_vol1knob", "action": "AS1000_PFD_VOL1_KNOB_SELECT", "image": "knob_vol.png", "left": 60, "top": 41, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.volKnob" }, "useEncoder": true },
+            { "id": "btn_vol2knob", "action": "AS1000_PFD_VOL2_KNOB_SELECT", "image": "knob_vol.png", "left": 2346, "top": 41, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.volKnob" }, "useEncoder": true },
+            { "id": "btn_navknob", "action": "AS1000_PFD_NAV_KNOB_SELECT", "image": "knob.png", "left": 46, "top": 171, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.regularKnob" }, "useDualEncoder": true },
+            { "id": "btn_navswap", "action": "AS1000_PFD_NAV_Switch", "image": "button_swap.png", "left": 97, "top": 104, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_hdgknob", "action": "AS1000_PFD_HDG_KNOB_SELECT", "image": "knob_hdg.png", "left": 46, "top": 338, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.regularKnob" }, "useDualEncoder": true },
+            { "id": "btn_altknob", "action": "AS1000_PFD_ALT_KNOB_SELECT", "image": "knob.png", "left": 46.5, "top": 790, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.regularKnob" }, "useDualEncoder": true },
+            { "id": "btn_comknob", "action": "AS1000_MFD_COM_KNOB_SELECT", "image": "knob.png", "left": 2332, "top": 170, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.regularKnob" }, "useDualEncoder": true },
+            { "id": "btn_comswap", "action": "AS1000_MFD_COM_Switch", "image": "button_swap.png", "left": 2306, "top": 104, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_crsknob", "action": "AS1000_MFD_CRS_KNOB_SELECT", "image": "knob_crs.png", "left": 2332, "top": 334, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.crsKnob" }, "useDualEncoder": true },
+            { "id": "btn_rangeknob", "action": "AS1000_MFD_MAP_KNOB_SELECT", "image": "knob_range.png", "left": 2339, "top": 493, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.rangeKnob" }, "useEncoder": true },
+            { "id": "btn_fmsknob", "action": "AS1000_MFD_FMS_KNOB_SELECT", "image": "knob.png", "left": 2331, "top": 790, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.regularKnob" }, "useDualEncoder": true },
+
+            { "id": "btn_ap", "action": "AP_MASTER", "image": "button_ap.png", "left": 22, "top": 467, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_fd", "action": "TOGGLE_FLIGHT_DIRECTOR", "image": "button_fd.png", "left": 94, "top": 467, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_hdg", "action": "AP_PANEL_HEADING_HOLD", "image": "button_hdg.png", "left": 22, "top": 518, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_alt", "action": "AP_PANEL_ALTITUDE_HOLD", "image": "button_alt.png", "left": 94, "top": 518, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_nav", "action": "AP_NAV1_HOLD", "image": "button_nav.png", "left": 22, "top": 568, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_vnv", "action": "AS1000_AP_VNAV_Push", "image": "button_vnv.png", "left": 94, "top": 568, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_apr", "action": "AP_APR_HOLD", "image": "button_apr.png", "left": 22, "top": 618, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_bc", "action": "AP_BC_HOLD", "image": "button_bc.png", "left": 94, "top": 618, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_vs", "action": "AP_PANEL_VS_HOLD", "image": "button_vs.png", "left": 22, "top": 668, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_flc", "action": "AS1000_MFD_FLC_Push", "image": "button_flc.png", "left": 22, "top": 718, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_speedknob", "action": "AIRSPEED_BUG_SELECT", "image": "knob_speed.png", "left": 94, "top": 666, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.speedKnob" }, "useEncoder": true },
+
+            { "id": "btn_dir", "action": "AS1000_MFD_DIRECTTO", "image": "button_dir.png", "left": 2306, "top": 617, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_fpl", "action": "AS1000_MFD_FPL_Push", "image": "button_fpl.png", "left": 2306, "top": 670, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_clr", "action": "AS1000_MFD_CLR", "image": "button_clr.png", "left": 2306, "top": 722, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_menu", "action": "AS1000_MFD_MENU_Push", "image": "button_menu.png", "left": 2378, "top": 617, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_proc", "action": "AS1000_MFD_PROC_Push", "image": "button_proc.png", "left": 2378, "top": 670, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_ent", "action": "AS1000_MFD_ENT_Push", "image": "button_ent.png", "left": 2378, "top": 722, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+
+            { "id": "btn_softkey_pfd_1", "action": "AS1000_PFD_SOFTKEYS_1", "image": "button_softkey.png", "left": 207, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_2", "action": "AS1000_PFD_SOFTKEYS_2", "image": "button_softkey.png", "left": 292, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_3", "action": "AS1000_PFD_SOFTKEYS_3", "image": "button_softkey.png", "left": 377, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_4", "action": "AS1000_PFD_SOFTKEYS_4", "image": "button_softkey.png", "left": 462, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_5", "action": "AS1000_PFD_SOFTKEYS_5", "image": "button_softkey.png", "left": 547, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_6", "action": "AS1000_PFD_SOFTKEYS_6", "image": "button_softkey.png", "left": 632, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_7", "action": "AS1000_PFD_SOFTKEYS_7", "image": "button_softkey.png", "left": 717, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_8", "action": "AS1000_PFD_SOFTKEYS_8", "image": "button_softkey.png", "left": 802, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_9", "action": "AS1000_PFD_SOFTKEYS_9", "image": "button_softkey.png", "left": 888, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_10", "action": "AS1000_PFD_SOFTKEYS_10", "image": "button_softkey.png", "left": 973, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_11", "action": "AS1000_PFD_SOFTKEYS_11", "image": "button_softkey.png", "left": 1058, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_pfd_12", "action": "AS1000_PFD_SOFTKEYS_12", "actionType": "MobiFlight", "image": "button_softkey.png", "left": 1142, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+
+            { "id": "btn_softkey_mfd_1", "action": "AS1000_MFD_SOFTKEYS_1", "image": "button_softkey.png", "left": 1257, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_2", "action": "AS1000_MFD_SOFTKEYS_2", "image": "button_softkey.png", "left": 1342, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_3", "action": "AS1000_MFD_SOFTKEYS_3", "image": "button_softkey.png", "left": 1427, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_4", "action": "AS1000_MFD_SOFTKEYS_4", "image": "button_softkey.png", "left": 1512, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_5", "action": "AS1000_MFD_SOFTKEYS_5", "image": "button_softkey.png", "left": 1597, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_6", "action": "AS1000_MFD_SOFTKEYS_6", "image": "button_softkey.png", "left": 1682, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_7", "action": "AS1000_MFD_SOFTKEYS_7", "image": "button_softkey.png", "left": 1767, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_8", "action": "AS1000_MFD_SOFTKEYS_8", "image": "button_softkey.png", "left": 1852, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_9", "action": "AS1000_MFD_SOFTKEYS_9", "image": "button_softkey.png", "left": 1938, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_10", "action": "AS1000_MFD_SOFTKEYS_10", "image": "button_softkey.png", "left": 2023, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_11", "action": "AS1000_MFD_SOFTKEYS_11", "image": "button_softkey.png", "left": 2108, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_softkey_mfd_12", "action": "AS1000_MFD_SOFTKEYS_12", "image": "button_softkey.png", "left": 2192, "top": 848, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+
+            { "id": "btn_yd", "action": "YAW_DAMPER_TOGGLE", "image": "button_yd.png", "left": 62, "top": 989, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_yd_indicator", "binding": "AP_YAW_DAMPER_ON", "images": [{ "url": "button_status_off.png", "val": 0 }, { "url": "button_status_on.png", "val": 1 }], "left": 121, "top": 994, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonStatusIndicator" } },
+            { "id": "btn_lvl", "action": "AP_WING_LEVELER", "image": "button_lvl.png", "left": 62, "top": 1049, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_bank", "action": "NONE", "image": "button_bank.png", "left": 62, "top": 1112, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+            { "id": "btn_spd", "action": "NONE", "image": "button_spd.png", "left": 62, "top": 1173, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.buttonBase" } },
+
+            { "id": "btn_master", "action": "TOGGLE_MASTER_BATTERY", "binding": "BATTERY_MASTER_ON", "images": [{ "url": "master_off.png", "val": 0 }, { "url": "master_on.png", "val": 1 }], "left": 170, "top": 1015, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.masterBase" }, "highlight": false },
+            { "id": "btn_avn_bus", "action": "TOGGLE_AVIONICS_MASTER", "binding": "AVIONICS_MASTER_ON", "images": [{ "url": "rocker_off.png", "val": 0 }, { "url": "rocker_on.png", "val": 1 }], "left": 288, "top": 1023, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.rockerBase" }, "highlight": false },
+            { "id": "btn_aux_bus", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 0, "lastValue": 1 }], "binding": "KODIAK_AUX_BUS", "images": [{ "url": "rocker_off.png", "val": 0 }, { "url": "rocker_on.png", "val": 1 }], "left": 377, "top": 1023, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.rockerBase" }, "highlight": false },
+
+            { "id": "btn_aux_fuel_pump", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 2, "lastValue": 1 }, { "newValue": 0, "lastValue": 2 }], "binding": "KODIAK_FUEL_PUMP", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_mid.png", "val": 1 }, { "url": "toggle_up.png", "val": 2 }], "left": 486, "top": 964, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_ignition", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 0, "lastValue": 1 }], "binding": "KODIAK_IGNITION", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 584, "top": 964, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_starter", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 2, "lastValue": 1 }, { "newValue": 0, "lastValue": 2 }], "binding": "KODIAK_STARTER", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_mid.png", "val": 1 }, { "url": "toggle_up.png", "val": 2 }], "left": 682, "top": 964, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+
+            { "id": "btn_generator", "action": "TOGGLE_ALTERNATOR1", "binding": "ALTERNATOR_1_ON", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 584, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_alternator", "action": "TOGGLE_ALTERNATOR2", "binding": "ALTERNATOR_2_ON", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 682, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+
+            { "id": "btn_beacon_light", "action": "TOGGLE_BEACON_LIGHTS", "binding": "LIGHT_BEACON_ON", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 919, "top": 965, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_strobe_light", "action": "STROBES_TOGGLE", "binding": "LIGHT_STROBE_ON", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 1016, "top": 965, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_nav_light", "action": "TOGGLE_NAV_LIGHTS", "binding": "LIGHT_NAV_ON", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 1110, "top": 965, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_taxi_light", "action": "TOGGLE_TAXI_LIGHTS", "binding": "LIGHT_TAXI_ON", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 1205, "top": 965, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_landing_light", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 2, "lastValue": 1 }, { "newValue": 0, "lastValue": 2 }], "binding": "KODIAK_LANDING_LIGHT", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_mid.png", "val": 1 }, { "url": "toggle_up.png", "val": 2 }], "left": 1323, "top": 965, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_cabin_light", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 2, "lastValue": 1 }, { "newValue": 0, "lastValue": 2 }], "binding": "KODIAK_CABIN_LIGHT", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_mid.png", "val": 1 }, { "url": "toggle_up.png", "val": 2 }], "left": 1441, "top": 965, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_instrument_light_knob", "action": "KODIAK_INSTRUMENTS_LIGHT_KNOB_SELECT", "actionValue": "0", "image": "knob_light_dual.png", "left": 1522, "top": 978, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.lightKnob" }, "useDualEncoder": true },
+            { "id": "btn_switch_panel_light__knob", "action": "KODIAK_PANEL_LIGHT_KNOB_SELECT", "actionValue": "0", "image": "knob_light.png", "left": 1616, "top": 978, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.lightKnob" }, "useEncoder": true },
+
+            { "id": "btn_engine_inlet_bypass_override", "image": "toggle_down.png", "left": 919, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_engine_inlet_bypass", "action": "ANTI_ICE_TOGGLE_ENG1", "actionType": "KEvent", "binding": "ENG_ANTI_ICE_1", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 1016, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_pitot_heat_left", "action": "PITOT_HEAT_TOGGLE", "actionValue": 1, "actionType": "KEvent", "binding": "KODIAK_PITOT_HEAT_1", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 1110, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_pitot_heat_right", "action": "PITOT_HEAT_TOGGLE", "actionValue": 2, "actionType": "KEvent", "binding": "KODIAK_PITOT_HEAT_2", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 1205, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_ice_knob", "action": "TOGGLE_PROPELLER_DEICE", "binding": "PROP_DEICE_SWITCH", "images": [{ "url": "knob_ice_off.png", "val": 0 }, { "url": "knob_ice_on.png", "val": 1 }], "left": 1320, "top": 1160, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.iceKnob" }, "highlight": false },
+            { "id": "btn_wind_shield_heat", "action": "KODIAK_100_DEICE_WINDSHIELD_TOGGLE", "binding": "WINDSHIELD_DEICE_SWITCH", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 1441, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_backup_pump_heat", "image": "toggle_down.png", "left": 1534, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+            { "id": "btn_ice_light", "action": "TOGGLE_WING_LIGHTS", "binding": "LIGHT_WING_ON", "images": [{ "url": "toggle_down.png", "val": 0 }, { "url": "toggle_up.png", "val": 1 }], "left": 1627, "top": 1140, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.toggleButtonBase" }, "highlight": false },
+
+            { "id": "btn_fuel_left", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 0, "lastValue": 1 }], "binding": "KODIAK_FUEL_SHUTOFF_LEFT", "images": [{ "url": "fuel_lever_left_off.png", "val": 0 }, { "url": "fuel_lever_left_on.png", "val": 1 }], "left": 1832, "top": 1023, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.fuelLever" }, "highlight": false },
+            { "id": "btn_fuel_right", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 0, "lastValue": 1 }], "binding": "KODIAK_FUEL_SHUTOFF_RIGHT", "images": [{ "url": "fuel_lever_right_off.png", "val": 0 }, { "url": "fuel_lever_right_on.png", "val": 1 }], "left": 2017, "top": 1023, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.fuelLever" }, "highlight": false },
+
+            { "id": "btn_oxygen", "valueSequence": [{ "newValue": 1, "lastValue": 0 }, { "newValue": 0, "lastValue": 1 }], "binding": "KODIAK_OXYGEN", "images": [{ "url": "oxygen_off.png", "val": 0 }, { "url": "oxygen_on.png", "val": 1 }], "left": 2316, "top": 1070, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.oxygenBase" }, "highlight": false },
+            { "id": "btn_oxygen_indicator", "binding": "KODIAK_OXYGEN", "images": [{ "url": "oxygen_indicator_off.png", "val": 0 }, { "url": "oxygen_indicator_on.png", "val": 1 }], "left": 2288, "top": 1047, "controlSize": { "$ref": "#CONTROL_SIZE.KODIAK.oxygenIndicatorBase" }, "highlight": false }
+        ]
+    }
+}
