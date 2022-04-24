@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
-import { useLocalStorageData } from '../../Services/LocalStorageProvider';
-import KnobPadOverlay from '../../Components/ControlDialog/KnobPadOverlay';
+import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
+import { useLocalStorageData } from '../Services/LocalStorageProvider';
+import KnobPadOverlay from '../Components/ControlDialog/KnobPadOverlay';
 import ButtonTemplate from './ButtonTemplate';
 
 const useStyles = makeStyles((theme) => ({
@@ -33,8 +33,8 @@ const useStyles = makeStyles((theme) => ({
 const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
     const { simConnectSystemEvent } = useSimConnectData();
     const { isUsedArduino } = useLocalStorageData().configurationData;
-    const sharedClasses = useStyles(panelInfo[0]);
-    const panelClasses = panelInfo[0].styles(panelInfo[0]);
+    const sharedClasses = useStyles(panelInfo);
+    const panelClasses = panelInfo.styles(panelInfo);
     const [reload, setReload] = useState(true);
     const [keyPadOpen, setKeyPadOpen] = useState(false);
     const [showDualKnob, setShowDualKnob] = useState(false);
@@ -74,20 +74,12 @@ const PopoutPanelContainer = ({panelInfo, displayFormat}) => {
     
     return useMemo(() => (
         <div className={sharedClasses.root}>
-            {reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'webpanel') && 
-                panelInfo.map((panel, index) => { 
-                    return (
-                        <div key={'atc' + index} className={displayFormat.toLowerCase() === 'webpanel' ? panelClasses.iframePanelMaxSize : panelClasses['iframePanel_' + index]}>
-                            <iframe title='iframePanel' className={sharedClasses.iframe} src={`/assets/webpanel.html?planeId=${panel.planeId}&panelId=${panel.panel_coherent_id}`} frameBorder="0"></iframe>
-                        </div>
-                    )}
-                )}
             { reload && (displayFormat.toLowerCase() === 'buttonpanel' || displayFormat.toLowerCase() === 'framepanel') &&
                 <div className={sharedClasses.buttonOverlay}>
-                    { panelInfo[0].definitions !== undefined && panelInfo[0].definitions.map(btn =>
+                    { panelInfo.definitions !== undefined && panelInfo.definitions.map(btn =>
                         <ButtonTemplate 
                             key={btn.id} 
-                            btn={btn} 
+                            btn={btn}
                             panelInfo={panelInfo}
                             showEncoder={(e, useDualEncoder) => handleShowEncoder(e, useDualEncoder)}>
                         </ButtonTemplate>

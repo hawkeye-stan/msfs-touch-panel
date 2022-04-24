@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
-using MSFSTouchPanel.FSConnector;
 using MSFSTouchPanel.Shared;
 using MSFSTouchPanel.SimConnectAgent;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -74,13 +75,12 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         public IActionResult Post(SimConnectPostData data)
         {
             var value = Convert.ToString(data.Value);
-            var planeProfile = (PlaneProfile)Enum.Parse(typeof(PlaneProfile), data.PlaneProfile);
 
-            _simConnectService.ExecAction(data.Action, data.ActionType, value, planeProfile);
+            _simConnectService.ExecAction(data.Action, data.ActionType, value);
 
             var clientIP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
 
-            Logger.ClientLog($"ClientIP: {clientIP, -20} Action: {data.Action,-35} Value: {value, -7} Profile: {data.PlaneProfile}", LogLevel.INFO);
+            Logger.ClientLog($"ClientIP: {clientIP, -20} Action: {data.Action,-35} Value: {value, -7}", LogLevel.INFO);
 
             return Ok();
         }
@@ -125,8 +125,15 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         {
             try
             {
-                var filePath = Path.Combine(AppContext.BaseDirectory, @"Data\PlanePanelProfileInfo.json");
-                return System.IO.File.ReadAllText(filePath);
+                var planeProfileConfiguration = ConfigurationReader.GetPlaneProfilesConfiguration();
+
+                return JsonConvert.SerializeObject(planeProfileConfiguration, Formatting.Indented, new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
+
+                //var filePath = Path.Combine(AppContext.BaseDirectory, @"Data\PlanePanelProfileInfo.json");
+                //return System.IO.File.ReadAllText(filePath);
 
             }
             catch (Exception ex)
@@ -162,8 +169,6 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         public object Value { get; set; }
 
         public int ExecutionCount { get; set; }
-
-        public string PlaneProfile { get; set; }
     }
 
     public class SimConnectSetLVarData

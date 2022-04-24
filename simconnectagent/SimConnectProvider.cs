@@ -55,9 +55,9 @@ namespace MSFSTouchPanel.SimConnectAgent
             OnMsfsDisconnected?.Invoke(this, null);
         }
 
-        public void ExecAction(string action, string actionType, string value, PlaneProfile planeProfile)
+        public void ExecAction(string action, string actionType, string value)
         {
-            _actionProvider.ExecAction(action, actionType, value, planeProfile);
+            _actionProvider.ExecAction(action, actionType, value);
         }
 
         public void SetLVar(string propName, string value)

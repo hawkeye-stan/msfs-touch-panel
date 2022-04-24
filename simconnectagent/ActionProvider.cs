@@ -52,7 +52,7 @@ namespace MSFSTouchPanel.SimConnectAgent
             }
         }
 
-        public void ExecAction(string action, string actionType, string value, PlaneProfile planeProfile)
+        public void ExecAction(string action, string actionType, string value)
         {
             if (_isSimConnected && action != null)
             {

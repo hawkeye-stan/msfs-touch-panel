@@ -1,7 +1,7 @@
 import React, {  useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { useHistory } from 'react-router-dom';
-import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
+import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
@@ -76,7 +76,7 @@ const ApplicationBar = ({showMapIcon, mapOpenChanged, planeInfo}) => {
                             <Typography variant="h6" className={classes.planeTitle}>{ planeInfo === undefined ? 'MSFS Web Panel' : planeInfo.planeName + ' - ' + planeInfo.panelName}</Typography>
                         </Grid>
                         <Grid item xs={3} className={classes.menuIcons}>
-                            <IconButton color='inherit' aria-label='settings' size='small' className={classes.menuButton} onClick={() => history.push('/webpanel')}>
+                            <IconButton color='inherit' aria-label='settings' size='small' className={classes.menuButton} onClick={() => history.push('/')}>
                                 <ArrowBackIcon></ArrowBackIcon>
                             </IconButton>
                             <IconButton color='inherit' aria-label='settings' size='small' className={classes.menuButton} onClick={() => window.location.reload(false)}>

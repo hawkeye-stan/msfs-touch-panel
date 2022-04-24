@@ -12,7 +12,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import FlightIcon from '@mui/icons-material/Flight';
 import SensorWindowIcon from '@mui/icons-material/SensorWindow';
-import { simConnectGetPlanePanelProfilesInfo }  from '../../Services/DataProviders/SimConnectDataProvider';
+import { simConnectGetPlanePanelProfilesInfo }  from '../Services/DataProviders/SimConnectDataProvider';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,14 +25,14 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: '100vw',
         display: 'grid',
         overflow: 'hidden',
-        height: '100%'
+        height: '100vh',
+        backgroundColor: 'black'
     }
 }));
 
 const PlaneProfileList = ({plane}) => {
     const history = useHistory();
     const [open, setOpen] = React.useState(false);
-
 
     return (
         <>
@@ -69,13 +69,13 @@ const WebPanelSelection = () => {
     }, []);
 
     return (
-        <div className={classes.root}>
+        <div className={classes.rootFullWidth}>
             <List component="nav" subheader={
                 <ListSubheader component="div" id="nested-list-subheader">
                     Please select a plane profile to open the corresponding panel
                 </ListSubheader>
             }>
-                { planePanelProfileInfo !== undefined && planePanelProfileInfo.planes.map((plane) => 
+                { planePanelProfileInfo !== undefined && planePanelProfileInfo.map((plane) => 
                     <PlaneProfileList key={plane.id} plane={plane}></PlaneProfileList>
                 )}
             </List>

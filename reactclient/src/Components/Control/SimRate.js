@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { useSimConnectData } from '../../../Services/DataProviders/SimConnectDataProvider';
-import { simActions } from '../../../Services/ActionProviders/simConnectActionHandler';
+import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
+import { simActions } from '../../Services/ActionProviders/simConnectActionHandler';
 import { Typography } from '@mui/material';
-import NumericEntryDisplay from '../../Control/NumericEntryDisplay';
+import NumericEntryDisplay from '../Control/NumericEntryDisplay';
 
 const useStyles = makeStyles((theme) => ({
     section: theme.custom.panelSection,

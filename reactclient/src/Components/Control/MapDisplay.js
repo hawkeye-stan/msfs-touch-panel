@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { useSimConnectData } from '../../../Services/DataProviders/SimConnectDataProvider';
-import { simConnectGetFlightPlan } from '../../../Services/DataProviders/SimConnectDataProvider';
-import { useLocalStorageData } from '../../../Services/LocalStorageProvider';
-import { useInterval } from '../../Util/hooks';
+import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
+import { simConnectGetFlightPlan } from '../../Services/DataProviders/SimConnectDataProvider';
+import { useLocalStorageData } from '../../Services/LocalStorageProvider';
+import { useInterval } from '../Util/hooks';
 import { useMap, LayersControl, LayerGroup, TileLayer, useMapEvents } from 'react-leaflet'
 import L from 'leaflet';
 import 'leaflet.marker.slideto';
@@ -258,8 +258,6 @@ const MapDisplay = ({displayType, refresh}) => {
 
         map.setZoom(mapDisplayType.defaultZoomLevel);
         map.setView(planePosition.current);
-
-
 
         document.getElementsByClassName('leaflet-container')[0].style.zoom = mapDisplayType.uiZoomFactor;
     }, [])

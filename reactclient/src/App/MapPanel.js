@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import { MapContainer } from 'react-leaflet';
-import { useSimConnectData } from '../../../Services/DataProviders/SimConnectDataProvider';
-import MapDisplay from '../../ControlGroup/Default/MapDisplay';
-
+import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
+import MapDisplay from '../Components/Control/MapDisplay';
 
 const useStyles = makeStyles((theme) => ({
     root: {

@@ -2,15 +2,13 @@ import { API_URL } from "../ServicesConst";
 import {simconnectDataType }from '../DataProviders/simConnectDataType';
 
 export const simConnectPost = (action, value, actionType) => {
-    let planeProfile = localStorage.getItem('planeProfile');
-
     if(action === undefined || value === undefined)
         return;
 
     if(actionType === undefined)
         actionType = 'SimConnect';
 
-    let data = {action: action, value: value, actionType: actionType, planeProfile: planeProfile };
+    let data = {action: action, value: value, actionType: actionType};
 
     fetch(`${API_URL.url}/postdata`, {
          method: "POST",

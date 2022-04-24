@@ -80,9 +80,9 @@ namespace MSFSTouchPanel.TouchPanelHost
             }
         }
 
-        public void ExecAction(string action, string actionType, string value, PlaneProfile planeProfile)
+        public void ExecAction(string action, string actionType, string value)
         {
-            _simConnectorProvider.ExecAction(action, actionType, value, planeProfile);
+            _simConnectorProvider.ExecAction(action, actionType, value);
         }
 
         public void SetLVar(string propName, string value)
@@ -116,7 +116,7 @@ namespace MSFSTouchPanel.TouchPanelHost
 
         public void Stop();
 
-        public void ExecAction(string action, string actionType, string value, PlaneProfile planeProfile);
+        public void ExecAction(string action, string actionType, string value);
 
         public void SetLVar(string propName, string value);
 

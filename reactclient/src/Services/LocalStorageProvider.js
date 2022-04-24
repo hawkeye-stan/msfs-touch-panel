@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { planeType } from '../planeType';
-import { config as planeConfig } from  '../Components/Panel/PanelConfig';
 
 const LocalStorageDataContext = createContext(null);
 
@@ -25,43 +23,14 @@ const LocalStorageProvider = ({ initialData, children }) => {
             dataRefreshInterval: 100,
             mapRefreshInterval: 250,
             isUsedArduino: false,
-            showLog: false,
-            panelVisibility: { }
         };
 
-        for (const prop in planeConfig) {
-            settings.panelVisibility[`${prop}`] = {}
-            planeConfig[prop].map(c => settings.panelVisibility[prop][c.key] = true);
-        }
-
         localStorage.setItem('settings', JSON.stringify(settings));
-        localStorage.setItem('planeProfile', planeType.DEFAULT.key);
     }
 
     const updateConfigurationData = (value) => {
         localStorage.setItem('settings', JSON.stringify(value));
         setConfigurationData(value);
-    }
-
-    const updatePlaneProfile = (value) => {
-        localStorage.setItem('planeProfile', value);
-
-        let configuration = JSON.parse(localStorage.getItem('settings'));
-
-        // if plane profile does not exist in configuration
-        if(configuration != null && configuration.panelVisibility[value] === undefined)
-        {
-            configuration.panelVisibility[`${value}`] = {}
-            planeConfig[value].map(c => configuration.panelVisibility[value][c.key] = true);
-            localStorage.setItem('settings', JSON.stringify(configuration));
-            setConfigurationData(configuration);
-        }
-
-        setPlaneProfile(value);
-    }
-
-    const updateMapConfig = (value) => {
-        setMapConfig(value);
     }
 
     // get data from local storage
@@ -70,11 +39,10 @@ const LocalStorageProvider = ({ initialData, children }) => {
             initializeLocalStorage();
 
         setConfigurationData(JSON.parse(localStorage.getItem('settings')));
-        setPlaneProfile(localStorage.getItem('planeProfile'));
     }, [])
 
     return (
-        <LocalStorageDataContext.Provider value={{ configurationData, updateConfigurationData, planeProfile, updatePlaneProfile, mapConfig, updateMapConfig }}>
+        <LocalStorageDataContext.Provider value={{ configurationData, updateConfigurationData, planeProfile, mapConfig }}>
             {children}
         </LocalStorageDataContext.Provider>
     )

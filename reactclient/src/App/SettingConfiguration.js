@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { useLocalStorageData } from '../../Services/LocalStorageProvider';
+import { useLocalStorageData } from '../Services/LocalStorageProvider';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import BooleanItem from '../../Components/Settings/BooleanItem';
-import NumericItem from '../../Components/Settings/NumericItem';
+import BooleanItem from '../Components/Control/BooleanItem';
+import NumericItem from '../Components/Control/NumericItem';
 
 const useStyles = makeStyles((theme) => ({
     root: {

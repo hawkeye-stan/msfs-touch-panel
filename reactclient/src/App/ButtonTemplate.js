@@ -1,9 +1,9 @@
 import React, { useMemo, useRef } from 'react';
 import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
-import { useSimConnectData } from '../../Services/DataProviders/SimConnectDataProvider';
-import { useLocalStorageData } from '../../Services/LocalStorageProvider';
-import { simConnectPost, simConnectSetLVar } from '../../Services/ActionProviders/simConnectPost';
+import { useSimConnectData } from '../Services/DataProviders/SimConnectDataProvider';
+import { useLocalStorageData } from '../Services/LocalStorageProvider';
+import { simConnectPost, simConnectSetLVar } from '../Services/ActionProviders/simConnectPost';
 
 const useStyles = makeStyles((theme) => ({
     iconButton: {
@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme) => ({
 const ButtonTemplate = ({ btn, panelInfo, showEncoder }) => {
     const { simConnectData } = useSimConnectData();
     const { isUsedArduino } = useLocalStorageData().configurationData;
-    const sharedClasses = useStyles(panelInfo[0]);
-    const panelClasses = panelInfo[0].styles(panelInfo[0]);
+    const sharedClasses = useStyles(panelInfo);
+    const panelClasses = panelInfo.styles(panelInfo);
     const dataBindingValue = simConnectData[btn.binding];
     const activeButton = useRef(false);
 
@@ -40,14 +40,14 @@ const ButtonTemplate = ({ btn, panelInfo, showEncoder }) => {
             let dataValue = simConnectData[btn.binding];
             let imageUrl = btn.images.find(x => x.val == dataValue).url;
 
-            return { backgroundImage: `url(/img/${panelInfo[0].planeId}/${imageUrl})`};
+            return { backgroundImage: `url(/img/${panelInfo.planeId}/${imageUrl})`};
         }
 
-        return { backgroundImage: `url(/img/${panelInfo[0].planeId}/${btn.image})`};
+        return { backgroundImage: `url(/img/${panelInfo.planeId}/${btn.image})`};
     }
     
     const setupButtonLocationStyle = (btn) => {
-        return { left: (btn.left / panelInfo[0].width * 100.0) + '%', top: (btn.top / panelInfo[0].height * 100.0) + '%' };
+        return { left: (btn.left / panelInfo.width * 100.0) + '%', top: (btn.top / panelInfo.height * 100.0) + '%' };
     }
 
     const handleOnClick = (event, btn) => {

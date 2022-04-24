@@ -5,6 +5,7 @@ using MSFSTouchPanel.TouchPanelHost.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -238,39 +239,26 @@ namespace MSFSTouchPanel.TouchPanelHost
 
         private void LoadPanelsMenu()
         {
-            JObject panelInfo;
+            var planeProfiles = ConfigurationReader.GetPlaneProfilesConfiguration();
 
-            try
-            {
-                using (StreamReader file = File.OpenText(Path.Combine(AppContext.BaseDirectory, @"Data\PlanePanelProfileInfo.json")))
-                using (JsonTextReader reader = new JsonTextReader(file))
+            foreach (var planeProfile in planeProfiles)
+            { 
+                var planeMenu = new ToolStripMenuItem();
+                planeMenu.Name = planeProfile.PlaneId;
+                planeMenu.Text = planeProfile.Name;
+                planeMenu.BackColor = menuPanelRoot.BackColor;
+
+                foreach (var panel in planeProfile.Panels)
                 {
-                    panelInfo = (JObject)JToken.ReadFrom(reader);
+                    var panelMenu = new ToolStripMenuItem();
+                    panelMenu.Name = $"menu_{panel.Type}_{planeProfile.PlaneId}_{panel.PanelId}";
+                    panelMenu.Click += panelMenuItem_Clicked;
+                    panelMenu.Text = panel.Name;
+                    panelMenu.BackColor = menuPanelRoot.BackColor;
+                    planeMenu.DropDownItems.Add(panelMenu);
                 }
 
-                foreach (JObject plane in panelInfo["planes"])
-                {
-                    var planeMenu = new ToolStripMenuItem();
-                    planeMenu.Name = $"{plane["planeId"]}";
-                    planeMenu.Text = $"{plane["name"]}";
-                    planeMenu.BackColor = menuPanelRoot.BackColor;
-
-                    foreach (JObject panel in plane["panels"])
-                    {
-                        var panelMenu = new ToolStripMenuItem();
-                        panelMenu.Name = $"menu_{panel["type"]}_{plane["planeId"]}_{panel["panelId"]}";
-                        panelMenu.Click += panelMenuItem_Clicked;
-                        panelMenu.Text = $"{panel["name"]}";
-                        panelMenu.BackColor = menuPanelRoot.BackColor;
-                        planeMenu.DropDownItems.Add(panelMenu);
-                    }
-
-                    menuPanelRoot.DropDownItems.Add(planeMenu);
-                }
-            }
-            catch 
-            {
-                AppendLogMessages(txtServerLogMessages, "ERROR: PlanePanelProfileInfo.json file is not found or is invalid.");
+                menuPanelRoot.DropDownItems.Add(planeMenu);
             }
         }
 

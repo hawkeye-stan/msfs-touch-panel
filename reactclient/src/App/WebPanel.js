@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
-import LocalStorageProvider from '../../Services/LocalStorageProvider';
-import SimConnectDataProvider, { simConnectGetPlanePanelProfilesInfo }  from '../../Services/DataProviders/SimConnectDataProvider';
-import { useWindowDimensions } from '../../Components/Util/hooks';
+import LocalStorageProvider from '../Services/LocalStorageProvider';
+import SimConnectDataProvider, { simConnectGetPlanePanelProfilesInfo }  from '../Services/DataProviders/SimConnectDataProvider';
+import { useWindowDimensions } from '../Components/Util/hooks';
 import ApplicationBar from './ApplicationBar';
-import TelemetryPanel from './TelemetryPanel';
-import MapPanel from '../../Components/Panel/Default/MapPanel';
+import MapPanel from './MapPanel';
 import PopoutPanelContainer from './PopoutPanelContainer';
 
 const useStyles = props => makeStyles((theme) => ({
@@ -56,7 +55,6 @@ const WebPanel = ({planeId, panelId, displayFormat}) => {
     const [mapOpen, setMapOpen] = useState(false);
     const [ planeProfile, setPlaneProfile] = useState();
     const [ panelProfile, setPanelProfile] = useState();
-    const [ planePanelProfileInfo, setPlanePanelProfileInfo ] = useState();
 
     useEffect(() => {
         if (displayFormat.toLowerCase() === 'framepanel')
@@ -68,14 +66,16 @@ const WebPanel = ({planeId, panelId, displayFormat}) => {
         {
             if(data !== null)
             {
-                setPlanePanelProfileInfo(data);
-                
                 // setup plane and panel profile
-                let planeProfile = data.planes.find(x => x.planeId.toLowerCase() === planeId);
-                if(planeProfile !== undefined)
+                let planeProfile = data.find(x => x.planeId.toLowerCase() === planeId);
+                planeProfile.panels.forEach(x => x.planeId = planeId);      // adds plane id into panel object
+
+                var panelProfile = planeProfile.panels.find(x => x.panelId.toLowerCase() === panelId);
+                
+                if(panelProfile !== undefined)
                 {
                     setPlaneProfile(planeProfile);
-                    setPanelProfile(planeProfile.panels.find(x => x.panelId.toLowerCase() === panelId))   
+                    setPanelProfile(panelProfile)   
                 }
             }
         })
@@ -88,22 +88,18 @@ const WebPanel = ({planeId, panelId, displayFormat}) => {
             <SimConnectDataProvider>
                 <CssBaseline />
 
-
-                { planePanelProfileInfo !== undefined && panelProfile !== undefined && displayFormat !== undefined && 
+                { panelProfile !== undefined && displayFormat !== undefined && 
                     <Container className={classes.rootFullWidth}>
                         <div className={classes.appbar}>
-                            <ApplicationBar showMapIcon={panelProfile.hasMap} mapOpenChanged={() => setMapOpen(!mapOpen)} planeInfo={{planeName: planeProfile.name, panelName: panelProfile.name}}></ApplicationBar>
-                            { panelProfile.hasTelemetryDisplay && <TelemetryPanel></TelemetryPanel> }
+                            <ApplicationBar showMapIcon={true} mapOpenChanged={() => setMapOpen(!mapOpen)} planeInfo={{planeName: planeProfile.name, panelName: panelProfile.name}}></ApplicationBar>
                         </div>
                     
-                        <div className={classes.panelContainer} style={{ aspectRatio: String(planePanelProfileInfo.panels.filter(x => x.panelId === panelProfile.panelId && x.planeId.toLowerCase() == planeId).panelRatio) }}>
-                            { panelProfile.hasMap &&
-                                <div className={classes.mapPanel} style={{display: mapOpen ? '' : 'none'}}>
-                                    <MapPanel mapType={'full'} refresh={mapOpen}/>
-                                </div>
-                            }
+                        <div className={classes.panelContainer} style={{ aspectRatio: String(panelProfile.panelRatio) }}>
+                            <div className={classes.mapPanel} style={{display: mapOpen ? '' : 'none'}}>
+                                <MapPanel mapType={'full'} refresh={mapOpen}/>
+                            </div>
                             <div className={classes.popoutPanel} style={{display: mapOpen ? 'none' : ''}}>
-                                <PopoutPanelContainer panelInfo={planePanelProfileInfo.panels.filter(x => x.panelId === panelProfile.panelId && x.planeId.toLowerCase() == planeId)} displayFormat={displayFormat}/> 
+                                <PopoutPanelContainer panelInfo={panelProfile} displayFormat={displayFormat}/> 
                             </div>
                         </div>
                     </Container>
@@ -111,11 +107,10 @@ const WebPanel = ({planeId, panelId, displayFormat}) => {
                 {
                     panelProfile === undefined &&
                     <div style={{paddingLeft: '10px'}}>
-                        <p>Unable to load panel with invalid parameters or missing profile data ....................</p>
+                        <p>Unable to load panel because of invalid parameters or missing profile data ....................</p>
                         <p>Plane type:  {planeId}</p>
                         <p>Panel type:  {panelId}</p>
                         <p>Display format: {displayFormat}</p>
-                        <p>Plane Panel Profile data: {String(planePanelProfileInfo)}</p>
                     </div>
                 }
                 

@@ -110,10 +110,13 @@ export const simConnectGetPlanePanelProfilesInfo = async () => {
     return await fetch(`${API_URL.url}/getplanepanelprofileinfo`)
     .then(response => response.json())
     .then(data => {
-        data.panels.forEach(x => { 
+        var panels = Object.values(data).map(plane => plane.panels);
+
+        panels[0].forEach(x => { 
             x.definitions = PANEL_CONTROL_DEFINITION[x.definitions]; 
             x.styles = PANEL_CONTROL_STYLE_DEFINITION[x.styles]; 
         })
+
         return data;
     })
     .catch(error => {
@@ -121,5 +124,3 @@ export const simConnectGetPlanePanelProfilesInfo = async () => {
         return null;
     });
 }
-
-

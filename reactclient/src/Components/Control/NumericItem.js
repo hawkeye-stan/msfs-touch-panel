@@ -2,7 +2,7 @@ import React from 'react';
 import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import NumericEntryDisplay from '../Control/NumericEntryDisplay';
+import NumericEntryDisplay from './NumericEntryDisplay';
 import { useLocalStorageData } from '../../Services/LocalStorageProvider';
 
 const useStyles = makeStyles((theme) => ({

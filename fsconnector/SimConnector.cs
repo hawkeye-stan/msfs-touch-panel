@@ -73,11 +73,12 @@ namespace MSFSTouchPanel.FSConnector
             _connectionTimer.Enabled = true;
         }
 
-        public bool Stop()
+        public void Stop()
         {
             _isInActiveFlightSession = false;
 
-            _mobiFlightWasmClient.Stop();
+            if(_mobiFlightWasmClient != null)
+                _mobiFlightWasmClient.Stop();
 
             if (_simConnect != null)
             {
@@ -86,10 +87,7 @@ namespace MSFSTouchPanel.FSConnector
                 _simConnect = null;
             }
 
-            Connected = true;
-
-            return true;
-        }
+            Connected = false;        }
 
         public void RequestData()
         {

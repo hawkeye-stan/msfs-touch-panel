@@ -1,14 +1,21 @@
-{
-    "planes": [
-        { "id": 4, "planeId": "kodiak", "name": "Daher Kodiak 100",
-            "panels": [
-                { "id": 1, "panelId": "pfd_mfd_combo", "name": "Panel", "type": "framepanel", "hasMap": true }
-            ]
-        }
-    ],
-
+[
+  {
+    "id": 1,
+    "planeId": "kodiak",
+    "name": "Daher Kodiak 100",
     "panels": [
-        { "id": 30, "planeId": "kodiak", "panelId": "pfd_mfd_combo", "panel_coherent_id": "as1000_pfd", "width": 2458, "height": 1304, "panelRatio": "2458/1350", "iframeRatio": "1024/768", "definitions": "KODIAK_DEF", "styles": "KODIAK_STYLES" }
-
+      {
+        "id": 1,
+        "panelId": "mainpanel",
+        "name": "Main Panel",
+        "type": "framepanel",
+        "width": 2458,
+        "height": 1304,
+        "panelRatio": "2458/1350",
+        "iframeRatio": "1024/768",
+        "definitions": "KODIAK_DEF",
+        "styles": "KODIAK_STYLES"
+      }
     ]
-}
+  }
+]
