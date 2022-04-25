@@ -10,7 +10,7 @@ namespace MSFSTouchPanel.FSConnector
 {
     public class SimConnector
     {
-        private const int MSFS_CONNECTION_RETRY_TIMEOUT = 1000;
+        private const int MSFS_CONNECTION_RETRY_TIMEOUT = 2000;
         private const int WM_USER_SIMCONNECT = 0x0402;
 
         private SimConnect _simConnect;
@@ -33,7 +33,6 @@ namespace MSFSTouchPanel.FSConnector
 
         public SimConnector()
         {
-            SimConnectDataDefinitions = ConfigurationReader.GetSimConnectDataDefinitions();
         }
 
         public void Start()
@@ -138,6 +137,11 @@ namespace MSFSTouchPanel.FSConnector
             // The constructor is similar to SimConnect_Open in the native API
             _simConnect = new SimConnect("Simconnect - Simvar test", Process.GetCurrentProcess().MainWindowHandle, WM_USER_SIMCONNECT, null, 0);
 
+            _connectionTimer.Enabled = false;
+
+            // Add SimConnect data definitions
+            SimConnectDataDefinitions = ConfigurationReader.GetSimConnectDataDefinitions();
+
             // Listen to connect and quit msgs
             _simConnect.OnRecvOpen += HandleOnRecvOpen;
             _simConnect.OnRecvQuit += HandleOnRecvQuit;
@@ -152,8 +156,6 @@ namespace MSFSTouchPanel.FSConnector
             _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.SIMSTOP, "SimStop");
             _simConnect.UnsubscribeFromSystemEvent(SimConnectSystemEvent.VIEW);
             _simConnect.SubscribeToSystemEvent(SimConnectSystemEvent.VIEW, "View");
-
-            _connectionTimer.Enabled = false;
 
             System.Threading.Thread.Sleep(2000);
             ReceiveMessage();
@@ -206,9 +208,15 @@ namespace MSFSTouchPanel.FSConnector
         {
             SIMCONNECT_EXCEPTION e = (SIMCONNECT_EXCEPTION)data.dwException;
 
-            if (e != SIMCONNECT_EXCEPTION.ALREADY_CREATED)
+            switch(e)
             {
-                Logger.ServerLog("SimConnectCache::Exception " + e.ToString(), LogLevel.ERROR);
+                case SIMCONNECT_EXCEPTION.ALREADY_CREATED:
+                case SIMCONNECT_EXCEPTION.UNRECOGNIZED_ID:
+                case SIMCONNECT_EXCEPTION.EVENT_ID_DUPLICATE:
+                    break;
+                default:
+                    Logger.ServerLog("SimConnectCache::Exception " + e.ToString(), LogLevel.ERROR);
+                    break;
             }   
         }
 

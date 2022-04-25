@@ -1,14 +1,5 @@
 [
   {
-    "propName": "TITLE",
-    "variableName": "TITLE",
-    "simConnectUnit": null,
-    "dataType": "String",
-    "dataDefinitionType": "SimConnect",
-    "defaultValue": "",
-    "JavaScriptFormatting": null
-  },
-  {
     "propName": "GPS_LAT",
     "variableName": "GPS POSITION LAT",
     "simConnectUnit": "degrees",

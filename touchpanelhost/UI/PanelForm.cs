@@ -10,9 +10,6 @@ namespace MSFSTouchPanel.TouchPanelHost.UI
         {
             InitializeComponent();
 
-            // Keep form always on top across all active windows
-            WindowManager.AlwaysOnTop(this.Handle);
-
             _ = InitializeAsync(displayFormat, planeId, panelId);
 
             this.Text = $"MSFS Touch Panel | {planeId.ToUpper()} - {panelId.ToUpper()}";

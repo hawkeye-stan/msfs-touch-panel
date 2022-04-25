@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using MSFSTouchPanel.Shared;
-using MSFSTouchPanel.SimConnectAgent;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -28,31 +27,8 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
             _hostingEnvironment = environment;
         }
 
-        [HttpGet("/getdebuggerpagelist")]
-        public string GetDebuggerPageList()
-        {
-            try
-            {
-                return GetCoherentDebuggerPageList().Result;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private async Task<string> GetCoherentDebuggerPageList()
-        {
-            HttpClient client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync("http://127.0.0.1:19999/pagelist.json");
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            return responseBody;
-        }
-
         [HttpGet("/getdata")]
-        public SimConnectData Get()
+        public SimConnectData GetData()
         {
             try
             {
@@ -71,29 +47,13 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         }
 
         [HttpPost("/postdata")]
-        public IActionResult Post(SimConnectPostData data)
+        public IActionResult PostData(SimConnectActionData actionData)
         {
-            var value = Convert.ToString(data.Value);
-
-            _simConnectService.ExecAction(data.Action, data.ActionType, value);
+            _simConnectService.ExecAction(actionData);
 
             var clientIP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
 
-            Logger.ClientLog($"ClientIP: {clientIP, -20} Action: {data.Action,-35} Value: {value, -7}", LogLevel.INFO);
-
-            return Ok();
-        }
-
-        [HttpPost("/setlvar")]
-        public IActionResult SetLVar(SimConnectSetLVarData data)
-        {
-            var value = Convert.ToString(data.Value);
-
-            _simConnectService.SetLVar(data.PropName, value);
-
-            var clientIP = HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-
-            Logger.ClientLog($"ClientIP: {clientIP,-20} LVar: {data.PropName,-35} Value: {value,-7}", LogLevel.INFO);
+            Logger.ClientLog($"ClientIP: {clientIP, -20} Action: {actionData.Action,-35} Value: {actionData.ActionValue, -7}", LogLevel.INFO);
 
             return Ok();
         }
@@ -102,21 +62,6 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         public string GetFlightPlan()
         {
             return _simConnectService.GetFlightPlan();
-        }
-
-        [HttpPost("/postflightplan")]
-        public IActionResult PostFlightPlan(G1000NxiFlightPlanRawData data)
-        {
-            try
-            {
-                _simConnectService.ProcessG1000NxiFlightPlan(data);
-            }
-            catch(Exception ex) 
-            {
-                Logger.ServerLog(ex.Message, LogLevel.ERROR);
-            }
-            
-            return Ok();
         }
 
         [HttpGet("/getplanepanelprofileinfo")]
@@ -138,29 +83,11 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
 
             return string.Empty;
         }
-
-        [HttpGet("/getPopoutPanelDefinitions")]
-        public string GetPopoutPanelDefinitions()
-        {
-            try
-            {
-                var filePath = Path.Combine(AppContext.BaseDirectory, @"Data\PopoutPanelDefinition.json");
-                return System.IO.File.ReadAllText(filePath);
-            }
-            catch (Exception ex)
-            {
-                Logger.ServerLog(ex.Message, LogLevel.ERROR);
-            }
-
-            return string.Empty;
-        }
     }
 
     public class SimConnectData
     {
         public string Data { get; set; }
-
-        public string LVar { get; set; }
 
         public bool MsfsStatus { get; set; }
 
@@ -169,23 +96,5 @@ namespace MSFSTouchPanel.TouchPanelHost.Controllers
         public string SystemEvent { get; set; }
         
         public string G1000NxiFlightPlan { get; set; }
-    }
-
-    public class SimConnectPostData
-    {
-        public string Action { get; set; }
-
-        public string ActionType { get; set; }
-
-        public object Value { get; set; }
-
-        public int ExecutionCount { get; set; }
-    }
-
-    public class SimConnectSetLVarData
-    { 
-        public string PropName { get; set; }
-
-        public string Value { get; set; }
     }
 }

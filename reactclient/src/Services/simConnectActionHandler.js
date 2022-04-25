@@ -2,15 +2,15 @@ import { simConnectPost } from './simConnectPost';
 
 export const simActions = {
     Encoder: {
-        upperIncrease: () => simConnectPost('UPPER_ENCODER_INC', 1),
-        upperDecrease: () => simConnectPost('UPPER_ENCODER_DEC', 1),
-        lowerIncrease: () => simConnectPost('LOWER_ENCODER_INC', 1),
-        lowerDecrease: () => simConnectPost('LOWER_ENCODER_DEC', 1),
-        push: () => simConnectPost('ENCODER_PUSH', 1),
+        upperIncrease: () => simConnectPost({action: 'UPPER_ENCODER_INC', actionValue: 1, actionType: 'EncoderAction'}),
+        upperDecrease: () => simConnectPost({action: 'UPPER_ENCODER_DEC', actionValue: 1, actionType: 'EncoderAction'}),
+        lowerIncrease: () => simConnectPost({action: 'LOWER_ENCODER_INC', actionValue: 1, actionType: 'EncoderAction'}),
+        lowerDecrease: () => simConnectPost({action: 'LOWER_ENCODER_DEC', actionValue: 1, actionType: 'EncoderAction'}),
+        push: () => simConnectPost({action: 'ENCODER_PUSH', actionValue: 1, actionType: 'EncoderAction'}),
     },
 
     SimRate : {
-        increase: () => simConnectPost('SIM_RATE_INCR', 1),
-        decrease: () => simConnectPost('SIM_RATE_DECR', 1),
+        increase: () => simConnectPost({action: 'SIM_RATE_INCR', actionValue: 1, actionType: 'SimEventId'}),
+        decrease: () => simConnectPost({action: 'SIM_RATE_DECR', actionValue: 1, actionType: 'SimEventId'}),
     }
 }

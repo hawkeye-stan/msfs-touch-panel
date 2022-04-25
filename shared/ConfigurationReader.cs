@@ -32,12 +32,22 @@ namespace MSFSTouchPanel.Shared
                 var folderPath = Path.Combine(AppContext.BaseDirectory, "Data");
                 string[] files = Directory.GetFiles(folderPath, "SimConnectDataDefinition*.json");      // get json files starting with prefix 'SimConnectDataDefinition'
 
+                // Add the special TITLE string variable first. It has to be to first property in SimConnectStruct
+                definitions.Add(new SimConnectDataDefinition() { PropName = "TITLE", VariableName = "TITLE", DataType = DataType.String, DataDefinitionType = DataDefinitionType.SimConnect, DefaultValue = "" });
+
                 for (var i = 0; i < files.Length; i++)
                 {
                     using (StreamReader reader = new StreamReader(files[i]))
                     {
-                        definitions.AddRange(JsonConvert.DeserializeObject<List<SimConnectDataDefinition>>(reader.ReadToEnd()));
-                        
+                        var definitionGroup = JsonConvert.DeserializeObject<List<SimConnectDataDefinition>>(reader.ReadToEnd());
+
+                        foreach(var def in definitionGroup)
+                        {
+                            if (!definitions.Exists(d => d.PropName == def.PropName))
+                                definitions.Add(def);
+                            else
+                                Logger.ServerLog($"{Path.GetFileName(files[i])} has duplicate entry with PropName: {def.PropName}", LogLevel.ERROR);
+                        }
                     }
                 }
 
@@ -45,7 +55,7 @@ namespace MSFSTouchPanel.Shared
             }
             catch
             {
-                Logger.ServerLog("ERROR: SimConnectDataDefinition.json file is not found or is invalid.", LogLevel.ERROR);
+                Logger.ServerLog("SimConnectDataDefinition.json file is not found or is invalid.", LogLevel.ERROR);
                 return new List<SimConnectDataDefinition>();
             }
         }

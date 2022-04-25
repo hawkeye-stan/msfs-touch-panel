@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using MSFSTouchPanel.Shared;
 using System;
 using System.Net;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -92,7 +93,11 @@ namespace MSFSTouchPanel.TouchPanelHost
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.Configure<ConsoleLifetimeOptions>(opts => opts.SuppressStatusMessages = true);
-                    services.AddControllersWithViews();
+                    services.AddControllersWithViews().AddJsonOptions(opts =>
+                    {
+                        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                        opts.JsonSerializerOptions.IgnoreNullValues = true;
+                    });
                     services.AddMemoryCache();
                     services.AddHostedService<WebApiHostService>();
                     services.AddSingleton<ISimConnectService>(provider => _simConnectService);

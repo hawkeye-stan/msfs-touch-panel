@@ -41,7 +41,6 @@ namespace MSFSTouchPanel.SimConnectAgent
         public void Start()
         {
             _simConnector.Start();
-            _arduinoProvider.Start();
         }
 
         public void Stop()
@@ -54,14 +53,9 @@ namespace MSFSTouchPanel.SimConnectAgent
             OnMsfsDisconnected?.Invoke(this, null);
         }
 
-        public void ExecAction(string action, string actionType, string value)
+        public void ExecAction(SimConnectActionData actionData)
         {
-            _actionProvider.ExecAction(action, actionType, value);
-        }
-
-        public void SetLVar(string propName, string value)
-        {
-            _actionProvider.SetLVar(propName, value);
+            _actionProvider.ExecAction(actionData);
         }
 
         public string GetFlightPlan()

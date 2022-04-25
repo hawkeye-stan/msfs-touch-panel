@@ -1,6 +1,6 @@
 ﻿using MSFSTouchPanel.ArduinoAgent;
+using MSFSTouchPanel.Shared;
 using System;
-using System.Collections.Generic;
 
 namespace MSFSTouchPanel.SimConnectAgent
 {
@@ -8,55 +8,50 @@ namespace MSFSTouchPanel.SimConnectAgent
     {
         private const string NO_ACTION = "NO_ACTION";
 
-        public static string GetSimConnectCommand(List<EncoderCommandMapping> commandMappings, string action, InputName encoderName, InputAction encoderAction)
+        public static CommandAction GetSimConnectCommand(SimConnectEncoderAction encoderAction, InputName inputName, InputAction inputAction)
         {
-            var mapping = commandMappings.Find(m => m.Command.Contains(action));
-
-            if (mapping == null)
-                throw new Exception($"EncoderCommandMapping for {action} cannot be found.");
-
-            switch (encoderName)
+            switch (inputName)
             {
                 case InputName.Encoder1:
-                    switch (encoderAction)
+                    switch (inputAction)
                     {
                         case InputAction.CW:
-                            return mapping.Encoder1CW;
+                            return new CommandAction(encoderAction.Encoder1CW, encoderAction.ActionType);
                         case InputAction.CCW:
-                            return mapping.Encoder1CCW;
+                            return new CommandAction(encoderAction.Encoder1CCW, encoderAction.ActionType);
                         case InputAction.SW:
-                            return mapping.Encoder1Switch;
+                            return new CommandAction(encoderAction.Encoder1Switch, encoderAction.ActionType);
                     }
                     break;
                 case InputName.Encoder2:
-                    switch (encoderAction)
+                    switch (inputAction)
                     {
                         case InputAction.CW:
-                            return mapping.Encoder2CW;
+                            return new CommandAction(encoderAction.Encoder2CW, encoderAction.ActionType);
                         case InputAction.CCW:
-                            return mapping.Encoder2CCW;
+                            return new CommandAction(encoderAction.Encoder2CCW, encoderAction.ActionType);
                         case InputAction.SW:
-                            return mapping.Encoder2Switch;
+                            return new CommandAction(encoderAction.Encoder2Switch, encoderAction.ActionType);
                     }
                     break;
                 case InputName.Joystick:
-                    switch (encoderAction)
+                    switch (inputAction)
                     {
                         case InputAction.UP:
-                            return mapping.Joystick1Up;
+                            return new CommandAction(encoderAction.Joystick1Up, encoderAction.ActionType);
                         case InputAction.DOWN:
-                            return mapping.Joystick1Down;
+                            return new CommandAction(encoderAction.Joystick1Down, encoderAction.ActionType);
                         case InputAction.LEFT:
-                            return mapping.Joystick1Left;
+                            return new CommandAction(encoderAction.Joystick1Left, encoderAction.ActionType);
                         case InputAction.RIGHT:
-                            return mapping.Joystick1Right;
+                            return new CommandAction(encoderAction.Joystick1Right, encoderAction.ActionType);
                         case InputAction.SW:
-                            return mapping.Joystick1Switch;
+                            return new CommandAction(encoderAction.Joystick1Switch, encoderAction.ActionType);
                     }
                     break;
             }
 
-            return NO_ACTION;
+            return new CommandAction(NO_ACTION, SimConnectActionType.EncoderAction);
         }
     }
 }

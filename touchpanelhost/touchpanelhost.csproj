@@ -414,9 +414,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="Data\EncoderCommandMapping.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
 	  <Content Update="Data\PlanePanelProfileInfo.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

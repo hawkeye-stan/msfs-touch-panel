@@ -32,17 +32,17 @@ const SimConnectDataProvider = ({ children }) => {
                 if(result === undefined)
                     throw new Error('MSFS Touch Panel Server error');
 
-                if(result.msfsStatus !== null)
+                if(result.msfsStatus !== null && result.msfsStatus !== undefined)
                     setNetworkStatus(Boolean(result.msfsStatus));
                 else
                     setNetworkStatus(false);
 
-                if(result.arduinoStatus !== null)  
+                if(result.arduinoStatus !== null && result.arduinoStatus !== undefined)  
                     setArduinoStatus(Boolean(result.arduinoStatus));
                 else
                     setArduinoStatus(false);
 
-                if(result.systemEvent !== null)
+                if(result.systemEvent !== null && result.systemEvent !== undefined)
                     setSimConnectSystemEvent(result.systemEvent.split('-')[0]);
                 else
                     setSimConnectSystemEvent(null);
@@ -50,9 +50,11 @@ const SimConnectDataProvider = ({ children }) => {
                 if (!result.msfsStatus)
                     handleConnectionError('MSFS SimConnect is not available.')
 
-                if (result.data !== null) {
+                if(result.g1000NxiFlightPlan !== '' && result.g1000NxiFlightPlan !== undefined)
+                    setG1000NxiFlightPlan(result.g1000NxiFlightPlan !== undefined ? JSON.parse(result.g1000NxiFlightPlan) : null);
+
+                if (result.data !== null && result.data !== undefined) {
                     var simData = JSON.parse(result.data);
-                    setG1000NxiFlightPlan(result.g1000NxiFlightPlan !== '' ? JSON.parse(result.g1000NxiFlightPlan) : null);
 
                     if ((simData !== null && simData !== [])) {
                         setSimConnectData(parseRequestData(simData));

@@ -3,7 +3,7 @@ import IconButton from '@mui/material/IconButton';
 import makeStyles from '@mui/styles/makeStyles';
 import { useSimConnectData } from '../Services/SimConnectDataProvider';
 import { useLocalStorageData } from '../Services/LocalStorageProvider';
-import { simConnectPost, simConnectSetLVar } from '../Services/simConnectPost';
+import { simConnectPost } from '../Services/simConnectPost';
 
 const useStyles = makeStyles(() => ({
     iconButton: {
@@ -71,14 +71,8 @@ const InteractiveControlTemplate = ({ btn, panelInfo, showEncoder }) => {
     }
 
     const handleOnClick = (event, btn) => {
-        if (btn.valueSequence !== undefined && btn.valueSequence.length > 0)
-        {
-            var sequence = btn.valueSequence.find(x => x.lastValue === dataBindingValue);
-            simConnectSetLVar(btn.binding, sequence.newValue);
-        }
-
         if (btn.action !== undefined && btn.action !== null)
-            simConnectPost(btn.action, btn.actionValue !== undefined? btn.actionValue : 1, btn.actionType);
+            simConnectPost({action: btn.action, actionValue: btn.actionValue, actionType: btn.actionType, encoderAction: btn.encoderActions === undefined ? null : btn.encoderActions });
 
         if(!isUsedArduino && (btn.useEncoder || btn.useDualEncoder))
             showEncoder(event, btn.useDualEncoder);

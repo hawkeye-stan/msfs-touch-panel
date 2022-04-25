@@ -127,15 +127,6 @@
     "JavaScriptFormatting": null
   },
   {
-    "propName": "LIGHT_WING_ON",
-    "variableName": "LIGHT WING",
-    "simConnectUnit": "bool",
-    "dataType": "Float64",
-    "dataDefinitionType": "SimConnect",
-    "defaultValue": 0,
-    "JavaScriptFormatting": null
-  },
-  {
     "propName": "ALTERNATOR_1_ON",
     "variableName": "GENERAL ENG MASTER ALTERNATOR:1",
     "simConnectUnit": "bool",

@@ -75,31 +75,14 @@ namespace MSFSTouchPanel.TouchPanelHost
             }
         }
 
-        public void ExecAction(string action, string actionType, string value)
+        public void ExecAction(SimConnectActionData actionData)
         {
-            _simConnectorProvider.ExecAction(action, actionType, value);
-        }
-
-        public void SetLVar(string propName, string value)
-        {
-            _simConnectorProvider.SetLVar(propName, value);
+            _simConnectorProvider.ExecAction(actionData);
         }
 
         public string GetFlightPlan()
         {
             return _simConnectorProvider.GetFlightPlan();
-        }
-
-        public void ProcessG1000NxiFlightPlan(G1000NxiFlightPlanRawData data)
-        {
-            try 
-            {
-                var waypoints = G1000NxiFlightPlanProvider.ProcessFlightPlan(data);
-
-                if (waypoints != null)
-                    _memCache.Set("g1000nxiFlightPlan", waypoints); 
-            } 
-            catch { }
         }
     }
 
@@ -111,12 +94,8 @@ namespace MSFSTouchPanel.TouchPanelHost
 
         public void Stop();
 
-        public void ExecAction(string action, string actionType, string value);
-
-        public void SetLVar(string propName, string value);
+        public void ExecAction(SimConnectActionData data);
 
         public string GetFlightPlan();
-
-        public void ProcessG1000NxiFlightPlan(G1000NxiFlightPlanRawData data);
     }
 }

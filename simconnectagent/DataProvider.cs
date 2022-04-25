@@ -99,29 +99,6 @@ namespace MSFSTouchPanel.SimConnectAgent
             // Invoke on data refresh event by listener
             OnDataRefreshed?.Invoke(this, new EventArgs<string>(jsonData));
         }
-
-        private void AddSimRateValidData(ref dynamic simData)
-        {
-            SimRateVar simRateVar = new SimRateVar()
-            {
-                APApproachHold = Convert.ToBoolean(simData.AUTOPILOT_APPROACH_HOLD),
-                AltitudeAboveGround = simData.PLANE_ALT_ABOVE_GROUND,
-                GroundSpeed = simData.GPS_GROUND_SPEED,
-                VerticalSpeed = simData.VERTICAL_SPEED,
-                PitchDegree = simData.PLANE_PITCH_DEGREES,
-                BankDegree = simData.PLANE_BANK_DEGREES,
-                WayPointNextLat = simData.GPS_WP_NEXT_LAT,
-                WayPointNextLon = simData.GPS_WP_NEXT_LON,
-                WayPointPreviousLat = simData.GPS_WP_PREV_LAT,
-                WayPointPreviousLon = simData.GPS_WP_PREV_LON,
-                PositionLat = simData.GPS_POSITION_LAT,
-                PositionLon = simData.GPS_POSITION_LON
-            };
-
-            var simRateCalcResult = SimConnectCalcEngine.SimRateValid(simRateVar);
-            simData.SIMULATION_RATE_VALID = simRateCalcResult.IsValid;
-            simData.SIMULATION_RATE_INVALID_REASON = simRateCalcResult.InvalidReason;
-        }
     }
 }
 
