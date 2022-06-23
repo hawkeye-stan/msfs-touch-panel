@@ -12,6 +12,7 @@
 
 #define VRx A0
 #define VRy A1
+#define JSW 8
 
 // Rotatry encoder variables
 int currentStateCLK1;
@@ -28,7 +29,7 @@ boolean rotaryEncoderRotating2 = false;
 unsigned long lastButton1Press = 0;
 unsigned long lastButton2Press = 0;
 
-Joystick joystick(VRx, VRy, 8);
+Joystick joystick(VRx, VRy, JSW);
 
 NewEncoder encoder1(DT1, CLK1, -32768, 32767, 0, FULL_PULSE);
 NewEncoder encoder2(DT2, CLK2, -32768, 32767, 0, FULL_PULSE);
@@ -71,7 +72,7 @@ void loop() {
     currentEncoderValue1 = currentEncoderState1.currentValue;
     if (currentEncoderValue1 != prevEncoderValue1) {
       if(currentEncoderValue1 > prevEncoderValue1){
-        Serial.println("Encoder1:CW");
+        Serial.println("Encoder1:CW:"+ currentEncoderValue1);
       }
       else{
         Serial.println("Encoder1:CCW");
@@ -122,30 +123,35 @@ void loop() {
 	}
 
 	// Read joystick
+  if(joystick.isPressed())
+  {
+    Serial.println("Joystick:SW");
+  }
+  
 	if(joystick.isReleased())
 	{
 		// left
 		if(joystick.isLeft())
 		{
-			Serial.println("Joystick:LEFT");
+			Serial.println("Joystick:UP");
 		}
 
 		// right
 		if(joystick.isRight())
 		{
-			Serial.println("Joystick:RIGHT");
+			Serial.println("Joystick:DOWN");
 		}
 
 		// up
 		if(joystick.isUp())
 		{
-			Serial.println("Joystick:UP");
+			Serial.println("Joystick:RIGHT");
 		}
 
 		// down
 		if(joystick.isDown())
 		{
-			Serial.println("Joystick:DOWN");
+			Serial.println("Joystick:LEFT");
 		}
 	}
 
